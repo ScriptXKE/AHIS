@@ -38,9 +38,8 @@
 |
 */
 
-$route['default_controller'] = "site";
+$route['default_controller'] = "splash";
 $route['404_override'] = '';
-$route['scaffolding_trigger'] = "";
 
 
 /* End of file routes.php */
