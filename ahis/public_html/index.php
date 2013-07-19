@@ -30,12 +30,12 @@ date_default_timezone_set('Africa/Nairobi');
 	switch ($_SERVER['HTTP_HOST']) 
 	{
 		
-		case 'ahis.faosomalia.org':
-			$env = 'development';
+		case 'ahis.scriptx.org':
+			$env = 'production';
 			break;
 		
 		default:
-			$env = 'production';
+			$env = 'development';
 			break;
 	}
 
