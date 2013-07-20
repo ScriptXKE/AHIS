@@ -6,6 +6,23 @@
         <title>AHIS - Animal Health Information System</title>
         <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
         <link rel="icon" type="<?php echo base_url(); ?>image/ico" href="favicon.ico">
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/ajax-chosen.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.chosen.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.easing-1.3.pack.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.fancybox.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.fancybox.pack.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.fileupload.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.iframe-transport.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.numeric.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.ui.datetime.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.uniform.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery.uniform.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/jquery-ui-timepicker-addon.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/load-image.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/tmpl.min.js"></script>
+        <script type="text/javascript" src="../assets/ahis_crud/js/jquery_plugins/ui.multiselect.min.js"></script>
+
         
      <!-- common stylesheets-->
         <!-- bootstrap framework css -->
@@ -112,29 +129,39 @@
 
         </div>
         <!-----End my top bar-------->
-        
+
         <!-- breadcrumbs -->
         <div class="container">
             <ul id="breadcrumbs">
                 <li><a href="<?php echo base_url(); ?>dashboard"><i class="icon-home"></i></a></li>
             </ul>
         </div>
-        
-        <!-- notification messages -->
-        <?php
-        // Check for the $msg variable
-        if ( (isset($msg) && trim($msg) != "") ) {
-        ?>
-        <div class="container notifications-container">
-            <p class="notifications-text"><?php echo $msg; ?></p>
-        </div>
-        <?php } ?>
             
         <!-- main content -->
         <div class="container">
 
         <!-- LOAD THE VIEW HERE : START -->
-        <?php $this->load->view($view); ?>
+        <?php //$this->load->view($view); ?>
+        
+
+        <div>
+        <a href='<?php echo site_url('diseases/diseases_management')?>'>Diseases</a> |
+        <a href='<?php echo site_url('cases/cases_management')?>'>Cases</a> |
+        <a href='<?php echo site_url('dashboards/animaltypes_management')?>'>Animal Types</a> |
+        <a href='<?php echo site_url('dashboards/symptoms_management')?>'>Symptoms</a> |
+        <a href='<?php echo site_url('dashboards/products_management')?>'>Reports</a> |
+        <a href='<?php echo site_url('dashboards/offices_management')?>'>Tickets</a> | 
+        <a href='<?php echo site_url('dashboards/employees_management')?>'>Link</a> |       
+        <a href='<?php echo site_url('dashboards/film_management')?>'>Link</a>
+        
+    </div>
+    <div style='height:20px;'></div>  
+    <div>
+        
+        <?php echo $output; ?>
+    </div>
+
+
         <!-- LOAD THE VIEW HERE : END -->
         
         </div>

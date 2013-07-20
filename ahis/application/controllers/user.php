@@ -38,21 +38,9 @@ class User extends CI_Controller
 	 */
 	public function profile() {
 
-		// Initialize the $msg variable to nothing
-		$msg = "";
-
-		// Check if any data was posted from the form
-		if ($_POST) {
-
-			// User details posted for update
-			// Call the appropriate method from the auth_model
-			$msg .= $this->auth_model->profile_update();
-
-		}	//	Checking for posting of any profile details
-
 		//	Run the query to get the current user's profile details
-		$user_criteria_array = array('user_id' => $this->session->userdata('user_id'));
-		$query = $this->db->get_where('view_users', $user_criteria_array);
+		$user_criteria_array = array('id' => $this->session->userdata('user_id'));
+		$query = $this->db->get_where('users', $user_criteria_array);
 
 		// Check for results
 		if ($query->num_rows() == 1) {
@@ -61,8 +49,7 @@ class User extends CI_Controller
 			// Now prepare to load the user profie view
 			$data = array(
 					'view' => 'user/profile',
-					'user_details' => $query->row_array(),
-					'msg' => $msg
+					'user_details' => $query->row_array()
 				);
 
 			// Load the view

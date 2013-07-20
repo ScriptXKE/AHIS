@@ -49,9 +49,9 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'ahis';
-$db['default']['password'] = 'ahis';
-$db['default']['database'] = 'ahis';
+$db['default']['username'] = 'root';
+$db['default']['password'] = '';
+$db['default']['database'] = '2013_ahis';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
