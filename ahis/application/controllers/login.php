@@ -38,7 +38,7 @@ class Login extends CI_Controller
 		{
 
 			//	Session is set ... redirect to the dashboard
-			redirect(base_url(). 'dashboard');
+			redirect(base_url(). 'dashboards');
 
 		}
 		else
@@ -81,7 +81,7 @@ class Login extends CI_Controller
 			{
 				
 				// Login successful ... redirect to the dashboard
-				redirect(base_url() . "dashboard");
+				redirect(base_url() . "dashboards");
 
 			} 
 			else 
