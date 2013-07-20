@@ -112,13 +112,23 @@
 
         </div>
         <!-----End my top bar-------->
-
+        
         <!-- breadcrumbs -->
         <div class="container">
             <ul id="breadcrumbs">
                 <li><a href="<?php echo base_url(); ?>dashboard"><i class="icon-home"></i></a></li>
             </ul>
         </div>
+        
+        <!-- notification messages -->
+        <?php
+        // Check for the $msg variable
+        if ( (isset($msg) && trim($msg) != "") ) {
+        ?>
+        <div class="container notifications-container">
+            <p class="notifications-text"><?php echo $msg; ?></p>
+        </div>
+        <?php } ?>
             
         <!-- main content -->
         <div class="container">

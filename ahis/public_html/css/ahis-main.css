@@ -1460,3 +1460,17 @@ div.ibutton-label-off span {
 }
 
 /*-----End iButton------*/
+
+
+/* CUSTOM CODE BY NICK */
+/* CODE FOR NOTIFICATIONS RENDERED IN 'main_template.php' */
+.notifications-container {
+    border: 1px solid #FFF;
+    margin-bottom: 5px;
+    background-color: #F0FFF0;
+}
+
+.notifications-text {
+    margin: 5px;
+}
+
