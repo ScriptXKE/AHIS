@@ -78,13 +78,13 @@
                                     <a href="<?php echo base_url() . 'dashboard'; ?>"><i class="icsw16-home icsw16-white"></i>&nbsp;&nbsp;Home</a>                                    
                                 </li>
                                 
-                                <li><a href="javascript:void(0)"><i class="icsw16-documents icsw16-white"></i>&nbsp;&nbsp;Cases</a>
+                                <li><a href="javascript:void(0)"><i class="icsw16-documents icsw16-white"></i>&nbsp;&nbsp;Incidents</a>
                                   <ul>
                                         <li>
-                                            <a href="form_elements.html">Open New Case</a>
+                                            <a href="<?php echo base_url(); ?>incident/create">Open New Incident</a>
                                         </li>
                                         <li>
-                                            <a href="#">Open Existing Case</a>
+                                            <a href="<?php echo base_url(); ?>incident">Open Existing Incident</a>
                                         </li>
                                     </ul>
                                 </li>
