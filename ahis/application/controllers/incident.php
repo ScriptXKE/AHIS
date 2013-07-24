@@ -1,35 +1,34 @@
 <?php
 
-if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * This class contains methods for the dashboard
- * @author ScriptX Consulting Ltd (sales@scriptx.co.ke / sales@scriptx.org) | 17 July 2013
- */
+* This class contains methods for the dashboard
+* @author ScriptX Consulting Ltd (sales@scriptx.co.ke / sales@scriptx.org) | 17 July 2013
+*/
 class Incident extends CI_Controller {
 
     // num of records per page
     private $limit = 10;
 
     /**
-     * Constructor method
-     * 
-     * This constructor checks if the user has a valid session before
-     * transferring control to the index() method to load the dashboard
-     * 
-     * @author ScriptX Consulting Ltd (sales@scriptx.co.ke / sales@scriptx.org) | 17 July 2013
-     *
-     */
+* Constructor method
+*
+* This constructor checks if the user has a valid session before
+* transferring control to the index() method to load the dashboard
+*
+* @author ScriptX Consulting Ltd (sales@scriptx.co.ke / sales@scriptx.org) | 17 July 2013
+*
+*/
     public function __construct() {
 
         // Run parent controller
         parent::__construct();
 
         /**
-         * The auth model is already autoloaded and the session validated
-         * Check if the user is logged in
-         */
+* The auth model is already autoloaded and the session validated
+* Check if the user is logged in
+*/
         $this->auth_model->is_logged_in();
 
         // load library
@@ -45,12 +44,12 @@ class Incident extends CI_Controller {
 // END: __construct()
 
     /**
-     * Default method for the Incident controller
-     * 
-     * This method loads the dasboard without any fuss
-     * Session validation has already taken place in the constructor
-     *
-     */
+* Default method for the Incident controller
+*
+* This method loads the dasboard without any fuss
+* Session validation has already taken place in the constructor
+*
+*/
     function index($offset = 0) {
         // offset
         $uri_segment = 3;
@@ -61,7 +60,7 @@ class Incident extends CI_Controller {
 
         // generate pagination
         $this->load->library('pagination');
-        $config['view'] = site_url('incident/index/');
+        $config['view'] = site_url('incident/index');
         $config['total_rows'] = $this->incident_model->count_all();
         $config['per_page'] = $this->limit;
         $config['uri_segment'] = $uri_segment;
@@ -74,10 +73,10 @@ class Incident extends CI_Controller {
         $this->table->set_heading('Incident No', 'Reporter Name', 'Animal Specie', 'Tags)', 'Location');
         $i = 0 + $offset;
         foreach ($incidents as $incident) {
-            $this->table->add_row(++$i, $incident->incident_id, $incident->reporter_id, $incident->animaltype_id, $incident->tags, $incident->location_id, 
-                    anchor('incident/view/' . $incident->id, 'view', array('class' => 'view')) . ' ' .
-                    anchor('incident/update/' . $incident->id, 'update', array('class' => 'update')) . ' ' .
-                    anchor('incident/delete/' . $incident->id, 'delete', array('class' => 'delete', 'onclick' => "return confirm('Are you sure want to delete this incident?')"))
+            $this->table->add_row(++$i, $incident->incident_id, $incident->reporter_id, $incident->animaltype_id, $incident->tags, $incident->location_id,
+                    anchor('incident/view' . $incident->id, 'view', array('class' => 'view')) . ' ' .
+                    anchor('incident/update' . $incident->id, 'update', array('class' => 'update')) . ' ' .
+                    anchor('incident/delete' . $incident->id, 'delete', array('class' => 'delete', 'onclick' => "return confirm('Are you sure want to delete this incident?')"))
             );
         }
         $data['table'] = $this->table->generate();
@@ -85,8 +84,8 @@ class Incident extends CI_Controller {
         // load view
         //$this->load->view('incidentList', $data);
         /**
-         * Load the main template and pass it the incident view
-         */
+* Load the main template and pass it the incident view
+*/
         $this->load->view('main_template', $data);
     }
 
@@ -101,18 +100,20 @@ class Incident extends CI_Controller {
         // set common properties
         $data['title'] = 'Add new incident';
         $data['message'] = '';
-        $data['action'] = site_url('incident/add');
-        $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
+        $data['action'] = site_url('incident/new');
+        $data['link_back'] = anchor('incident/index', 'Back to list of incidents', array('class' => 'back'));
+        $data['view'] = 'incident/edit';
 
         // load view
-        $this->load->view('incidentEdit', $data);
+        $this->load->view('main_template', $data);
     }
 
-    function addIncident() {
+    function create() {
         // set common properties
         $data['title'] = 'Add new incident';
-        $data['action'] = site_url('incident/add');
-        $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
+        $data['action'] = site_url('incident/new');
+        $data['link_back'] = anchor('incident/index', 'Back to list of incidents', array('class' => 'back'));
+        $data['view'] = 'incident/edit';
 
         // set empty default form field values
         $this->_set_fields();
@@ -125,9 +126,9 @@ class Incident extends CI_Controller {
         } else {
             // save data
             /**
-             * Add data saving code here
-             *
-             */
+* Add data saving code here
+*
+*/
             $id = $this->incident_model->save($incident);
 
             // set user message
@@ -141,10 +142,11 @@ class Incident extends CI_Controller {
     function view($id) {
         // set common properties
         $data['title'] = 'Incident Details';
-        $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
+        $data['link_back'] = anchor('incident/index', 'Back to list of incidents', array('class' => 'back'));
 
         // get incident details
         $data['incident'] = $this->incident_model->get_by_id($id)->row();
+        $data['view'] = 'incident/view';
 
         // load view
         $this->load->view('main_template', $data);
@@ -159,24 +161,25 @@ class Incident extends CI_Controller {
         $this->form_data->id = $id;
         // save data
         /**
-         * Add form data here, user form_data
-         *
-         */
+* Add form data here, user form_data
+*
+*/
         // set common properties
-        $data['title'] = 'Update Incident';
+        $data['title'] = 'Update incident';
         $data['message'] = '';
-        $data['action'] = site_url('incident/update');
-        $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
+        $data['action'] = site_url('incident/update_changes');
+        $data['link_back'] = anchor('incident/index', 'Back to list of incidents', array('class' => 'back'));
+        $data['view'] = 'incident/index';
 
         // load view
         $this->load->view('main_template', $data);
     }
 
-    function updateIncident() {
+    function update_changes() {
         // set common properties
-        $data['title'] = 'Update Incident';
-        $data['action'] = site_url('incident/update');
-        $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
+        $data['title'] = 'Update incident';
+        $data['action'] = site_url('incident/update_changes');
+        $data['link_back'] = anchor('incident/index', 'Back to list of incidents', array('class' => 'back'));
 
         // set empty default form field values
         $this->_set_fields();
@@ -191,14 +194,17 @@ class Incident extends CI_Controller {
             $id = $this->input->post('id');
             // save data
             /**
-             * Add form data here, user form_data
-             *
-             */
+* Add form data here, user form_data
+*
+*/
             $this->incident_model->update($id, $incident);
 
             // set user message
             $data['message'] = '<div class="success">update incident success</div>';
         }
+
+        // set the view
+        $data['view'] = 'incident/index';
 
         // load view
         $this->load->view('main_template', $data);
@@ -209,31 +215,30 @@ class Incident extends CI_Controller {
         $this->incident_model->delete($id);
 
         // redirect to incident list page
-        redirect('incident/index/', 'refresh');
+        redirect('incident/index', 'refresh');
     }
 
     // set empty default form field values
     function _set_fields() {
         $this->form_data->id = '';
         /**
-         * ...set form_date form data here, user form_data
-         *
-         */
+* ...set form_date form data here, user form_data
+*
+*/
     }
 
     // validation rules
     function _set_rules() {
         // save data
         /**
-         * Add form validation here data here, e.g as below
-         * $this->form_validation->set_rules('specie', 'Animal Type', 'trim|required');
-         * $this->form_validation->set_rules('date', 'date', 'trim|required|callback_valid_date');
-
-         * $this->form_validation->set_message('required', '* required');
-         * $this->form_validation->set_message('isset', '* required');
-         * $this->form_validation->set_message('valid_date', 'date format is not valid. dd-mm-yyyy');
-         * $this->form_validation->set_error_delimiters('<p class="error">', '</p>');
-         */
+* Add form validation here data here, e.g as below
+* $this->form_validation->set_rules('specie', 'Animal Type', 'trim|required');
+* $this->form_validation->set_rules('date', 'date', 'trim|required|callback_valid_date');
+* $this->form_validation->set_message('required', '* required');
+* $this->form_validation->set_message('isset', '* required');
+* $this->form_validation->set_message('valid_date', 'date format is not valid. dd-mm-yyyy');
+* $this->form_validation->set_error_delimiters('<p class="error">', '</p>');
+*/
     }
 
     // date_validation callback
@@ -253,4 +258,3 @@ class Incident extends CI_Controller {
 }
 /* End of file incident.php */
 /* Location: ./application/controllers/incident.php */
-?>

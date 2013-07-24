@@ -186,7 +186,7 @@ small { font-size: 11px }
     #breadcrumbs a:hover i { opacity: .8 }
     
 /* main content  */
-    .main-wrapper { height: auto !important; min-height: 80%; }
+    .main-wrapper { height: auto !important; min-height: 100%; }
     .footer_space { height: 35px; margin-top: 30px; }
     
 /* boxes  */
@@ -229,13 +229,13 @@ small { font-size: 11px }
     .w-box .table thead th, .w-box .table tfoot th { background-color: #f0f3f5 !important }
     .w-box .table .sorting_desc, .w-box .table .sorting_asc { background-color: #dce3e7 !important }
     .w-box .table-vam td, .w-box .table-vam th { vertical-align: middle }
-    .w-box-blue .w-box-header { background: #0A3C4E }
+    .w-box-blue .w-box-header { background: #093A4C }
     .w-box-blue .table thead th, .w-box-blue .table tfoot th { background-color: #ebf2f6 !important }
     .w-box-blue .table .sorting_desc, .w-box-blue .table .sorting_asc { background-color: #d4e3eb !important }
     .w-box-orange .w-box-header { background: #dd8500 }
     .w-box-orange .table thead th, .w-box-orange .table tfoot th { background-color: #fff8ee !important }
     .w-box-orange .table .sorting_desc, .w-box-orange .table .sorting_asc { background-color: #ffebcc !important }
-    .w-box-green .w-box-header { background: #749a00 }
+    .w-box-green .w-box-header { background: #1F9930 }
     .w-box-green .table thead th, .w-box-green .table tfoot th { background-color: #eff7ec !important }
     .w-box-green .table .sorting_desc, .w-box-green .table .sorting_asc { background-color: #dbedd4 !important }
     .w-box-header .label { background: #fff; color: #555; text-shadow: none; }
@@ -273,11 +273,9 @@ small { font-size: 11px }
     #pageNav { margin: 0; padding: 0; width: 100%; }
     #pageNav li { margin: 0; padding: 0; list-style: none; }
     #pageNav a { position: relative; display: block; font-size: 11px; color: #333; padding: 6px 8px; background: #888; background: rgba(0,0,0,.08); border-bottom: 1px solid #efefef; border-bottom: 1px solid rgba(255,255,255,.4); }
-    #pageNav a:hover, #pageNav .current a { text-decoration: none; background: #777; background: rgba(0,0,0,.2); border-bottom: 1px solid #eee; border-bottom: 1px solid rgba(255,255,255,.6); }
+    #pageNav a:hover, #pageNav .current a { text-decoration: none; font-weight:bold; color:#FFFFFF; background: #1F9930; border-bottom: 1px solid #eee; border-bottom: 1px solid rgba(255,255,255,.6); }
     #pageNav li:last-child a { border: none }
-    #pageNav li.current a:after { left: 100%; border: solid transparent; content: ""; height: 0; width: 0; position: absolute; pointer-events: none; }
-    #pageNav li.current a:after { border-color: rgba(136, 183, 213, 0); border-left-color: rgba(0,0,0,.2); border-width: 16px; top: 50%; margin-top: -16px; }
-    
+
     .wmk_grid ul li>a .zoomOverlay, .wmk_grid ul li, .w-box-header .dropdown-toggle { -webkit-transition: all 0.3s ease-out; -moz-transition: all 0.3s ease-out; -o-transition: all 0.3s ease-out; transition: all 0.3s ease-out; }
     .close_edit_box { cursor: pointer }
     #edit_image_table td { vertical-align: middle }
@@ -351,6 +349,29 @@ small { font-size: 11px }
     .axisLabel { position: absolute; text-align: center; font-size: 11px; color: #666; }
     .xaxisLabel { bottom: 3px; left: 0; right: 0; }
     .yaxisLabel { top: 50%; left: 2px; transform: rotate(-90deg); -o-transform: rotate(-90deg); -ms-transform: rotate(-90deg); -moz-transform: rotate(-90deg); -webkit-transform: rotate(-90deg); transform-origin: 0 0; -o-transform-origin: 0 0; -ms-transform-origin: 0 0; -moz-transform-origin: 0 0; -webkit-transform-origin: 0 0; }
+	
+/* SMS list  */
+    .SMS-list {  position: relative; overflow: hidden; }
+    .SMS-list > ul { height: 100%; overflow: auto; list-style: none; }
+    .SMS-list ul { margin: 0; padding: 0; }
+    .SMS-list li { list-style: none; display: block; clear: both; }
+    .SMS-list > ul > li li { list-style: none; display: block; clear: both; padding: 4px 8px; border-top: 1px solid #f3f3f3; margin: 0; font-size: 12px; overflow: hidden; }
+    .SMS-list > ul > li li:first-child { border-top: none }
+    .SMS-list > ul > li h4 { padding: 6px 10px; background: #f3f3f3; border-top: 1px solid #e2e2e2; border-bottom: 1px solid #e2e2e2; font-size: 12px; margin: 0; }
+    .SMS-list > ul > li h4 span { font-weight: normal }
+    .SMS-list > ul > li.sticky_header h4 { position: absolute; top: 0; z-index: 10; }
+    .SMS-list ul img { margin-right: 10px; display: block; float: left; }
+    .SMS-list .list-username { margin: 0; font-size: 13px; display: block; padding: 4px 0 0; color: #555; }
+    .SMS-list .list-info { font-size: 11px; display: block; color: #777; }
+    .SMS-list .list-info span { font-weight: 700 }
+    .SMS-list ul img + .list-username,.SMS-list ul img + .list-username + .list-info,.SMS-list ul img + .list-info {padding-left:60px}
+    .SMS-list-scroll { height: 728px }
+    
+    .SMS-list-scroll #list_buttons { position: absolute; height: 100%; left: 0; top: 0; background: #f2f2f2; width: 30px; z-index: 100; border-right: 1px solid #e2e2e2; }
+    .SMS-list-scroll #list_buttons span { display: block; padding: 4px 0; text-align: center; cursor: pointer; font-size: 12px; }
+    .SMS-list-scroll #list_buttons span:hover { background: #e2e2e2 }
+    .SMS-list-scroll #list_buttons + ul { margin-left: 31px }
+    
 
 /* contact list  */
     .jQ-list { height: 420px; position: relative; overflow: hidden; }
@@ -546,7 +567,7 @@ small { font-size: 11px }
     .gridALicious p {padding:5px;margin:0}
 
 /* footer */    
-    footer { line-height: 28px; height: 30px; /*background: #E9E9E9;*/ font-size: 12px; padding: 4px 8px 0; margin-top: -35px; border-top: 1px solid #f7f7f7; -webkit-box-shadow: 0 -1px 0 #ddd; -moz-box-shadow: 0 -1px 0 #ddd; -ms-box-shadow: 0 -1px 0 #ddd; box-shadow: 0 -1px 0 #ddd; }
+    footer { line-height: 28px; height: 30px; background: #E9E9E9; font-size: 12px; padding: 4px 8px 0; margin-top: -35px; border-top: 1px solid #f7f7f7; -webkit-box-shadow: 0 -1px 0 #ddd; -moz-box-shadow: 0 -1px 0 #ddd; -ms-box-shadow: 0 -1px 0 #ddd; box-shadow: 0 -1px 0 #ddd; }
     footer ul { margin: 0 }
     footer li { list-style: none; display: inline-block; margin: 0 2px; }
     
@@ -1460,17 +1481,3 @@ div.ibutton-label-off span {
 }
 
 /*-----End iButton------*/
-
-
-/* CUSTOM CODE BY NICK */
-/* CODE FOR NOTIFICATIONS RENDERED IN 'main_template.php' */
-.notifications-container {
-    border: 1px solid #FFF;
-    margin-bottom: 5px;
-    background-color: #F0FFF0;
-}
-
-.notifications-text {
-    margin: 5px;
-}
-

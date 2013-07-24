@@ -8,7 +8,7 @@
  */
 class Incident_model extends CI_Model {
 	
-	private $tbl_incident= 'tbl_incident';
+	private $tbl_incident= 'incidents';
 	
         /**
 	 * Constructor method
