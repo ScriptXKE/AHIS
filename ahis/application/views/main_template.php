@@ -84,7 +84,7 @@
                                             <a href="<?php echo base_url(); ?>incident/create">Open New Incident</a>
                                         </li>
                                         <li>
-                                            <a href="<?php echo base_url(); ?>incident">Open Existing Incident</a>
+                                            <a href="<?php echo base_url(); ?>incident/edit">Open Existing Incident</a>
                                         </li>
                                     </ul>
                                 </li>

@@ -74,8 +74,8 @@ class Incident extends CI_Controller {
         $i = 0 + $offset;
         foreach ($incidents as $incident) {
             $this->table->add_row(++$i, $incident->incident_id, $incident->reporter_id, $incident->animaltype_id, $incident->tags, $incident->location_id,
-                    anchor('incident/view' . $incident->id, 'view', array('class' => 'view')) . ' ' .
-                    anchor('incident/update' . $incident->id, 'update', array('class' => 'update')) . ' ' .
+                    anchor('incident/list' . $incident->id, 'list', array('class' => 'list')) . ' ' .
+                    anchor('incident/edit' . $incident->id, 'edit', array('class' => 'edit')) . ' ' .
                     anchor('incident/delete' . $incident->id, 'delete', array('class' => 'delete', 'onclick' => "return confirm('Are you sure want to delete this incident?')"))
             );
         }
@@ -146,7 +146,7 @@ class Incident extends CI_Controller {
 
         // get incident details
         $data['incident'] = $this->incident_model->get_by_id($id)->row();
-        $data['view'] = 'incident/view';
+        $data['view'] = 'incident/list';
 
         // load view
         $this->load->view('main_template', $data);
