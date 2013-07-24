@@ -39,7 +39,7 @@ class Incident extends CI_Controller {
         $this->load->helper('url');
 
         // load model
-        $this->load->model('Incident_model', '', TRUE);
+        $this->load->model('incident_model', '', TRUE);
     }
 
 // END: __construct()
@@ -57,12 +57,12 @@ class Incident extends CI_Controller {
         $offset = $this->uri->segment($uri_segment);
 
         // load data
-        $incidents = $this->Incident_model->get_paged_list($this->limit, $offset)->result();
+        $incidents = $this->incident_model->get_paged_list($this->limit, $offset)->result();
 
         // generate pagination
         $this->load->library('pagination');
         $config['view'] = site_url('incident/index/');
-        $config['total_rows'] = $this->Incident_model->count_all();
+        $config['total_rows'] = $this->incident_model->count_all();
         $config['per_page'] = $this->limit;
         $config['uri_segment'] = $uri_segment;
         $this->pagination->initialize($config);
@@ -87,7 +87,7 @@ class Incident extends CI_Controller {
         /**
          * Load the main template and pass it the incident view
          */
-        $this->load->view('incident_template', $data);
+        $this->load->view('main_template', $data);
     }
 
 // END: index()
@@ -101,7 +101,7 @@ class Incident extends CI_Controller {
         // set common properties
         $data['title'] = 'Add new incident';
         $data['message'] = '';
-        $data['action'] = site_url('incident/addIncident');
+        $data['action'] = site_url('incident/add');
         $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
 
         // load view
@@ -111,7 +111,7 @@ class Incident extends CI_Controller {
     function addIncident() {
         // set common properties
         $data['title'] = 'Add new incident';
-        $data['action'] = site_url('incident/addIncident');
+        $data['action'] = site_url('incident/add');
         $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
 
         // set empty default form field values
@@ -128,14 +128,14 @@ class Incident extends CI_Controller {
              * Add data saving code here
              *
              */
-            $id = $this->Incident_model->save($incident);
+            $id = $this->incident_model->save($incident);
 
             // set user message
             $data['message'] = '<div class="success">add new incident success</div>';
         }
 
         // load view
-        $this->load->view('IncidentEdit', $data);
+        $this->load->view('main_template', $data);
     }
 
     function view($id) {
@@ -144,10 +144,10 @@ class Incident extends CI_Controller {
         $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
 
         // get incident details
-        $data['incident'] = $this->Incident_model->get_by_id($id)->row();
+        $data['incident'] = $this->incident_model->get_by_id($id)->row();
 
         // load view
-        $this->load->view('IncidentView', $data);
+        $this->load->view('main_template', $data);
     }
 
     function update($id) {
@@ -155,7 +155,7 @@ class Incident extends CI_Controller {
         $this->_set_rules();
 
         // prefill form values
-        $incident = $this->Incident_model->get_by_id($id)->row();
+        $incident = $this->incident_model->get_by_id($id)->row();
         $this->form_data->id = $id;
         // save data
         /**
@@ -163,19 +163,19 @@ class Incident extends CI_Controller {
          *
          */
         // set common properties
-        $data['title'] = 'Update incident';
+        $data['title'] = 'Update Incident';
         $data['message'] = '';
-        $data['action'] = site_url('incident/updateIncident');
+        $data['action'] = site_url('incident/update');
         $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
 
         // load view
-        $this->load->view('incidentEdit', $data);
+        $this->load->view('main_template', $data);
     }
 
     function updateIncident() {
         // set common properties
-        $data['title'] = 'Update incident';
-        $data['action'] = site_url('incident/updateIncident');
+        $data['title'] = 'Update Incident';
+        $data['action'] = site_url('incident/update');
         $data['link_back'] = anchor('incident/index/', 'Back to list of incidents', array('class' => 'back'));
 
         // set empty default form field values
@@ -194,19 +194,19 @@ class Incident extends CI_Controller {
              * Add form data here, user form_data
              *
              */
-            $this->Incident_model->update($id, $incident);
+            $this->incident_model->update($id, $incident);
 
             // set user message
             $data['message'] = '<div class="success">update incident success</div>';
         }
 
         // load view
-        $this->load->view('incidentEdit', $data);
+        $this->load->view('main_template', $data);
     }
 
     function delete($id) {
         // delete incident
-        $this->Incident_model->delete($id);
+        $this->incident_model->delete($id);
 
         // redirect to incident list page
         redirect('incident/index/', 'refresh');

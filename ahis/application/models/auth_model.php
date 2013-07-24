@@ -216,7 +216,7 @@ class Auth_model extends CI_Model {
 
 		} else {
 
-			//	No errors ... go ahead and update the persons table with the new details
+			//	No errors ... go ahead and update the person table with the new details
 			//	First, update the $person_details_array() with the details to be updated
 			$person_details_array = array(
 					'firstname' => $this->input->post('u_firstname'),
@@ -226,9 +226,9 @@ class Auth_model extends CI_Model {
 					'biodata' => $this->input->post('u_biodata')
 				);
 
-			// Update the persons table
+			// Update the person table
 			$this->db->where('id', $this->session->userdata['person_id']);
-			$this->db->update('persons', $person_details_array);
+			$this->db->update('person', $person_details_array);
 
 			// Successful update
 			// Update the session variable that carries the user's name
@@ -237,7 +237,7 @@ class Auth_model extends CI_Model {
 			// Update the $msg variable
 			$msg .= "<li>Your profile details were updated successfully.</li>";
 
-		}	//	Running the form data validations for PERSONS update data
+		}	//	Running the form data validations for PERSON update data
 
 
 		/************* NOW RUN EMAIL CHECKS ********************************/
@@ -259,7 +259,7 @@ class Auth_model extends CI_Model {
 
 			// Email is okay ... go ahead and save it to the database
 			$this->db->where('id', $this->session->userdata['person_id']);
-			$this->db->update('persons', array('email' => $this->input->post('u_email')));
+			$this->db->update('person', array('email' => $this->input->post('u_email')));
 
 			// Email updated successfully
 			$msg .= "<li>Your email address was successfully updated.</li>";
@@ -329,7 +329,7 @@ class Auth_model extends CI_Model {
 		$this->db->where('id != ', $this->session->userdata('person_id'));
 
 		// Run the query
-		$query = $this->db->get('persons');
+		$query = $this->db->get('person');
 
 		// Check for the number of rows returned
 		// If a record is returned, then this action will cause a duplicate email record
