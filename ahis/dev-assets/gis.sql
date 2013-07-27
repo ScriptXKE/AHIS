@@ -1,19 +1,3 @@
-/*
-SQLyog Ultimate - MySQL GUI v8.2 
-MySQL - 5.1.36 : Database - gis
-*********************************************************************
-*/
-
-/*!40101 SET NAMES utf8 */;
-
-/*!40101 SET SQL_MODE=''*/;
-
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-/*Table structure for table `country` */
-
 DROP TABLE IF EXISTS `country`;
 
 CREATE TABLE `country` (
@@ -41,7 +25,7 @@ CREATE TABLE `district` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` tinytext NOT NULL,
   `region_id` char(2) NOT NULL DEFAULT '',
-  `district_PCode_id` char(2) NOT NULL DEFAULT '',
+  `district_pcode_id` char(2) NOT NULL DEFAULT '',
   `coordinates` text NOT NULL,
   `gaul_code` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -84,15 +68,15 @@ CREATE TABLE `region` (
   `name` tinytext NOT NULL,
   `coordinates` text NOT NULL,
   `zone_id` int(11) NOT NULL DEFAULT '0',
-  `ULatitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
-  `LLongitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
-  `LLatitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
-  `RLongitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
-  `XZoomFactor` decimal(7,2) NOT NULL DEFAULT '0.00',
-  `YZoomFactor` decimal(7,2) NOT NULL DEFAULT '0.00',
-  `XZoomOffSet` decimal(5,2) NOT NULL DEFAULT '0.00',
-  `YZoomOffSet` decimal(5,2) NOT NULL DEFAULT '0.00',
-  `SecurityOfficer` int(11) NOT NULL DEFAULT '0',
+  `ulatitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `llongitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `llatitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `rlongitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `xzoomfactor` decimal(7,2) NOT NULL DEFAULT '0.00',
+  `yzoomfactor` decimal(7,2) NOT NULL DEFAULT '0.00',
+  `xzoomoffset` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `yzoomoffset` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `securityofficer` int(11) NOT NULL DEFAULT '0',
   `gaul_code` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `inx_zone_id` (`zone_id`)
@@ -113,8 +97,8 @@ DROP TABLE IF EXISTS `settlement`;
 CREATE TABLE `settlement` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` tinytext NOT NULL,
-  `PCode` varchar(10) NOT NULL DEFAULT '',
-  `district_PCode_id` varchar(4) NOT NULL DEFAULT '',
+  `pcode` varchar(10) NOT NULL DEFAULT '',
+  `district_pcode_id` varchar(4) NOT NULL DEFAULT '',
   `district_id` int(11) NOT NULL DEFAULT '0',
   `longitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
   `latitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
@@ -137,13 +121,13 @@ DROP TABLE IF EXISTS `town`;
 CREATE TABLE `town` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` tinytext NOT NULL,
-  `PCode` varchar(10) NOT NULL DEFAULT '',
-  `district_PCode_id` varchar(4) NOT NULL DEFAULT '',
+  `pcode` varchar(10) NOT NULL DEFAULT '',
+  `district_pcode_id` varchar(4) NOT NULL DEFAULT '',
   `district_id` int(11) NOT NULL DEFAULT '0',
   `coordinates` text NOT NULL,
   `longitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
   `latitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
-  `FSAUCode` varchar(4) NOT NULL DEFAULT '',
+  `fsaucode` varchar(4) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `inx_district_id` (`district_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
@@ -175,8 +159,3 @@ LOCK TABLES `zone` WRITE;
 insert  into `zone`(`id`,`name`,`country_id`) values (1,'NORTHEAST',118),(2,'NORTHWEST',118),(3,'SORGHUM BELT',118),(4,'CENTRAL',118),(5,'SHABELLE',118),(6,'JUBA',118);
 
 UNLOCK TABLES;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;

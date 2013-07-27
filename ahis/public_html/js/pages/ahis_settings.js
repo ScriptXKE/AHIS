@@ -19,15 +19,15 @@
                 labelOff: "No"
             });
         }
-        if($('#s_lang_visitors').length) {
-            $('#s_lang_visitors').select2({
-                tags:["English", "Chinese", "Dutch", "French", "German", "Hungarian", "Italian", "Lithuanian", "Russian", "Spanish", "Swedish", "Ukrainian"],
+        if($('#syptoms').length) {
+            $('#syptoms').select2({
+                tags:["Bleeding", "Scars", "Weakness", "Fever", "Pyrexia,", "Pneumonia,", "Anorexia"],
                 tokenSeparators: [",", " "]
             });
         }
         if($('#s_lang_redirect').length) {
             $('#s_lang_redirect').select2({
-                tags:["English", "Chinese", "Dutch", "French", "German", "Hungarian", "Italian", "Lithuanian", "Russian", "Spanish", "Swedish", "Ukrainian"],
+                tags:["Bleeding", "Scars", "Weakness", "Fever", "Pyrexia,", "Pneumonia,", "Anorexia"],
                 tokenSeparators: [",", " "]
             });
         }

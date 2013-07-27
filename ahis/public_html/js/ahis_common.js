@@ -197,3 +197,30 @@
             }
         }
     };
+	
+	//* Surveillance form
+
+	init: $(function() {
+		
+    	$('#showForm').click(function() {
+        	$('#beforeRequest').show();
+    	});
+		
+		$('#beforeRequest').click(function() {
+        	$('#afterRequest').show();
+			$('#beforeRequest').hide();
+    	});
+		
+		$('#afterRequest').click(function() {
+        	$('#hideForm').show();
+			$('#afterRequest').hide();
+    	});
+		
+		$('#beforePrognosis').click(function() {
+        	$('#afterPrognosis').show();
+			$('#beforePrognosis').hide();
+    	});
+	
+		})
+	
+
