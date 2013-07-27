@@ -83,9 +83,7 @@ class Incident extends CI_Controller {
 
         // load view
         //$this->load->view('incidentList', $data);
-        /**
-* Load the main template and pass it the incident view
-*/
+        // Load the main template and pass it the incident view
         $this->load->view('main_template', $data);
     }
 
@@ -231,14 +229,14 @@ class Incident extends CI_Controller {
     function _set_rules() {
         // save data
         /**
-* Add form validation here data here, e.g as below
-* $this->form_validation->set_rules('specie', 'Animal Type', 'trim|required');
-* $this->form_validation->set_rules('date', 'date', 'trim|required|callback_valid_date');
-* $this->form_validation->set_message('required', '* required');
-* $this->form_validation->set_message('isset', '* required');
-* $this->form_validation->set_message('valid_date', 'date format is not valid. dd-mm-yyyy');
-* $this->form_validation->set_error_delimiters('<p class="error">', '</p>');
-*/
+        * Add form validation here data here, e.g as below
+        * $this->form_validation->set_rules('specie', 'Animal Type', 'trim|required');
+        * $this->form_validation->set_rules('date', 'date', 'trim|required|callback_valid_date');
+        * $this->form_validation->set_message('required', '* required');
+        * $this->form_validation->set_message('isset', '* required');
+        * $this->form_validation->set_message('valid_date', 'date format is not valid. dd-mm-yyyy');
+        * $this->form_validation->set_error_delimiters('<p class="error">', '</p>');
+        */
     }
 
     // date_validation callback
