@@ -1,395 +1,5043 @@
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+/*
+Navicat MySQL Data Transfer
 
-DROP SCHEMA IF EXISTS `ahis` ;
-CREATE SCHEMA IF NOT EXISTS `ahis` ;
-SHOW WARNINGS;
-USE `ahis` ;
+Source Server         : localdb
+Source Server Version : 50610
+Source Host           : localhost:3306
+Source Database       : ahis-local
 
--- -----------------------------------------------------
--- Table `person`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `person` ;
+Target Server Type    : MYSQL
+Target Server Version : 50610
+File Encoding         : 65001
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `person` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT ,
-  `firstname` VARCHAR(20) NOT NULL ,
-  `surname` VARCHAR(20) NOT NULL ,
-  `othernames` VARCHAR(30) NOT NULL ,
-  `birthdate` DATE NULL DEFAULT NULL ,
-  `gender` ENUM('male','female') NOT NULL ,
-  `email` VARCHAR(100) NULL DEFAULT NULL ,
-  `telephone` VARCHAR(50) NULL DEFAULT NULL ,
-  `biodata` TEXT NULL DEFAULT NULL ,
-  `avatar` VARCHAR(100) NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+Date: 2013-07-30 23:00:17
+*/
 
-SHOW WARNINGS;
-CREATE UNIQUE INDEX ON `person` (`email` ASC) ;
+SET FOREIGN_KEY_CHECKS=0;
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Table structure for `ci_sessions`
+-- ----------------------------
+DROP TABLE IF EXISTS `ci_sessions`;
+CREATE TABLE `ci_sessions` (
+  `session_id` varchar(40) NOT NULL DEFAULT '0',
+  `ip_address` varchar(45) NOT NULL DEFAULT '0',
+  `user_agent` varchar(120) NOT NULL,
+  `last_activity` int(10) unsigned NOT NULL DEFAULT '0',
+  `user_data` text NOT NULL,
+  PRIMARY KEY (`session_id`),
+  KEY `last_activity_idx` (`last_activity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- POPULATE THE PERSONS TABLE
-INSERT INTO person
-(firstname, surname, othernames, birthdate, gender, email, telephone, biodata, avatar)
-VALUES
-('Nicholas','Kerandi','','1978-01-01','male','nkerandi@gmail.com','','Nick is just there',''),
-('Germain','Mirindi','','1979-01-01','male','gmirindi@gmail.com','','G is the don',''),
-('Andrew','Onyango','','1985-01-01','male','andrew.onyango@yahoo.co.uk','','This is Drew',''),
-('Obed','Mubia','','1986-01-01','male','mubiaobed@gmail.com','','Mofaya in the house',''),
-('Titus','Nderitu','','1987-01-01','male','titus.nderitu@gmail.com','','G is the don','tito-nderitu.png');
+-- ----------------------------
+-- Records of ci_sessions
+-- ----------------------------
 
+-- ----------------------------
+-- Table structure for `country`
+-- ----------------------------
+DROP TABLE IF EXISTS `country`;
+CREATE TABLE `country` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `nationality` varchar(255) NOT NULL DEFAULT '',
+  `gaul_code` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_name_index` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
--- -----------------------------------------------------
--- Table `reporter`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `reporter` ;
+-- ----------------------------
+-- Records of country
+-- ----------------------------
+INSERT INTO `country` VALUES ('105', '', '', null);
+INSERT INTO `country` VALUES ('106', 'USA', 'American', '259');
+INSERT INTO `country` VALUES ('107', 'Australia', 'Australian', '17');
+INSERT INTO `country` VALUES ('108', 'Britain', 'British', '256');
+INSERT INTO `country` VALUES ('109', 'Congo (DRC)', 'Congolese(DRC)', '68');
+INSERT INTO `country` VALUES ('110', 'Ethiopian - Somali', 'Ethipian - Somali', '79');
+INSERT INTO `country` VALUES ('111', 'Germany', 'German', '93');
+INSERT INTO `country` VALUES ('112', 'India', 'Indian', '115');
+INSERT INTO `country` VALUES ('113', 'Ireland', 'Irish', '119');
+INSERT INTO `country` VALUES ('114', 'Italy', 'Italian', '122');
+INSERT INTO `country` VALUES ('115', 'Kenya', 'Kenyan', '133');
+INSERT INTO `country` VALUES ('116', 'Liberia', 'Liberian', '144');
+INSERT INTO `country` VALUES ('117', 'Sierra Leone', 'Sierra Leone', '221');
+INSERT INTO `country` VALUES ('118', 'Somalia', 'Somali', '226');
+INSERT INTO `country` VALUES ('119', 'Sudan', 'Sudanese', '40764');
+INSERT INTO `country` VALUES ('120', 'Tanzania', 'Tanzanian', '257');
+INSERT INTO `country` VALUES ('121', 'New Zealand', 'New Zealander', '179');
+INSERT INTO `country` VALUES ('122', 'Djibouti', 'Djiboutian', null);
+INSERT INTO `country` VALUES ('123', 'Netherlands', 'Dutch', null);
+INSERT INTO `country` VALUES ('124', 'Georgia', 'Georgian', null);
+INSERT INTO `country` VALUES ('125', 'Hungary', 'Hungarian', null);
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `reporter` (
-  `id` INT(10) NOT NULL AUTO_INCREMENT ,
-  `active` ENUM('0','1') NOT NULL DEFAULT '0' ,
-  `is_verified` ENUM('0','1') NOT NULL DEFAULT '0' ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  `person_id` INT(11) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  CONSTRAINT `fk_reporter_person`
-    FOREIGN KEY (`person_id` )
-    REFERENCES `person` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Table structure for `disease`
+-- ----------------------------
+DROP TABLE IF EXISTS `disease`;
+CREATE TABLE `disease` (
+  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(25) NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE INDEX `reporter_person_idx` ON `reporter` (`person_id` ASC) ;
+-- ----------------------------
+-- Records of disease
+-- ----------------------------
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Table structure for `disease_symptom`
+-- ----------------------------
+DROP TABLE IF EXISTS `disease_symptom`;
+CREATE TABLE `disease_symptom` (
+  `disease_id` tinyint(3) unsigned NOT NULL,
+  `symptom_id` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`disease_id`,`symptom_id`),
+  KEY `fk_disease_idx` (`disease_id`),
+  KEY `fk_symptom_idx` (`symptom_id`),
+  CONSTRAINT `fk_disease_symptom` FOREIGN KEY (`disease_id`) REFERENCES `disease` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_symptom_disease` FOREIGN KEY (`symptom_id`) REFERENCES `symptom` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `incident`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `incident` ;
+-- ----------------------------
+-- Records of disease_symptom
+-- ----------------------------
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `incident` (
-  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `serial_no` VARCHAR(255) NOT NULL ,
-  `description` TEXT NULL DEFAULT NULL ,
-  `reported_date` DATE NULL DEFAULT NULL ,
-  `user_id` TINYINT UNSIGNED NULL DEFAULT NULL ,
-  `location_id` TINYINT NOT NULL DEFAULT 1 ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  `reporter_id` INT(10) NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  CONSTRAINT `fk_incident_reporter`
-    FOREIGN KEY (`reporter_id` )
-    REFERENCES `reporter` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Table structure for `district`
+-- ----------------------------
+DROP TABLE IF EXISTS `district`;
+CREATE TABLE `district` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` tinytext NOT NULL,
+  `region_id` char(2) NOT NULL DEFAULT '',
+  `district_pcode_id` char(2) NOT NULL DEFAULT '',
+  `coordinates` text NOT NULL,
+  `gaul_code` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `inx_region_id` (`region_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
-SHOW WARNINGS;
-CREATE UNIQUE INDEX `serial_no_idx` ON `incident` (`serial_no` ASC) ;
+-- ----------------------------
+-- Records of district
+-- ----------------------------
+INSERT INTO `district` VALUES ('1', 'BORAMA', '11', '01', '149,187,171,176,177,176,175,206,173,216,174,218,171,213,163,209,159,201,152,194', '25654');
+INSERT INTO `district` VALUES ('2', 'BAKI', '11', '02', '178,213,180,186,220,172,227,179,217,191,199,185', '25653');
+INSERT INTO `district` VALUES ('3', 'LUGHAYE', '11', '03', '166,164,199,152,217,169,181,181,181,172,170,173', '25655');
+INSERT INTO `district` VALUES ('4', 'ZEYLAC', '11', '04', '172,120,183,126,195,149,161,162,166,173,147,184,140,169', '25656');
+INSERT INTO `district` VALUES ('5', 'HARGEYSA', '12', '01', '194,241,222,200,223,193,227,187,256,209,264,211,256,242,255,277,218,264', '25726');
+INSERT INTO `district` VALUES ('6', 'BERBERA', '12', '02', '229,182,230,185,257,205,269,207,280,192,334,197,336,161,325,156,299,168,274,181,258,183', '25724');
+INSERT INTO `district` VALUES ('7', 'GEBILEY', '12', '03', '175,225,202,190,220,197,190,239', '25725');
+INSERT INTO `district` VALUES ('8', 'BURCO', '13', '01', '295,215,327,219,325,206,330,202,336,203,347,261,345,280,349,307,295,290', '25720');
+INSERT INTO `district` VALUES ('9', 'BUUHOODLE', '13', '02', '351,278,390,280,395,281,399,294,394,323,352,309', '25721');
+INSERT INTO `district` VALUES ('10', 'OWDWEYNE', '13', '03', '268,211,292,215,292,288,260,279,259,245', '25722');
+INSERT INTO `district` VALUES ('11', 'SHEIKH', '13', '04', '273,208,283,197,325,201,322,206,322,214', '25723');
+INSERT INTO `district` VALUES ('12', 'LAAS CAANOOD', '14', '01', '392,276,485,280,457,309,459,312,449,322,398,324,403,290,399,281', '25717');
+INSERT INTO `district` VALUES ('13', 'CAYNABO', '14', '02', '342,207,388,243,388,275,350,274,351,260', '25716');
+INSERT INTO `district` VALUES ('14', 'TALEEX', '14', '03', '461,235,516,233,517,257,497,276,460,276', '25718');
+INSERT INTO `district` VALUES ('15', 'XUDUN', '14', '04', '392,242,458,237,455,275,392,272', '25719');
+INSERT INTO `district` VALUES ('16', 'CEERIGAABO', '15', '01', '385,157,405,147,406,141,431,136,434,142,449,140,491,176,487,230,405,237,419,211,419,193', '25715');
+INSERT INTO `district` VALUES ('17', 'CEEL AFWEYNE', '15', '02', '340,160,352,160,356,168,382,159,415,194,415,212,399,237,388,238,338,200', '25714');
+INSERT INTO `district` VALUES ('18', 'LAASQORAY', '15', '03', '453,140,468,140,475,132,495,127,509,133,515,159,517,228,491,231,494,173', null);
+INSERT INTO `district` VALUES ('19', 'BOSSAASSO', '16', '01', '512,133,541,127,548,122,561,142,568,155,551,174,528,170,519,180,518,155', '25663');
+INSERT INTO `district` VALUES ('20', 'BANDAR BEYLA', '16', '02', '582,217,603,212,625,212,621,233,625,237,613,252,613,258,600,272,593,290,587,303,575,294,570,299,571,259,580,251', '25662');
+INSERT INTO `district` VALUES ('21', 'CALUULA', '16', '03', '599,109,609,100,611,91,625,89,637,95,651,98,641,112,614,119,601,119,596,115', '25664');
+INSERT INTO `district` VALUES ('22', 'ISKUSHUBAN', '16', '04', '601,123,643,116,636,134,644,139,639,149,641,170,658,180,642,178,627,184,625,207,604,207,577,215,559,203,552,177,603,167,609,155,599,136', '25665');
+INSERT INTO `district` VALUES ('23', 'QANDALA', '16', '05', '559,131,552,120,560,119,572,118,581,117,592,111,591,121,598,122,593,137,604,155,599,165,558,172,573,153', '25666');
+INSERT INTO `district` VALUES ('24', 'QARDHO', '16', '06', '519,184,533,173,548,178,555,206,570,215,578,217,576,249,568,255,566,299,563,293,558,288,542,287,528,278,523,264,521,234', '25667');
+INSERT INTO `district` VALUES ('25', 'GAROOWE', '17', '01', '462,309,489,281,501,279,518,261,525,283,529,285,524,301,524,321', '25712');
+INSERT INTO `district` VALUES ('26', 'BURTINLE', '17', '02', '455,327,454,324,463,313,523,324,515,341,485,358,432,349', '25710');
+INSERT INTO `district` VALUES ('27', 'EYL', '17', '03', '535,285,544,292,559,292,564,308,576,298,585,309,565,325,562,337,562,348,560,350,554,357,548,351,531,343,522,339,531,315,529,300', '25711');
+INSERT INTO `district` VALUES ('28', 'GAALKACYO', '18', '01', '426,352,484,362,483,399,448,397,436,408,429,426,371,412,390,392,401,402,431,373,419,363', '25705');
+INSERT INTO `district` VALUES ('29', 'GALDOGOB', '18', '02', '418,366,425,373,402,397,393,391', '25706');
+INSERT INTO `district` VALUES ('30', 'HOBYO', '18', '03', '436,424,439,409,451,400,484,403,494,408,523,409,519,421,518,432,485,486,472,502,433,490,419,458', '25707');
+INSERT INTO `district` VALUES ('31', 'JARIIBAN', '18', '04', '488,361,520,343,547,354,550,362,524,406,498,406,487,399', '25708');
+INSERT INTO `district` VALUES ('32', 'HARARDHEERE', '18', '05', '434,495,469,506,456,531,444,542,428,534', '25709');
+INSERT INTO `district` VALUES ('33', 'DHUSA MARREEB', '19', '01', '318,495,363,454,373,450,374,455,416,459,429,491,398,492,372,492,336,499', '25677');
+INSERT INTO `district` VALUES ('34', 'CABUDWAAQ', '19', '02', '365,418,374,448,363,448,317,490,310,475', '25673');
+INSERT INTO `district` VALUES ('35', 'CADAADO', '19', '03', '428,429,370,416,380,451,415,455', '25674');
+INSERT INTO `district` VALUES ('36', 'CEEL BUR', '19', '04', '353,501,371,496,430,495,423,532,360,547,347,539,343,522', '25675');
+INSERT INTO `district` VALUES ('37', 'CEEL DHEERE', '19', '05', '388,544,423,536,441,545,399,592,362,570,363,551', '25676');
+INSERT INTO `district` VALUES ('38', 'BELET WEYNE', '20', '01', '307,478,315,500,341,503,349,500,340,520,342,536,317,537,311,544,299,540,282,546,271,556,263,557,252,508,273,511', '25684');
+INSERT INTO `district` VALUES ('39', 'BULO BURTI', '20', '02', '264,561,277,557,283,549,299,543,309,548,320,540,344,540,358,551,358,570,347,573,337,589,284,588,291,611,281,607,265,607,263,588,267,571', '25685');
+INSERT INTO `district` VALUES ('40', 'JALALAQSI', '20', '03', '288,592,338,593,330,607,295,609', '25686');
+INSERT INTO `district` VALUES ('41', 'JOWHAR', '21', '01', '285,613,331,612,329,638,310,639,305,636,295,637,283,620', '25704');
+INSERT INTO `district` VALUES ('42', 'ADAN YABAL', '21', '02', '358,573,397,595,381,611,377,603,342,589,349,578', null);
+INSERT INTO `district` VALUES ('43', 'BALCAD', '21', '03', '298,643,302,641,306,643,334,642,339,651,326,663,313,671,304,672,296,671', '25702');
+INSERT INTO `district` VALUES ('44', 'CADALE', '21', '04', '341,594,376,608,376,616,342,650,341,641,334,638,334,613', '25703');
+INSERT INTO `district` VALUES ('45', 'MOGADISHU', '22', '01', '293,684,300,674,309,674', '25672');
+INSERT INTO `district` VALUES ('46', 'MARKA', '23', '01', '281,690,266,690,250,704,242,710,242,714', '25694');
+INSERT INTO `district` VALUES ('47', 'AFGOOYE', '23', '02', '259,673,277,661,293,646,294,674,292,681,281,687,269,687', '25691');
+INSERT INTO `district` VALUES ('48', 'BARAAWE', '23', '03', '239,715,226,718,180,748,189,760,208,743,226,727', '25692');
+INSERT INTO `district` VALUES ('49', 'KURTUNWAAREY', '23', '04', '208,693,244,704,238,710,224,714,197,697', '25693');
+INSERT INTO `district` VALUES ('50', 'QORYOLEY', '23', '05', '216,691,236,682,255,672,264,687,247,701', '25695');
+INSERT INTO `district` VALUES ('51', 'SABLAALE', '23', '06', '158,717,192,700,221,717,178,745', '25696');
+INSERT INTO `district` VALUES ('52', 'WANLA WEYNE', '23', '07', '259,610,280,611,279,622,293,639,266,663,255,668', '25697');
+INSERT INTO `district` VALUES ('53', 'BAYDHABA', '24', '01', '164,585,180,593,192,591,207,569,226,575,233,589,232,600,202,627,180,650,166,647', '25668');
+INSERT INTO `district` VALUES ('54', 'BUUR HAKABA', '24', '02', '233,605,244,611,255,611,251,669,174,703,178,695,169,685,184,651', '25669');
+INSERT INTO `district` VALUES ('55', 'DIINSOR', '24', '03', '129,651,162,651,178,654,165,687,173,696,171,706,154,713,123,684', '25670');
+INSERT INTO `district` VALUES ('56', 'QANSAX DHEERE', '24', '04', '134,620,150,624,161,622,161,647,129,647', '25671');
+INSERT INTO `district` VALUES ('57', 'XUDUR', '25', '01', '177,537,232,540,232,580,228,571,207,566,203,569', '25661');
+INSERT INTO `district` VALUES ('58', 'CEEL BARDE', '25', '02', '166,527,181,519,214,508,249,509,255,538,225,535,173,534', '25657');
+INSERT INTO `district` VALUES ('59', 'TAYEGLOW', '25', '03', '235,540,255,541,262,571,261,591,260,606,255,606,243,606,237,602,237,592,235,579', '25659');
+INSERT INTO `district` VALUES ('60', 'WAJID', '25', '04', '166,568,192,562,201,571,195,580,185,589,165,582', '25660');
+INSERT INTO `district` VALUES ('61', 'YEED', '25', '05', '151,545,158,540,162,529,176,543,190,559,162,565', null);
+INSERT INTO `district` VALUES ('62', 'GARBAHAREY', '26', '01', '100,585,160,608,159,620,150,621,131,617,127,637,82,622', '25682');
+INSERT INTO `district` VALUES ('63', 'BAARDHEERE', '26', '02', '96,630,127,641,120,686,73,686,61,728,39,727,39,667,84,667', '25678');
+INSERT INTO `district` VALUES ('64', 'BELET XAAWA', '26', '03', '87,572,100,578,78,620,60,614', '25679');
+INSERT INTO `district` VALUES ('65', 'CEEL WAAQ', '26', '04', '54,617,93,628,82,664,39,664,39,633', '25680');
+INSERT INTO `district` VALUES ('66', 'DOOLOW', '26', '05', '89,568,101,555,118,555,110,572,104,575', '25681');
+INSERT INTO `district` VALUES ('67', 'LUUQ', '26', '06', '122,554,149,549,162,571,160,605,103,582,104,577,111,576', '25683');
+INSERT INTO `district` VALUES ('68', 'BU\'AALE', '27', '01', '107,723,113,714,153,717,169,741,134,755,124,723', '25698');
+INSERT INTO `district` VALUES ('69', 'JILIB', '27', '02', '135,759,171,744,186,764,167,782,142,783', '25699');
+INSERT INTO `district` VALUES ('70', 'SAAKOW', '27', '03', '64,726,78,689,123,690,149,713,110,710,104,724', '25700');
+INSERT INTO `district` VALUES ('71', 'KISMAAYO', '28', '01', '55,814,91,807,129,808,136,815,97,862', '25690');
+INSERT INTO `district` VALUES ('72', 'AFMADOW', '28', '02', '37,731,122,726,139,783,128,795,127,804,92,803,38,813', '25687');
+INSERT INTO `district` VALUES ('73', 'BADHADHE', '28', '03', '38,817,50,814,95,865,71,899,39,854', '25688');
+INSERT INTO `district` VALUES ('74', 'JAMAAME', '28', '04', '141,785,163,786,139,813,130,803,131,798', '25689');
+INSERT INTO `district` VALUES ('75', 'NAIROBI', '29', '', '', null);
 
-SHOW WARNINGS;
-CREATE INDEX `incident_reporter_idx` ON `incident` (`reporter_id` ASC) ;
+-- ----------------------------
+-- Table structure for `incident`
+-- ----------------------------
+DROP TABLE IF EXISTS `incident`;
+CREATE TABLE `incident` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `serial_no` varchar(255) NOT NULL,
+  `description` text,
+  `reported_date` date DEFAULT NULL,
+  `user_id` tinyint(3) unsigned DEFAULT NULL,
+  `location_id` tinyint(4) NOT NULL DEFAULT '1',
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `reporter_id` int(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `serial_no_idx` (`serial_no`),
+  KEY `incident_reporter_idx` (`reporter_id`),
+  CONSTRAINT `fk_incident_reporter` FOREIGN KEY (`reporter_id`) REFERENCES `reporter` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Records of incident
+-- ----------------------------
 
--- -----------------------------------------------------
--- Table `symptom`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `symptom` ;
+-- ----------------------------
+-- Table structure for `incident_sms`
+-- ----------------------------
+DROP TABLE IF EXISTS `incident_sms`;
+CREATE TABLE `incident_sms` (
+  `incident_id` smallint(5) unsigned NOT NULL,
+  `sms_id` smallint(5) unsigned NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`incident_id`,`sms_id`),
+  KEY `incident_sms_idx` (`sms_id`),
+  CONSTRAINT `fk_incident_sms` FOREIGN KEY (`incident_id`) REFERENCES `incident` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_sms_incident` FOREIGN KEY (`sms_id`) REFERENCES `sms` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `symptom` (
-  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(25) NOT NULL ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Records of incident_sms
+-- ----------------------------
 
-SHOW WARNINGS;
-CREATE UNIQUE INDEX `id_UNIQUE` ON `symptom` (`id` ASC) ;
+-- ----------------------------
+-- Table structure for `incident_species`
+-- ----------------------------
+DROP TABLE IF EXISTS `incident_species`;
+CREATE TABLE `incident_species` (
+  `species_id` smallint(5) unsigned NOT NULL,
+  `incident_id` smallint(5) unsigned NOT NULL,
+  `number` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`species_id`,`incident_id`),
+  KEY `incident_species_idx` (`incident_id`),
+  CONSTRAINT `fk_species_incident` FOREIGN KEY (`species_id`) REFERENCES `species` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_incident_species` FOREIGN KEY (`incident_id`) REFERENCES `incident` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Records of incident_species
+-- ----------------------------
 
--- -----------------------------------------------------
--- Table `incident_symptom`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `incident_symptom` ;
+-- ----------------------------
+-- Table structure for `incident_symptom`
+-- ----------------------------
+DROP TABLE IF EXISTS `incident_symptom`;
+CREATE TABLE `incident_symptom` (
+  `incident_id` smallint(5) unsigned NOT NULL,
+  `symptom_id` tinyint(3) unsigned NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`incident_id`,`symptom_id`),
+  KEY `fk_incident_symptom_idx` (`symptom_id`),
+  CONSTRAINT `fk_incident_symptom` FOREIGN KEY (`incident_id`) REFERENCES `incident` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_symptom_incident` FOREIGN KEY (`symptom_id`) REFERENCES `symptom` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `incident_symptom` (
-  `incident_id` SMALLINT UNSIGNED NOT NULL ,
-  `symptom_id` TINYINT UNSIGNED NOT NULL ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  PRIMARY KEY (`incident_id`, `symptom_id`) ,
-  CONSTRAINT `fk_incident_symptom`
-    FOREIGN KEY (`incident_id` )
-    REFERENCES `incident` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_symptom_incident`
-    FOREIGN KEY (`symptom_id` )
-    REFERENCES `symptom` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Records of incident_symptom
+-- ----------------------------
 
-SHOW WARNINGS;
-CREATE INDEX `fk_incident_symptom_idx` ON `incident_symptom` (`symptom_id` ASC) ;
+-- ----------------------------
+-- Table structure for `livelihood_zone`
+-- ----------------------------
+DROP TABLE IF EXISTS `livelihood_zone`;
+CREATE TABLE `livelihood_zone` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_name_index` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Records of livelihood_zone
+-- ----------------------------
+INSERT INTO `livelihood_zone` VALUES ('1', 'Addun Pastoral: Mixed sheep & goats, camel');
+INSERT INTO `livelihood_zone` VALUES ('2', 'Awdal border & coastal towns: Petty trading, fishing, salt mining');
+INSERT INTO `livelihood_zone` VALUES ('3', 'Bay-Bakool Agro-Pastoral High potential sorghum: Cattle, camel');
+INSERT INTO `livelihood_zone` VALUES ('4', 'Central regions Agro-Pastoral: Cowpea, sheep & goats, camel, cattle');
+INSERT INTO `livelihood_zone` VALUES ('5', 'Coastal Deeh: Sheep');
+INSERT INTO `livelihood_zone` VALUES ('6', 'Dawo Pastoral: Shoats, cattle, camel');
+INSERT INTO `livelihood_zone` VALUES ('7', 'East  Golis Pastoral: Frankinncense');
+INSERT INTO `livelihood_zone` VALUES ('8', 'Fishing');
+INSERT INTO `livelihood_zone` VALUES ('9', 'Gagaab Pastoral: Frankincense');
+INSERT INTO `livelihood_zone` VALUES ('10', 'Guban Pastoral: Sheep, goats & camel');
+INSERT INTO `livelihood_zone` VALUES ('11', 'Hawd Pastoral: Camel, sheep & goats');
+INSERT INTO `livelihood_zone` VALUES ('12', 'Hiran  Agro-Pastoral');
+INSERT INTO `livelihood_zone` VALUES ('13', 'Hiran riverine: Sorghum, maize, cattle & shoats');
+INSERT INTO `livelihood_zone` VALUES ('14', 'Juba pump irrigation: Tobacco, onions, maize');
+INSERT INTO `livelihood_zone` VALUES ('15', 'Kakaar-Dharor Pastoral: Sheep, goats, camel');
+INSERT INTO `livelihood_zone` VALUES ('16', 'L. & M. Shabelle Agro-Pastoral Irrigated: Maize/Sorghum & cattle');
+INSERT INTO `livelihood_zone` VALUES ('17', 'L. & M. Shabelle Agro-Pastoral rain-fed: Maize,cowpeas, sesame & cattle');
+INSERT INTO `livelihood_zone` VALUES ('18', 'Lower Juba Agro-Pastoral: Maize & cattle');
+INSERT INTO `livelihood_zone` VALUES ('19', 'North-West Agro-Pastoral: Sorghum, cattle');
+INSERT INTO `livelihood_zone` VALUES ('20', 'North-West Valley Agro-Pastoral: Irrigated vegetables, shoats');
+INSERT INTO `livelihood_zone` VALUES ('21', 'Nugal Valley Pastoral: Sheep & camel');
+INSERT INTO `livelihood_zone` VALUES ('22', 'Potato zone & vegetables');
+INSERT INTO `livelihood_zone` VALUES ('23', 'Shabelle riverine: Maize, fruits & vegetables');
+INSERT INTO `livelihood_zone` VALUES ('24', 'Sool-Sanag Plateau Pastoral: Camel, sheep & goats');
+INSERT INTO `livelihood_zone` VALUES ('25', 'South-East Pastoral: Cattle, sheep & goats');
+INSERT INTO `livelihood_zone` VALUES ('26', 'Southern Agro-Pastoral: Camel, cattle, sorghum');
+INSERT INTO `livelihood_zone` VALUES ('27', 'Southern coastal pastoral: Goats, cattle');
+INSERT INTO `livelihood_zone` VALUES ('28', 'Southern inland pastoral: Camel, sheep & goats');
+INSERT INTO `livelihood_zone` VALUES ('29', 'Southern Juba riverine: Maize, sesame, fruits & vegetables');
+INSERT INTO `livelihood_zone` VALUES ('30', 'Togdheer Agro-Pastoral: Sheep, goats & vegetables');
+INSERT INTO `livelihood_zone` VALUES ('31', 'Urban');
+INSERT INTO `livelihood_zone` VALUES ('32', 'West Golis Pastoral: Goats, camel, sheep');
 
--- -----------------------------------------------------
--- Table `disease`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `disease` ;
+-- ----------------------------
+-- Table structure for `person`
+-- ----------------------------
+DROP TABLE IF EXISTS `person`;
+CREATE TABLE `person` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(20) NOT NULL,
+  `surname` varchar(20) NOT NULL,
+  `othernames` varchar(30) NOT NULL,
+  `birthdate` date DEFAULT NULL,
+  `gender` enum('male','female') NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `telephone` varchar(50) DEFAULT NULL,
+  `biodata` text,
+  `avatar` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `person_email_idx` (`email`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `disease` (
-  `id` TINYINT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(25) NOT NULL ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Records of person
+-- ----------------------------
+INSERT INTO `person` VALUES ('1', 'Nicholas', 'Kerandi', '', '1978-01-01', 'male', 'nkerandi@gmail.com', '', 'Nick is just there', '');
+INSERT INTO `person` VALUES ('2', 'Germain', 'Mirindi', '', '1979-01-01', 'male', 'gmirindi@gmail.com', '', 'G is the don', '');
+INSERT INTO `person` VALUES ('3', 'Andrew', 'Onyango', '', '1985-01-01', 'male', 'andrew.onyango@yahoo.co.uk', '', 'This is Drew', '');
+INSERT INTO `person` VALUES ('4', 'Obed', 'Mubia', '', '1986-01-01', 'male', 'mubiaobed@gmail.com', '', 'Mofaya in the house', '');
+INSERT INTO `person` VALUES ('5', 'Titus', 'Nderitu', '', '1987-01-01', 'male', 'titus.nderitu@gmail.com', '', 'G is the don', 'tito-nderitu.png');
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Table structure for `region`
+-- ----------------------------
+DROP TABLE IF EXISTS `region`;
+CREATE TABLE `region` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` tinytext NOT NULL,
+  `coordinates` text NOT NULL,
+  `zone_id` int(11) NOT NULL DEFAULT '0',
+  `ulatitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `llongitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `llatitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `rlongitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `xzoomfactor` decimal(7,2) NOT NULL DEFAULT '0.00',
+  `yzoomfactor` decimal(7,2) NOT NULL DEFAULT '0.00',
+  `xzoomoffset` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `yzoomoffset` decimal(5,2) NOT NULL DEFAULT '0.00',
+  `securityofficer` int(11) NOT NULL DEFAULT '0',
+  `gaul_code` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `inx_zone_id` (`zone_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
--- -----------------------------------------------------
--- Table `disease_symptom`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `disease_symptom` ;
+-- ----------------------------
+-- Records of region
+-- ----------------------------
+INSERT INTO `region` VALUES ('11', 'AWDAL', '', '2', '11.50000', '42.50000', '9.50000', '44.25000', '317.50', '320.75', '42.50', '11.75', '83', '2688');
+INSERT INTO `region` VALUES ('12', 'WOQOOYI GALBEED', '', '2', '11.00000', '43.25000', '8.75000', '46.25000', '216.00', '218.00', '43.00', '11.75', '83', '2705');
+INSERT INTO `region` VALUES ('13', 'TOGDHEER', '', '2', '10.25000', '44.50000', '8.00000', '47.25000', '254.50', '256.75', '44.25', '10.50', '83', '2704');
+INSERT INTO `region` VALUES ('14', 'SOOL', '', '2', '10.25000', '46.00000', '8.00000', '49.25000', '254.00', '255.25', '45.75', '10.50', '83', '2703');
+INSERT INTO `region` VALUES ('15', 'SANAAG', '', '2', '11.50000', '46.00000', '9.25000', '49.25000', '239.35', '242.00', '45.50', '12.00', '83', '2702');
+INSERT INTO `region` VALUES ('16', 'BARI', '', '1', '12.00000', '48.75000', '8.25000', '51.50000', '192.45', '195.15', '48.25', '12.50', '84', '2690');
+INSERT INTO `region` VALUES ('17', 'NUGAAL', '', '1', '9.25000', '47.50000', '7.25000', '50.25000', '255.00', '256.00', '47.25', '9.50', '84', '2701');
+INSERT INTO `region` VALUES ('18', 'MUDUG', '', '1', '7.75000', '46.50000', '4.25000', '49.75000', '189.50', '189.30', '46.25', '8.50', '84', '2700');
+INSERT INTO `region` VALUES ('19', 'GALGADUUD', '', '4', '6.75000', '45.50000', '3.25000', '48.00000', '251.25', '250.50', '45.25', '7.00', '85', '2693');
+INSERT INTO `region` VALUES ('20', 'HIRAAN', '', '4', '5.50000', '44.50000', '3.00000', '46.50000', '300.00', '299.25', '44.25', '5.75', '85', '2695');
+INSERT INTO `region` VALUES ('21', 'MIDDLE SHABELLE', '', '5', '4.00000', '45.00000', '2.00000', '47.25000', '314.00', '313.00', '44.50', '4.25', '85', '2699');
+INSERT INTO `region` VALUES ('22', 'BANAADIR', '', '5', '2.25000', '45.25000', '1.92000', '45.67000', '1675.00', '1667.00', '45.17', '2.33', '85', '2692');
+INSERT INTO `region` VALUES ('23', 'LOWER SHABELLE', '', '5', '3.50000', '42.75000', '0.50000', '45.50000', '239.75', '238.00', '42.00', '3.75', '85', '2697');
+INSERT INTO `region` VALUES ('24', 'BAY', '', '3', '4.00000', '41.25000', '1.25000', '44.75000', '226.90', '226.65', '41.50', '4.25', '86', '2691');
+INSERT INTO `region` VALUES ('25', 'BAKOOL', '', '3', '5.00000', '42.75000', '3.25000', '45.00000', '306.50', '306.00', '42.25', '5.25', '86', '2689');
+INSERT INTO `region` VALUES ('26', 'GEDO', '', '3', '4.50000', '41.00000', '1.00000', '43.25000', '259.00', '257.75', '40.50', '4.75', '86', '2694');
+INSERT INTO `region` VALUES ('27', 'MIDDLE JUBA', '', '6', '2.00000', '41.25000', '0.25000', '43.75000', '313.10', '311.40', '41.00', '2.75', '87', '2698');
+INSERT INTO `region` VALUES ('28', 'LOWER JUBA', '', '6', '1.50000', '41.00000', '-1.75000', '43.25000', '279.50', '279.00', '40.50', '1.75', '87', '2696');
+INSERT INTO `region` VALUES ('29', 'NAIROBI', '', '0', '0.00000', '0.00000', '0.00000', '0.00000', '0.00', '0.00', '0.00', '0.00', '88', null);
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `disease_symptom` (
-  `disease_id` TINYINT UNSIGNED NOT NULL ,
-  `symptom_id` TINYINT UNSIGNED NOT NULL ,
-  PRIMARY KEY (`disease_id`, `symptom_id`) ,
-  CONSTRAINT `fk_disease_symptom`
-    FOREIGN KEY (`disease_id` )
-    REFERENCES `disease` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_symptom_disease`
-    FOREIGN KEY (`symptom_id` )
-    REFERENCES `symptom` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Table structure for `reporter`
+-- ----------------------------
+DROP TABLE IF EXISTS `reporter`;
+CREATE TABLE `reporter` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `active` enum('0','1') NOT NULL DEFAULT '0',
+  `is_verified` enum('0','1') NOT NULL DEFAULT '0',
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `person_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `reporter_person_idx` (`person_id`),
+  CONSTRAINT `fk_reporter_person` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE INDEX `fk_disease_idx` ON `disease_symptom` (`disease_id` ASC) ;
+-- ----------------------------
+-- Records of reporter
+-- ----------------------------
 
-SHOW WARNINGS;
-CREATE INDEX `fk_symptom_idx` ON `disease_symptom` (`symptom_id` ASC) ;
+-- ----------------------------
+-- Table structure for `settlement`
+-- ----------------------------
+DROP TABLE IF EXISTS `settlement`;
+CREATE TABLE `settlement` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` tinytext NOT NULL,
+  `pcode` varchar(10) NOT NULL DEFAULT '',
+  `district_pcode_id` varchar(4) NOT NULL DEFAULT '',
+  `district_id` int(11) NOT NULL DEFAULT '0',
+  `longitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `latitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  PRIMARY KEY (`id`),
+  KEY `inx_district_id` (`district_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4363 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Records of settlement
+-- ----------------------------
+INSERT INTO `settlement` VALUES ('1', 'Ara-Weine', '1102049024', '1102', '2', '43.41945', '10.28444');
+INSERT INTO `settlement` VALUES ('2', 'Balli Valley', '1102049032', '1102', '2', '43.75389', '10.32417');
+INSERT INTO `settlement` VALUES ('3', 'Besareh', '1102029022', '1102', '2', '43.44910', '9.94810');
+INSERT INTO `settlement` VALUES ('4', 'Biyafoge', '1102039002', '1102', '2', '44.21252', '10.49150');
+INSERT INTO `settlement` VALUES ('5', 'Dibad valley', '1102049034', '1102', '2', '43.73583', '10.29306');
+INSERT INTO `settlement` VALUES ('6', 'Garbodadar', '1102039014', '1102', '2', '43.63499', '10.23733');
+INSERT INTO `settlement` VALUES ('7', 'Gargaara', '1102039010', '1102', '2', '43.80758', '10.31193');
+INSERT INTO `settlement` VALUES ('8', 'Hadeytacawl', '1102039008', '1102', '2', '44.07165', '10.59115');
+INSERT INTO `settlement` VALUES ('9', 'Hadeytaweyne', '1102039006', '1102', '2', '44.09104', '10.57036');
+INSERT INTO `settlement` VALUES ('10', 'Karinkarin', '1102029018', '1102', '2', '43.62810', '10.28290');
+INSERT INTO `settlement` VALUES ('11', 'Old Baki', '1102049026', '1102', '2', '43.37000', '9.95222');
+INSERT INTO `settlement` VALUES ('12', 'Qabri Baxar', '1102029020', '1102', '2', '43.71960', '10.28100');
+INSERT INTO `settlement` VALUES ('13', 'Ruqi', '1102049028', '1102', '2', '43.43222', '9.96694');
+INSERT INTO `settlement` VALUES ('14', 'Sabawanaag', '1102039004', '1102', '2', '44.11734', '10.55247');
+INSERT INTO `settlement` VALUES ('15', 'Sheed Dheer', '1102049030', '1102', '2', '43.52333', '10.30194');
+INSERT INTO `settlement` VALUES ('16', 'Waraqadhigta', '1102039012', '1102', '2', '43.61975', '10.18095');
+INSERT INTO `settlement` VALUES ('17', 'Xoorey', '1102039016', '1102', '2', '43.36706', '10.18009');
+INSERT INTO `settlement` VALUES ('18', 'Abakor Cadaawe', '1101039006', '1101', '1', '43.34555', '10.03341');
+INSERT INTO `settlement` VALUES ('19', 'Abase', '1101049046', '1101', '1', '43.11167', '9.93194');
+INSERT INTO `settlement` VALUES ('20', 'Ali Gala', '1101029016', '1101', '1', '43.25210', '10.44880');
+INSERT INTO `settlement` VALUES ('21', 'Ando Bait', '1101029018', '1101', '1', '43.24710', '9.99810');
+INSERT INTO `settlement` VALUES ('22', 'Araqolab', '1101029020', '1101', '1', '43.21900', '9.92120');
+INSERT INTO `settlement` VALUES ('23', 'Aroor sayl', '1101049080', '1101', '1', '42.89194', '10.29583');
+INSERT INTO `settlement` VALUES ('24', 'Asha Ado', '1101049062', '1101', '1', '43.11472', '9.90750');
+INSERT INTO `settlement` VALUES ('25', 'Badanbed', '1101049052', '1101', '1', '43.22750', '10.18278');
+INSERT INTO `settlement` VALUES ('26', 'Cabaasa', '1101029022', '1101', '1', '43.22930', '10.11810');
+INSERT INTO `settlement` VALUES ('27', 'Cadaad', '1101039008', '1101', '1', '43.26655', '10.07770');
+INSERT INTO `settlement` VALUES ('28', 'Ceel Baxay', '1101039012', '1101', '1', '42.96329', '10.29882');
+INSERT INTO `settlement` VALUES ('29', 'Dabacaddo', '1101029026', '1101', '1', '43.32280', '9.78050');
+INSERT INTO `settlement` VALUES ('30', 'Dara Woha', '1101029028', '1101', '1', '43.29780', '9.86970');
+INSERT INTO `settlement` VALUES ('31', 'Darayemacane', '1101049056', '1101', '1', '43.22139', '9.98278');
+INSERT INTO `settlement` VALUES ('32', 'Degmo Laqas', '1101049058', '1101', '1', '43.07667', '9.97056');
+INSERT INTO `settlement` VALUES ('33', 'Dhagaxa Madow', '1101049048', '1101', '1', '43.29000', '9.73667');
+INSERT INTO `settlement` VALUES ('34', 'Dhoobo', '1101029030', '1101', '1', '43.27250', '10.27970');
+INSERT INTO `settlement` VALUES ('35', 'Dibrio Meleh', '1101029032', '1101', '1', '43.16830', '10.00060');
+INSERT INTO `settlement` VALUES ('36', 'Dugs Sare Cammud', '1101029034', '1101', '1', '43.22850', '9.94810');
+INSERT INTO `settlement` VALUES ('37', 'Eegi', '1101049074', '1101', '1', '43.26556', '9.85222');
+INSERT INTO `settlement` VALUES ('38', 'Fadhiwanag', '1101049084', '1101', '1', '43.29083', '10.29222');
+INSERT INTO `settlement` VALUES ('39', 'Fiqi Aadan', '1101049078', '1101', '1', '43.19222', '10.37194');
+INSERT INTO `settlement` VALUES ('40', 'Goraya Cowl', '1101049060', '1101', '1', '43.22778', '9.87722');
+INSERT INTO `settlement` VALUES ('41', 'Hendheysa', '1101029040', '1101', '1', '43.27770', '9.81820');
+INSERT INTO `settlement` VALUES ('42', 'Holhol', '1101049064', '1101', '1', '43.13222', '9.91889');
+INSERT INTO `settlement` VALUES ('43', 'Jaaraahorato', '1101029042', '1101', '1', '43.32250', '9.83260');
+INSERT INTO `settlement` VALUES ('44', 'Jif', '1101029044', '1101', '1', '43.18090', '10.29940');
+INSERT INTO `settlement` VALUES ('45', 'Laagmaraa', '1101029014', '1101', '1', '43.32940', '9.75050');
+INSERT INTO `settlement` VALUES ('46', 'Magalo Qaloc', '1101049068', '1101', '1', '43.29028', '9.73167');
+INSERT INTO `settlement` VALUES ('47', 'Magalo-cad', '1101049066', '1101', '1', '43.30222', '9.69167');
+INSERT INTO `settlement` VALUES ('48', 'Maraaley', '1101049070', '1101', '1', '43.04000', '10.03278');
+INSERT INTO `settlement` VALUES ('49', 'Qulujeed', '1101049072', '1101', '1', '43.00917', '10.09167');
+INSERT INTO `settlement` VALUES ('50', 'Sattawa', '1101029036', '1101', '1', '43.10210', '9.98010');
+INSERT INTO `settlement` VALUES ('51', 'Shakal', '1101039004', '1101', '1', '43.34743', '10.04362');
+INSERT INTO `settlement` VALUES ('52', 'Taw Tawle', '1101049054', '1101', '1', '43.19667', '10.01361');
+INSERT INTO `settlement` VALUES ('53', 'Tulli', '1101049076', '1101', '1', '43.31222', '9.81639');
+INSERT INTO `settlement` VALUES ('54', 'Tuur Qaylo', '1101029024', '1101', '1', '43.17190', '9.97240');
+INSERT INTO `settlement` VALUES ('55', 'Walaalgo', '1101029038', '1101', '1', '43.27760', '9.85140');
+INSERT INTO `settlement` VALUES ('56', 'Weeraar', '1101039010', '1101', '1', '43.24535', '10.26003');
+INSERT INTO `settlement` VALUES ('57', 'Xaliimaale', '1101049050', '1101', '1', '43.17278', '10.23500');
+INSERT INTO `settlement` VALUES ('58', 'Xariirad', '1101049082', '1101', '1', '42.83667', '10.32472');
+INSERT INTO `settlement` VALUES ('59', 'Carmaale', '1103039008', '1103', '3', '44.00942', '10.64587');
+INSERT INTO `settlement` VALUES ('60', 'Farda-lagu xidh', '1103049010', '1103', '3', '43.44972', '10.40917');
+INSERT INTO `settlement` VALUES ('61', 'Gerisa', '1103039004', '1103', '3', '43.42935', '10.60990');
+INSERT INTO `settlement` VALUES ('62', 'Kalawle', '1103039006', '1103', '3', '43.85175', '10.55228');
+INSERT INTO `settlement` VALUES ('63', 'Karuure', '1103039002', '1103', '3', '43.58881', '10.75059');
+INSERT INTO `settlement` VALUES ('64', 'Aasha Caddo', '1104049040', '1104', '4', '43.43917', '11.17444');
+INSERT INTO `settlement` VALUES ('65', 'Bukh', '1104029010', '1104', '4', '43.07030', '10.44990');
+INSERT INTO `settlement` VALUES ('66', 'Cabdikaadir', '1104049034', '1104', '4', '42.89194', '10.51028');
+INSERT INTO `settlement` VALUES ('67', 'Caddoowe', '1104049036', '1104', '4', '42.78722', '10.52667');
+INSERT INTO `settlement` VALUES ('68', 'Ceel Gaal', '1104049042', '1104', '4', '43.43972', '10.97528');
+INSERT INTO `settlement` VALUES ('69', 'Cuutooyin', '1104029012', '1104', '4', '43.11940', '10.82270');
+INSERT INTO `settlement` VALUES ('70', 'Doon', '1104029014', '1104', '4', '43.13000', '11.22990');
+INSERT INTO `settlement` VALUES ('71', 'Dudub Asa', '1104029016', '1104', '4', '43.06990', '10.87810');
+INSERT INTO `settlement` VALUES ('72', 'El Qori', '1104029018', '1104', '4', '43.30190', '11.45020');
+INSERT INTO `settlement` VALUES ('73', 'Fulla', '1104029020', '1104', '4', '43.12750', '10.82240');
+INSERT INTO `settlement` VALUES ('74', 'Geel ka Goojis', '1104049038', '1104', '4', '42.80972', '10.44444');
+INSERT INTO `settlement` VALUES ('75', 'Harag Jiid', '1104029024', '1104', '4', '43.62870', '10.98140');
+INSERT INTO `settlement` VALUES ('76', 'Haren', '1104029026', '1104', '4', '43.28260', '10.88070');
+INSERT INTO `settlement` VALUES ('77', 'Hemal', '1104029028', '1104', '4', '43.12790', '10.56770');
+INSERT INTO `settlement` VALUES ('78', 'Iskudarka', '1104029030', '1104', '4', '43.27720', '10.78130');
+INSERT INTO `settlement` VALUES ('79', 'Jaglaleh', '1104029032', '1104', '4', '43.24700', '11.23130');
+INSERT INTO `settlement` VALUES ('80', 'Jidhi', '1104039008', '1104', '4', '43.07053', '10.62345');
+INSERT INTO `settlement` VALUES ('81', 'Lowya Cadde', '1104049044', '1104', '4', '43.25945', '11.45917');
+INSERT INTO `settlement` VALUES ('82', 'Shiikh Awaare', '1104039006', '1104', '4', '43.04521', '10.45062');
+INSERT INTO `settlement` VALUES ('83', 'Tokhoshi', '1104039002', '1104', '4', '43.41065', '11.34451');
+INSERT INTO `settlement` VALUES ('84', 'Warabood', '1104029022', '1104', '4', '43.43080', '11.22860');
+INSERT INTO `settlement` VALUES ('85', 'Ato', '2502029004', '2502', '58', '43.35020', '4.62050');
+INSERT INTO `settlement` VALUES ('86', 'Ceel Abdalla', '2502029010', '2502', '58', '44.60050', '4.84820');
+INSERT INTO `settlement` VALUES ('87', 'Ceel Ballei', '2502029012', '2502', '58', '43.52860', '4.78170');
+INSERT INTO `settlement` VALUES ('88', 'Ceel Caboq', '2502029014', '2502', '58', '43.51760', '4.68030');
+INSERT INTO `settlement` VALUES ('89', 'Ceel Dego Gos', '2502029016', '2502', '58', '43.43160', '4.62010');
+INSERT INTO `settlement` VALUES ('90', 'Ceel Meghet', '2502029018', '2502', '58', '44.40120', '4.91880');
+INSERT INTO `settlement` VALUES ('91', 'Ceel Tegavei', '2502029020', '2502', '58', '43.44770', '4.64930');
+INSERT INTO `settlement` VALUES ('92', 'Duddum Har', '2502029008', '2502', '58', '44.55180', '4.92220');
+INSERT INTO `settlement` VALUES ('93', 'Far Fima', '2502029022', '2502', '58', '43.47790', '4.50040');
+INSERT INTO `settlement` VALUES ('94', 'Salcudoble', '2502029024', '2502', '58', '43.97820', '4.89870');
+INSERT INTO `settlement` VALUES ('95', 'Shimbiro', '2502039002', '2502', '58', '43.48702', '4.56962');
+INSERT INTO `settlement` VALUES ('96', 'Uascen', '2502029006', '2502', '58', '43.21980', '4.67810');
+INSERT INTO `settlement` VALUES ('97', 'Abag Dheere', '2503039030', '2503', '59', '44.35861', '3.98745');
+INSERT INTO `settlement` VALUES ('98', 'Biyoley', '2503039038', '2503', '59', '44.42332', '3.93851');
+INSERT INTO `settlement` VALUES ('99', 'Cashur', '2503039022', '2503', '59', '44.34975', '3.91594');
+INSERT INTO `settlement` VALUES ('100', 'Ceel Gudo', '2503039006', '2503', '59', '44.35612', '4.10825');
+INSERT INTO `settlement` VALUES ('101', 'Dawla', '2503039002', '2503', '59', '44.39537', '4.05142');
+INSERT INTO `settlement` VALUES ('102', 'Dhanabo', '2503039044', '2503', '59', '44.64293', '3.97192');
+INSERT INTO `settlement` VALUES ('103', 'Dhema', '2503039012', '2503', '59', '44.52065', '3.81551');
+INSERT INTO `settlement` VALUES ('104', 'Doomaar', '2503039028', '2503', '59', '44.35588', '3.97777');
+INSERT INTO `settlement` VALUES ('105', 'Drersin', '2503039024', '2503', '59', '44.34480', '3.88266');
+INSERT INTO `settlement` VALUES ('106', 'El Garmet', '2503029048', '2503', '59', '44.36830', '3.98270');
+INSERT INTO `settlement` VALUES ('107', 'Elkiya', '2503039010', '2503', '59', '44.50339', '3.85339');
+INSERT INTO `settlement` VALUES ('108', 'Garas-Ca Damo', '2503029052', '2503', '59', '44.67910', '3.77770');
+INSERT INTO `settlement` VALUES ('109', 'Goberreh', '2503039026', '2503', '59', '44.37196', '3.97102');
+INSERT INTO `settlement` VALUES ('110', 'Gonreh', '2503039018', '2503', '59', '44.30487', '3.96329');
+INSERT INTO `settlement` VALUES ('111', 'Hobinshe', '2503039020', '2503', '59', '44.30050', '3.92166');
+INSERT INTO `settlement` VALUES ('112', 'Jannai', '2503039034', '2503', '59', '44.38051', '3.95030');
+INSERT INTO `settlement` VALUES ('113', 'Jiumqaale', '2503039040', '2503', '59', '44.46001', '3.90460');
+INSERT INTO `settlement` VALUES ('114', 'Kajin', '2503039036', '2503', '59', '44.39746', '3.94268');
+INSERT INTO `settlement` VALUES ('115', 'Korar', '2503039042', '2503', '59', '44.39792', '3.86153');
+INSERT INTO `settlement` VALUES ('116', 'Mesaar', '2503039008', '2503', '59', '44.58540', '3.99201');
+INSERT INTO `settlement` VALUES ('117', 'Qonle', '2503039014', '2503', '59', '44.55236', '3.76880');
+INSERT INTO `settlement` VALUES ('118', 'Qormari', '2503039032', '2503', '59', '44.39143', '3.96246');
+INSERT INTO `settlement` VALUES ('119', 'Sankor', '2503039016', '2503', '59', '44.69977', '3.95820');
+INSERT INTO `settlement` VALUES ('120', 'Sciaule Ali Mai', '2503029050', '2503', '59', '44.68050', '3.72780');
+INSERT INTO `settlement` VALUES ('121', 'Ubudi', '2503029046', '2503', '59', '44.50230', '3.81970');
+INSERT INTO `settlement` VALUES ('122', 'Xararla', '2503039004', '2503', '59', '44.42818', '4.02662');
+INSERT INTO `settlement` VALUES ('123', 'Bakaar Yar', '2504039004', '2504', '60', '43.47765', '3.61507');
+INSERT INTO `settlement` VALUES ('124', 'Bakar Weyn', '2504039022', '2504', '60', '43.46084', '3.67241');
+INSERT INTO `settlement` VALUES ('125', 'Caracase', '2504029026', '2504', '60', '43.53260', '3.74800');
+INSERT INTO `settlement` VALUES ('126', 'Ceel Heji', '2504039010', '2504', '60', '43.50012', '3.59398');
+INSERT INTO `settlement` VALUES ('127', 'Dabacore', '2504029030', '2504', '60', '43.22210', '3.65140');
+INSERT INTO `settlement` VALUES ('128', 'Dugsamey', '2504039024', '2504', '60', '43.47997', '3.70330');
+INSERT INTO `settlement` VALUES ('129', 'Duuray', '2504039020', '2504', '60', '43.33646', '3.68824');
+INSERT INTO `settlement` VALUES ('130', 'El Alul', '2504029034', '2504', '60', '43.52760', '3.82250');
+INSERT INTO `settlement` VALUES ('131', 'El Dontole', '2504029032', '2504', '60', '43.52930', '3.82930');
+INSERT INTO `settlement` VALUES ('132', 'Etiyal', '2504039006', '2504', '60', '43.51400', '3.65826');
+INSERT INTO `settlement` VALUES ('133', 'Gurabow', '2504039016', '2504', '60', '43.73012', '3.90471');
+INSERT INTO `settlement` VALUES ('134', 'Horma', '2504029036', '2504', '60', '43.37790', '3.80090');
+INSERT INTO `settlement` VALUES ('135', 'Idannug', '2504039018', '2504', '60', '43.32347', '3.84510');
+INSERT INTO `settlement` VALUES ('136', 'Jebel', '2504029038', '2504', '60', '43.57850', '3.91740');
+INSERT INTO `settlement` VALUES ('137', 'Korkor', '2504039008', '2504', '60', '43.58661', '3.64120');
+INSERT INTO `settlement` VALUES ('138', 'Laandhi', '2504039014', '2504', '60', '43.71938', '3.81618');
+INSERT INTO `settlement` VALUES ('139', 'Organton', '2504039002', '2504', '60', '43.43243', '3.90424');
+INSERT INTO `settlement` VALUES ('140', 'Sarman', '2504039012', '2504', '60', '43.50356', '3.62355');
+INSERT INTO `settlement` VALUES ('141', 'Subai', '2504029028', '2504', '60', '43.14750', '3.72710');
+INSERT INTO `settlement` VALUES ('142', 'Abal', '2501039066', '2501', '57', '43.94176', '3.94875');
+INSERT INTO `settlement` VALUES ('143', 'Barkale', '2501039046', '2501', '57', '44.23527', '3.98714');
+INSERT INTO `settlement` VALUES ('144', 'Biyoley', '2501039058', '2501', '57', '43.83809', '3.96344');
+INSERT INTO `settlement` VALUES ('145', 'Buulo Fajir', '2501039048', '2501', '57', '44.27556', '3.97529');
+INSERT INTO `settlement` VALUES ('146', 'Ceel Garas', '2501039002', '2501', '57', '44.21133', '4.15077');
+INSERT INTO `settlement` VALUES ('147', 'Ceel Heri', '2501039032', '2501', '57', '44.00058', '3.92727');
+INSERT INTO `settlement` VALUES ('148', 'Ceel Ya', '2501029086', '2501', '57', '44.16820', '4.02220');
+INSERT INTO `settlement` VALUES ('149', 'Deygab', '2501039038', '2501', '57', '44.13665', '3.98374');
+INSERT INTO `settlement` VALUES ('150', 'Dhanful', '2501039008', '2501', '57', '43.99737', '4.18253');
+INSERT INTO `settlement` VALUES ('151', 'Dharilgada', '2501039006', '2501', '57', '43.93100', '4.22956');
+INSERT INTO `settlement` VALUES ('152', 'Dhursheen', '2501039014', '2501', '57', '43.87784', '4.12339');
+INSERT INTO `settlement` VALUES ('153', 'Dugsiilow', '2501039062', '2501', '57', '43.94787', '3.99681');
+INSERT INTO `settlement` VALUES ('154', 'Eidarr Dabobe', '2501029088', '2501', '57', '43.55140', '4.35260');
+INSERT INTO `settlement` VALUES ('155', 'El Dafarur', '2501029090', '2501', '57', '43.97990', '4.17290');
+INSERT INTO `settlement` VALUES ('156', 'Etiyal', '2501039028', '2501', '57', '44.01429', '3.99157');
+INSERT INTO `settlement` VALUES ('157', 'Faarax', '2501039012', '2501', '57', '43.94146', '4.12948');
+INSERT INTO `settlement` VALUES ('158', 'Faarjarley Wiila', '2501039054', '2501', '57', '43.81618', '3.90373');
+INSERT INTO `settlement` VALUES ('159', 'Gaal Madoobe', '2501039042', '2501', '57', '44.17365', '3.97370');
+INSERT INTO `settlement` VALUES ('160', 'Gadey', '2501039004', '2501', '57', '44.24776', '4.16143');
+INSERT INTO `settlement` VALUES ('161', 'Galol', '2501039034', '2501', '57', '44.04762', '3.92557');
+INSERT INTO `settlement` VALUES ('162', 'Garas Weyne', '2501039026', '2501', '57', '43.48562', '4.26576');
+INSERT INTO `settlement` VALUES ('163', 'Geed Buureed', '2501039056', '2501', '57', '43.84607', '3.92211');
+INSERT INTO `settlement` VALUES ('164', 'Giara Abarou', '2501029096', '2501', '57', '43.69700', '4.25150');
+INSERT INTO `settlement` VALUES ('165', 'God Colow', '2501029098', '2501', '57', '43.40280', '4.47030');
+INSERT INTO `settlement` VALUES ('166', 'Gudoqor', '2501039074', '2501', '57', '44.09689', '4.41844');
+INSERT INTO `settlement` VALUES ('167', 'Iilay', '2501039020', '2501', '57', '43.96523', '4.01921');
+INSERT INTO `settlement` VALUES ('168', 'Jilibey', '2501039040', '2501', '57', '44.11187', '3.95577');
+INSERT INTO `settlement` VALUES ('169', 'Korkor', '2501039036', '2501', '57', '44.08714', '3.97431');
+INSERT INTO `settlement` VALUES ('170', 'Kukay', '2501039060', '2501', '57', '43.90128', '3.97498');
+INSERT INTO `settlement` VALUES ('171', 'Lac Bissigle', '2501029076', '2501', '57', '43.52850', '4.37900');
+INSERT INTO `settlement` VALUES ('172', 'Lafaale', '2501039016', '2501', '57', '43.87561', '4.03757');
+INSERT INTO `settlement` VALUES ('173', 'Madax Waraabe', '2501039010', '2501', '57', '43.91186', '4.12423');
+INSERT INTO `settlement` VALUES ('174', 'Moro Idda', '2501029080', '2501', '57', '43.60180', '4.31720');
+INSERT INTO `settlement` VALUES ('175', 'Moro Uanaile', '2501029082', '2501', '57', '43.82850', '4.32800');
+INSERT INTO `settlement` VALUES ('176', 'Morogavi', '2501029078', '2501', '57', '43.63170', '4.17710');
+INSERT INTO `settlement` VALUES ('177', 'Mubarak', '2501039044', '2501', '57', '44.19080', '3.95489');
+INSERT INTO `settlement` VALUES ('178', 'Ofidow', '2501039018', '2501', '57', '43.85620', '4.02961');
+INSERT INTO `settlement` VALUES ('179', 'Olondow', '2501039052', '2501', '57', '43.81873', '3.92930');
+INSERT INTO `settlement` VALUES ('180', 'Orugley', '2501039050', '2501', '57', '43.80122', '3.94332');
+INSERT INTO `settlement` VALUES ('181', 'Sarman', '2501039030', '2501', '57', '44.00434', '3.95649');
+INSERT INTO `settlement` VALUES ('182', 'Ted', '2501039072', '2501', '57', '43.90846', '4.39767');
+INSERT INTO `settlement` VALUES ('183', 'Totiyas', '2501039068', '2501', '57', '43.96717', '3.95531');
+INSERT INTO `settlement` VALUES ('184', 'Tubooy', '2501039022', '2501', '57', '43.84449', '4.12800');
+INSERT INTO `settlement` VALUES ('185', 'Unramade', '2501039070', '2501', '57', '43.98602', '3.91192');
+INSERT INTO `settlement` VALUES ('186', 'Waney', '2501039024', '2501', '57', '43.80566', '4.07202');
+INSERT INTO `settlement` VALUES ('187', 'War Shariif', '2501029092', '2501', '57', '43.49790', '4.21970');
+INSERT INTO `settlement` VALUES ('188', 'Xawaala Arundi', '2501029084', '2501', '57', '43.65110', '4.37130');
+INSERT INTO `settlement` VALUES ('189', 'Yaferi', '2501039064', '2501', '57', '43.94027', '3.94194');
+INSERT INTO `settlement` VALUES ('190', 'Arunlei', '2505029022', '2505', '61', '42.95050', '4.21720');
+INSERT INTO `settlement` VALUES ('191', 'Balli Adde', '2505029024', '2505', '61', '43.05090', '4.54720');
+INSERT INTO `settlement` VALUES ('192', 'Baygar', '2505039012', '2505', '61', '43.13625', '4.03299');
+INSERT INTO `settlement` VALUES ('193', 'Buur Basle', '2505039014', '2505', '61', '43.12703', '4.07437');
+INSERT INTO `settlement` VALUES ('194', 'Buur Caddey', '2505039004', '2505', '61', '43.34631', '4.06650');
+INSERT INTO `settlement` VALUES ('195', 'Buur Dhuxunle', '2505039006', '2505', '61', '43.24777', '4.05202');
+INSERT INTO `settlement` VALUES ('196', 'Calaame', '2505029026', '2505', '61', '43.15100', '4.37970');
+INSERT INTO `settlement` VALUES ('197', 'Coralle', '2505029030', '2505', '61', '43.04790', '4.31710');
+INSERT INTO `settlement` VALUES ('198', 'Dermangit', '2505029032', '2505', '61', '42.97000', '4.34830');
+INSERT INTO `settlement` VALUES ('199', 'Dharkaya Kuus', '2505039018', '2505', '61', '43.13445', '3.99316');
+INSERT INTO `settlement` VALUES ('200', 'Durrei', '2505029034', '2505', '61', '42.92290', '4.27160');
+INSERT INTO `settlement` VALUES ('201', 'El Garap', '2505029036', '2505', '61', '42.97730', '4.40030');
+INSERT INTO `settlement` VALUES ('202', 'El Lehele Digodia', '2505029038', '2505', '61', '43.00000', '4.25280');
+INSERT INTO `settlement` VALUES ('203', 'Garsaley', '2505039020', '2505', '61', '43.23215', '3.99545');
+INSERT INTO `settlement` VALUES ('204', 'Guubey', '2505039016', '2505', '61', '43.11818', '4.08662');
+INSERT INTO `settlement` VALUES ('205', 'Maranga', '2505039010', '2505', '61', '43.16074', '4.02919');
+INSERT INTO `settlement` VALUES ('206', 'Urvein', '2505029028', '2505', '61', '43.54700', '4.07290');
+INSERT INTO `settlement` VALUES ('207', 'War Weyne', '2505039008', '2505', '61', '43.22607', '4.04322');
+INSERT INTO `settlement` VALUES ('208', 'Assaley', '2201039002', '2201', '45', '45.55723', '2.16144');
+INSERT INTO `settlement` VALUES ('209', 'Caddey', '2201039004', '2201', '45', '45.46638', '2.10446');
+INSERT INTO `settlement` VALUES ('210', 'Cisaleey', '2201049010', '2201', '45', '45.54667', '2.16972');
+INSERT INTO `settlement` VALUES ('211', 'Colomat', '2201029006', '2201', '45', '45.39860', '2.09950');
+INSERT INTO `settlement` VALUES ('212', 'Guddo', '2201029008', '2201', '45', '45.39750', '2.15180');
+INSERT INTO `settlement` VALUES ('213', 'Balli Scillin', '1602029006', '1602', '20', '50.05190', '8.65200');
+INSERT INTO `settlement` VALUES ('214', 'Bio Gadud', '1602029008', '1602', '20', '50.57850', '9.82880');
+INSERT INTO `settlement` VALUES ('215', 'Bixin', '1602049032', '1602', '20', '50.43472', '9.08889');
+INSERT INTO `settlement` VALUES ('216', 'Boqshirqan', '1602049044', '1602', '20', '50.40607', '8.85704');
+INSERT INTO `settlement` VALUES ('217', 'Cag', '1602029010', '1602', '20', '50.22820', '8.43150');
+INSERT INTO `settlement` VALUES ('218', 'Cal Marthat', '1602029012', '1602', '20', '50.35090', '8.66790');
+INSERT INTO `settlement` VALUES ('219', 'Car Weyn', '1602029014', '1602', '20', '50.24850', '9.01860');
+INSERT INTO `settlement` VALUES ('220', 'Caris', '1602049036', '1602', '20', '50.79210', '9.60163');
+INSERT INTO `settlement` VALUES ('221', 'Darimoh', '1602029016', '1602', '20', '50.58130', '9.04760');
+INSERT INTO `settlement` VALUES ('222', 'Dauli', '1602029018', '1602', '20', '50.43130', '8.87770');
+INSERT INTO `settlement` VALUES ('223', 'Dharinbaar', '1602049042', '1602', '20', '50.46687', '8.93065');
+INSERT INTO `settlement` VALUES ('224', 'Dhur', '1602029020', '1602', '20', '50.60200', '9.25120');
+INSERT INTO `settlement` VALUES ('225', 'Dhuudo', '1602039004', '1602', '20', '50.20712', '9.32496');
+INSERT INTO `settlement` VALUES ('226', 'Diniq', '1602049034', '1602', '20', '50.62750', '9.24833');
+INSERT INTO `settlement` VALUES ('227', 'Durdur', '1602049040', '1602', '20', '50.57509', '9.03169');
+INSERT INTO `settlement` VALUES ('228', 'Eddi Gellie', '1602029022', '1602', '20', '50.79980', '9.76870');
+INSERT INTO `settlement` VALUES ('229', 'God Lagodei', '1602029024', '1602', '20', '50.73230', '9.87820');
+INSERT INTO `settlement` VALUES ('230', 'Godobyar', '1602049030', '1602', '20', '50.06861', '8.70083');
+INSERT INTO `settlement` VALUES ('231', 'Jan', '1602029026', '1602', '20', '50.67240', '9.22830');
+INSERT INTO `settlement` VALUES ('232', 'Kulule', '1602049038', '1602', '20', '50.62913', '9.15954');
+INSERT INTO `settlement` VALUES ('233', 'Sudh', '1602029028', '1602', '20', '50.35150', '8.67660');
+INSERT INTO `settlement` VALUES ('234', 'Aantaara', '1601039026', '1601', '19', '49.55171', '11.44241');
+INSERT INTO `settlement` VALUES ('235', 'Audelle Uen', '1601029042', '1601', '19', '49.11760', '10.67110');
+INSERT INTO `settlement` VALUES ('236', 'Bacugia', '1601029044', '1601', '19', '49.50140', '11.14730');
+INSERT INTO `settlement` VALUES ('237', 'Badawle', '1601049086', '1601', '19', '49.20555', '10.96056');
+INSERT INTO `settlement` VALUES ('238', 'Bali Khadar', '1601049080', '1601', '19', '49.12222', '10.95139');
+INSERT INTO `settlement` VALUES ('239', 'Bender Bacaad', '1601039030', '1601', '19', '49.44693', '11.35175');
+INSERT INTO `settlement` VALUES ('240', 'Bur Meirale', '1601029046', '1601', '19', '49.52140', '10.53020');
+INSERT INTO `settlement` VALUES ('241', 'Buur Gaaban', '1601039028', '1601', '19', '49.46851', '11.36112');
+INSERT INTO `settlement` VALUES ('242', 'Cago', '1601039014', '1601', '19', '49.21847', '10.99628');
+INSERT INTO `settlement` VALUES ('243', 'Caiodo', '1601029048', '1601', '19', '49.27190', '10.87090');
+INSERT INTO `settlement` VALUES ('244', 'Carsmo', '1601049098', '1601', '19', '49.06028', '10.56389');
+INSERT INTO `settlement` VALUES ('245', 'Ceel Doofaar', '1601039004', '1601', '19', '49.03747', '10.63480');
+INSERT INTO `settlement` VALUES ('246', 'Ceel Doofar', '1601049078', '1601', '19', '49.04333', '10.45972');
+INSERT INTO `settlement` VALUES ('247', 'Daga Xaab', '1601029052', '1601', '19', '49.67880', '11.08150');
+INSERT INTO `settlement` VALUES ('248', 'Dameer', '1601049088', '1601', '19', '49.15778', '11.00556');
+INSERT INTO `settlement` VALUES ('249', 'Dancug', '1601029054', '1601', '19', '49.07240', '10.97240');
+INSERT INTO `settlement` VALUES ('250', 'Dhegacad', '1601049082', '1601', '19', '49.68250', '11.10778');
+INSERT INTO `settlement` VALUES ('251', 'Dudo', '1601029056', '1601', '19', '49.11870', '11.05050');
+INSERT INTO `settlement` VALUES ('252', 'El Daddavo', '1601029058', '1601', '19', '49.14790', '10.95000');
+INSERT INTO `settlement` VALUES ('253', 'El Dhurre', '1601029060', '1601', '19', '49.47730', '11.14720');
+INSERT INTO `settlement` VALUES ('254', 'Galgala', '1601049100', '1601', '19', '49.00639', '11.19406');
+INSERT INTO `settlement` VALUES ('255', 'Galgalo', '1601039012', '1601', '19', '49.05506', '10.99006');
+INSERT INTO `settlement` VALUES ('256', 'God Cabobe', '1601029066', '1601', '19', '49.14840', '10.60080');
+INSERT INTO `settlement` VALUES ('257', 'Golgol', '1601029068', '1601', '19', '49.42800', '11.17270');
+INSERT INTO `settlement` VALUES ('258', 'Gub', '1601049090', '1601', '19', '49.17667', '11.05000');
+INSERT INTO `settlement` VALUES ('259', 'Gubato', '1601039022', '1601', '19', '49.29763', '11.12170');
+INSERT INTO `settlement` VALUES ('260', 'Habab Git', '1601029070', '1601', '19', '49.57110', '11.09740');
+INSERT INTO `settlement` VALUES ('261', 'Hais', '1601029072', '1601', '19', '48.95230', '11.18280');
+INSERT INTO `settlement` VALUES ('262', 'Hamug', '1601029074', '1601', '19', '49.15050', '11.03270');
+INSERT INTO `settlement` VALUES ('263', 'Iongali', '1601029076', '1601', '19', '49.08270', '11.07840');
+INSERT INTO `settlement` VALUES ('264', 'Jiingadda', '1601039020', '1601', '19', '49.14573', '10.72011');
+INSERT INTO `settlement` VALUES ('265', 'Juurile', '1601039010', '1601', '19', '49.06996', '10.38830');
+INSERT INTO `settlement` VALUES ('266', 'Kalabayr', '1601049084', '1601', '19', '49.25611', '10.84556');
+INSERT INTO `settlement` VALUES ('267', 'Karin', '1601039016', '1601', '19', '49.21774', '10.98432');
+INSERT INTO `settlement` VALUES ('268', 'Kob Dhexaad', '1601039006', '1601', '19', '49.49862', '10.65710');
+INSERT INTO `settlement` VALUES ('269', 'Laag', '1601039024', '1601', '19', '49.18249', '11.04351');
+INSERT INTO `settlement` VALUES ('270', 'Laaso Dawaco', '1601039008', '1601', '19', '49.08492', '10.46926');
+INSERT INTO `settlement` VALUES ('271', 'Las Chi Bohol', '1601029034', '1601', '19', '49.69800', '10.96980');
+INSERT INTO `settlement` VALUES ('272', 'Las Gal', '1601029036', '1601', '19', '49.05180', '11.21740');
+INSERT INTO `settlement` VALUES ('273', 'Las Goriga', '1601029038', '1601', '19', '49.14970', '11.09740');
+INSERT INTO `settlement` VALUES ('274', 'Massal', '1601029040', '1601', '19', '49.32020', '10.85240');
+INSERT INTO `settlement` VALUES ('275', 'Rehis', '1601029062', '1601', '19', '49.22260', '11.27920');
+INSERT INTO `settlement` VALUES ('276', 'Scillale Bio Madda', '1601029064', '1601', '19', '49.47750', '10.56960');
+INSERT INTO `settlement` VALUES ('277', 'Sugure', '1601029050', '1601', '19', '49.16760', '10.97910');
+INSERT INTO `settlement` VALUES ('278', 'Tasjiic', '1601049094', '1601', '19', '49.45667', '10.86583');
+INSERT INTO `settlement` VALUES ('279', 'Ufayn Sare', '1601049096', '1601', '19', '49.66833', '10.79250');
+INSERT INTO `settlement` VALUES ('280', 'Ufeyn', '1601039002', '1601', '19', '49.75497', '10.65083');
+INSERT INTO `settlement` VALUES ('281', 'Xamur', '1601049092', '1601', '19', '49.14750', '11.02250');
+INSERT INTO `settlement` VALUES ('282', 'Yalaho', '1601039018', '1601', '19', '49.25728', '10.92306');
+INSERT INTO `settlement` VALUES ('283', 'Adado', '1603049090', '1603', '21', '50.77306', '11.61944');
+INSERT INTO `settlement` VALUES ('284', 'Af Dhuxun', '1603049062', '1603', '21', '50.88250', '11.66444');
+INSERT INTO `settlement` VALUES ('285', 'Afkala Haya', '1603039020', '1603', '21', '50.57741', '11.90830');
+INSERT INTO `settlement` VALUES ('286', 'Aiesloho', '1603029032', '1603', '21', '51.11790', '11.57120');
+INSERT INTO `settlement` VALUES ('287', 'Airebehje', '1603029034', '1603', '21', '50.74990', '11.91900');
+INSERT INTO `settlement` VALUES ('288', 'Bandar Murcaayo', '1603039024', '1603', '21', '50.45603', '11.69291');
+INSERT INTO `settlement` VALUES ('289', 'Bereeda', '1603039014', '1603', '21', '51.05872', '11.87036');
+INSERT INTO `settlement` VALUES ('290', 'Bio Addo', '1603029036', '1603', '21', '50.83150', '11.94830');
+INSERT INTO `settlement` VALUES ('291', 'Buqcatooti', '1603049102', '1603', '21', '50.59111', '11.73944');
+INSERT INTO `settlement` VALUES ('292', 'Caanood', '1603049104', '1603', '21', '51.16676', '11.59299');
+INSERT INTO `settlement` VALUES ('293', 'Ceel Carab', '1603029038', '1603', '21', '50.56810', '11.73020');
+INSERT INTO `settlement` VALUES ('294', 'Ceel Laas', '1603049094', '1603', '21', '51.18611', '11.78889');
+INSERT INTO `settlement` VALUES ('295', 'Damo', '1603039012', '1603', '21', '51.23517', '11.83499');
+INSERT INTO `settlement` VALUES ('296', 'Daralehe', '1603049096', '1603', '21', '51.16417', '11.75806');
+INSERT INTO `settlement` VALUES ('297', 'Daylan', '1603049066', '1603', '21', '50.79861', '11.57444');
+INSERT INTO `settlement` VALUES ('298', 'Dhuxun', '1603049064', '1603', '21', '50.86639', '11.66389');
+INSERT INTO `settlement` VALUES ('299', 'Dibow', '1603049068', '1603', '21', '50.79722', '11.58056');
+INSERT INTO `settlement` VALUES ('300', 'El Dibir', '1603029044', '1603', '21', '51.21860', '11.77090');
+INSERT INTO `settlement` VALUES ('301', 'El Gomor', '1603029046', '1603', '21', '50.95010', '11.87010');
+INSERT INTO `settlement` VALUES ('302', 'El Haghen', '1603029048', '1603', '21', '50.47720', '11.65190');
+INSERT INTO `settlement` VALUES ('303', 'Endichi', '1603029050', '1603', '21', '50.82960', '11.78280');
+INSERT INTO `settlement` VALUES ('304', 'Garasley', '1603049082', '1603', '21', '50.79333', '11.66583');
+INSERT INTO `settlement` VALUES ('305', 'Garsa', '1603039028', '1603', '21', '50.47693', '11.71352');
+INSERT INTO `settlement` VALUES ('306', 'Geesaley', '1603039018', '1603', '21', '50.50329', '11.74627');
+INSERT INTO `settlement` VALUES ('307', 'Gobrou', '1603029056', '1603', '21', '50.85120', '11.50230');
+INSERT INTO `settlement` VALUES ('308', 'Guulaan', '1603049084', '1603', '21', '50.76917', '11.66806');
+INSERT INTO `settlement` VALUES ('309', 'Haluod', '1603029058', '1603', '21', '50.57100', '11.76780');
+INSERT INTO `settlement` VALUES ('310', 'Hogat', '1603029060', '1603', '21', '51.12210', '11.58160');
+INSERT INTO `settlement` VALUES ('311', 'Hursale', '1603049074', '1603', '21', '50.86833', '11.56083');
+INSERT INTO `settlement` VALUES ('312', 'Ismadhaxasho', '1603049070', '1603', '21', '50.82028', '11.58750');
+INSERT INTO `settlement` VALUES ('313', 'JidLahelay', '1603049076', '1603', '21', '50.86528', '11.59194');
+INSERT INTO `settlement` VALUES ('314', 'Kalaale', '1603049078', '1603', '21', '50.88222', '11.59861');
+INSERT INTO `settlement` VALUES ('315', 'Kaxarey', '1603049080', '1603', '21', '50.80833', '11.64778');
+INSERT INTO `settlement` VALUES ('316', 'Labaleged', '1603049088', '1603', '21', '50.81417', '11.62222');
+INSERT INTO `settlement` VALUES ('317', 'Las Daud', '1603029030', '1603', '21', '50.77700', '11.95070');
+INSERT INTO `settlement` VALUES ('318', 'Olog', '1603039010', '1603', '21', '51.20803', '11.84605');
+INSERT INTO `settlement` VALUES ('319', 'Ongoloho', '1603049092', '1603', '21', '50.79583', '11.62250');
+INSERT INTO `settlement` VALUES ('320', 'Qayjawa', '1603039026', '1603', '21', '50.44359', '11.68222');
+INSERT INTO `settlement` VALUES ('321', 'Ragazz', '1603029052', '1603', '21', '50.92210', '11.69920');
+INSERT INTO `settlement` VALUES ('322', 'Runhio', '1603029054', '1603', '21', '51.09850', '11.55230');
+INSERT INTO `settlement` VALUES ('323', 'Seen Weyn', '1603039008', '1603', '21', '51.19543', '11.73738');
+INSERT INTO `settlement` VALUES ('324', 'Seen Yar', '1603039006', '1603', '21', '51.20302', '11.77082');
+INSERT INTO `settlement` VALUES ('325', 'Sireis', '1603029040', '1603', '21', '51.05140', '11.78080');
+INSERT INTO `settlement` VALUES ('326', 'Talamoge', '1603049086', '1603', '21', '50.85695', '11.66917');
+INSERT INTO `settlement` VALUES ('327', 'Tayega', '1603049106', '1603', '21', '50.47452', '11.68569');
+INSERT INTO `settlement` VALUES ('328', 'Tooxin', '1603039004', '1603', '21', '51.25407', '11.75050');
+INSERT INTO `settlement` VALUES ('329', 'Uocobar', '1603029042', '1603', '21', '50.74930', '11.79770');
+INSERT INTO `settlement` VALUES ('330', 'Wadayimo', '1603049072', '1603', '21', '50.83083', '11.58083');
+INSERT INTO `settlement` VALUES ('331', 'Wareegsimo', '1603039022', '1603', '21', '50.97067', '11.91986');
+INSERT INTO `settlement` VALUES ('332', 'Xabo', '1603039016', '1603', '21', '50.52192', '11.79160');
+INSERT INTO `settlement` VALUES ('333', 'Xayislaho', '1603049100', '1603', '21', '51.13805', '11.57111');
+INSERT INTO `settlement` VALUES ('334', 'Xoogaad', '1603049098', '1603', '21', '51.05305', '11.53889');
+INSERT INTO `settlement` VALUES ('335', 'Af Ruugleey', '1604039014', '1604', '22', '50.89802', '10.21782');
+INSERT INTO `settlement` VALUES ('336', 'Agarboale', '1604029036', '1604', '22', '50.81870', '10.47980');
+INSERT INTO `settlement` VALUES ('337', 'Ahable', '1604029038', '1604', '22', '50.41760', '11.20150');
+INSERT INTO `settlement` VALUES ('338', 'Al Marodle', '1604029040', '1604', '22', '50.61960', '10.40250');
+INSERT INTO `settlement` VALUES ('339', 'Arar Gubetti', '1604029044', '1604', '22', '50.87780', '10.91900');
+INSERT INTO `settlement` VALUES ('340', 'Armugia', '1604029046', '1604', '22', '50.75300', '11.42090');
+INSERT INTO `settlement` VALUES ('341', 'Ascira', '1604029048', '1604', '22', '50.95230', '10.37220');
+INSERT INTO `settlement` VALUES ('342', 'Avarfaro', '1604029050', '1604', '22', '50.87700', '10.97990');
+INSERT INTO `settlement` VALUES ('343', 'Beeli-Wacatay', '1604039024', '1604', '22', '50.44089', '11.02911');
+INSERT INTO `settlement` VALUES ('344', 'Bola Cohuan', '1604029052', '1604', '22', '50.87000', '9.98050');
+INSERT INTO `settlement` VALUES ('345', 'Buq Atoti', '1604039018', '1604', '22', '50.58793', '10.73124');
+INSERT INTO `settlement` VALUES ('346', 'Bur Mahago', '1604029054', '1604', '22', '50.62980', '10.37950');
+INSERT INTO `settlement` VALUES ('347', 'Cadayo', '1604039012', '1604', '22', '51.12186', '11.01071');
+INSERT INTO `settlement` VALUES ('348', 'Ceel Adde', '1604029080', '1604', '22', '51.24820', '10.41780');
+INSERT INTO `settlement` VALUES ('349', 'Corieli', '1604029060', '1604', '22', '51.00090', '11.21730');
+INSERT INTO `settlement` VALUES ('350', 'Cubocso', '1604029062', '1604', '22', '50.12810', '10.02900');
+INSERT INTO `settlement` VALUES ('351', 'Dabder', '1604029064', '1604', '22', '51.20040', '10.49710');
+INSERT INTO `settlement` VALUES ('352', 'Dadabalo', '1604029066', '1604', '22', '51.02730', '11.25200');
+INSERT INTO `settlement` VALUES ('353', 'Dalmadot', '1604029042', '1604', '22', '49.93240', '9.95160');
+INSERT INTO `settlement` VALUES ('354', 'Dari Sal Weyn', '1604039022', '1604', '22', '50.37792', '11.14288');
+INSERT INTO `settlement` VALUES ('355', 'Darinne', '1604029068', '1604', '22', '50.34740', '10.28090');
+INSERT INTO `settlement` VALUES ('356', 'Darrei Donta', '1604029070', '1604', '22', '50.43040', '11.24850');
+INSERT INTO `settlement` VALUES ('357', 'Deh-Cabo', '1604029072', '1604', '22', '51.09840', '10.80170');
+INSERT INTO `settlement` VALUES ('358', 'Dharjaalle', '1604049128', '1604', '22', '50.01833', '10.47333');
+INSERT INTO `settlement` VALUES ('359', 'Dhorzi', '1604029074', '1604', '22', '51.23260', '10.42860');
+INSERT INTO `settlement` VALUES ('360', 'Doganheieh', '1604029076', '1604', '22', '50.97800', '10.50030');
+INSERT INTO `settlement` VALUES ('361', 'Doghei', '1604029078', '1604', '22', '50.71860', '10.56870');
+INSERT INTO `settlement` VALUES ('362', 'Duud Hooyo', '1604039008', '1604', '22', '49.94955', '9.88505');
+INSERT INTO `settlement` VALUES ('363', 'El Af-Ca Uarallai', '1604029082', '1604', '22', '50.75250', '11.01790');
+INSERT INTO `settlement` VALUES ('364', 'El Fira', '1604029084', '1604', '22', '50.52720', '10.60100');
+INSERT INTO `settlement` VALUES ('365', 'El Gaimeddo', '1604029086', '1604', '22', '50.91870', '10.36920');
+INSERT INTO `settlement` VALUES ('366', 'El Gavoiad', '1604029088', '1604', '22', '50.56940', '10.32960');
+INSERT INTO `settlement` VALUES ('367', 'El Mah', '1604029090', '1604', '22', '50.45160', '10.27900');
+INSERT INTO `settlement` VALUES ('368', 'El Mogor', '1604029092', '1604', '22', '50.98080', '11.37030');
+INSERT INTO `settlement` VALUES ('369', 'El Raghebis', '1604029094', '1604', '22', '50.53230', '10.29840');
+INSERT INTO `settlement` VALUES ('370', 'El Uneut', '1604029096', '1604', '22', '50.49860', '10.33060');
+INSERT INTO `settlement` VALUES ('371', 'Ena Baianle', '1604029098', '1604', '22', '50.95190', '10.68100');
+INSERT INTO `settlement` VALUES ('372', 'Gahrreg', '1604029110', '1604', '22', '50.61860', '11.33170');
+INSERT INTO `settlement` VALUES ('373', 'Garahule', '1604029108', '1604', '22', '50.62760', '10.56830');
+INSERT INTO `settlement` VALUES ('374', 'Gargoore', '1604049122', '1604', '22', '50.69333', '10.49111');
+INSERT INTO `settlement` VALUES ('375', 'Gondoli', '1604029112', '1604', '22', '51.01700', '11.11780');
+INSERT INTO `settlement` VALUES ('376', 'Gumbah', '1604029114', '1604', '22', '50.97990', '10.79810');
+INSERT INTO `settlement` VALUES ('377', 'Hunda', '1604049124', '1604', '22', '51.13694', '10.65056');
+INSERT INTO `settlement` VALUES ('378', 'Hurdiyo', '1604039010', '1604', '22', '51.13321', '10.56293');
+INSERT INTO `settlement` VALUES ('379', 'Iasup', '1604029116', '1604', '22', '50.87190', '10.67970');
+INSERT INTO `settlement` VALUES ('380', 'Iskorsaar', '1604049126', '1604', '22', '50.69778', '9.95722');
+INSERT INTO `settlement` VALUES ('381', 'Jadan', '1604029118', '1604', '22', '50.87200', '11.23020');
+INSERT INTO `settlement` VALUES ('382', 'Jibalei', '1604029120', '1604', '22', '50.87730', '10.15250');
+INSERT INTO `settlement` VALUES ('383', 'Kalmasso', '1604029026', '1604', '22', '50.73100', '9.92930');
+INSERT INTO `settlement` VALUES ('384', 'Lava Rugodle', '1604029028', '1604', '22', '50.83240', '10.62050');
+INSERT INTO `settlement` VALUES ('385', 'Laz Meleden', '1604029032', '1604', '22', '49.97180', '10.33160');
+INSERT INTO `settlement` VALUES ('386', 'Laz-i-Naio', '1604029030', '1604', '22', '50.68240', '11.17920');
+INSERT INTO `settlement` VALUES ('387', 'Masuadde', '1604029034', '1604', '22', '51.02030', '10.94860');
+INSERT INTO `settlement` VALUES ('388', 'Meeladeen', '1604039016', '1604', '22', '49.80865', '10.43477');
+INSERT INTO `settlement` VALUES ('389', 'Sala Gon', '1604029102', '1604', '22', '51.06910', '10.50270');
+INSERT INTO `settlement` VALUES ('390', 'Saladegh', '1604029100', '1604', '22', '50.76880', '11.01790');
+INSERT INTO `settlement` VALUES ('391', 'Scillale Hodmane', '1604029104', '1604', '22', '49.71720', '10.47020');
+INSERT INTO `settlement` VALUES ('392', 'Seiemmogh', '1604029106', '1604', '22', '50.62800', '11.07960');
+INSERT INTO `settlement` VALUES ('393', 'Surat', '1604029056', '1604', '22', '51.07750', '10.83220');
+INSERT INTO `settlement` VALUES ('394', 'Taageer', '1604049130', '1604', '22', '50.92528', '10.94889');
+INSERT INTO `settlement` VALUES ('395', 'Timirshe', '1604049132', '1604', '22', '50.42028', '10.56333');
+INSERT INTO `settlement` VALUES ('396', 'Tolmo', '1604029058', '1604', '22', '50.94950', '11.12770');
+INSERT INTO `settlement` VALUES ('397', 'Unuun', '1604039020', '1604', '22', '50.43274', '11.17639');
+INSERT INTO `settlement` VALUES ('398', 'Xamurre', '1604049134', '1604', '22', '50.53778', '10.66833');
+INSERT INTO `settlement` VALUES ('399', 'Xiriiro', '1604039006', '1604', '22', '50.25082', '9.97927');
+INSERT INTO `settlement` VALUES ('400', 'Af Karin', '1605039018', '1605', '23', '50.16305', '11.28112');
+INSERT INTO `settlement` VALUES ('401', 'Afcad', '1605049096', '1605', '23', '49.87750', '11.11833');
+INSERT INTO `settlement` VALUES ('402', 'Anghor', '1605029048', '1605', '23', '50.12760', '11.25300');
+INSERT INTO `settlement` VALUES ('403', 'Aualgube Hai', '1605029050', '1605', '23', '50.18210', '11.07260');
+INSERT INTO `settlement` VALUES ('404', 'Balli Dhiddin', '1605039010', '1605', '23', '50.39281', '10.88080');
+INSERT INTO `settlement` VALUES ('405', 'Bareda', '1605049112', '1605', '23', '50.15568', '11.50660');
+INSERT INTO `settlement` VALUES ('406', 'Berda Uen', '1605029052', '1605', '23', '50.15200', '11.07710');
+INSERT INTO `settlement` VALUES ('407', 'Biitaalei', '1605049106', '1605', '23', '49.82167', '11.17389');
+INSERT INTO `settlement` VALUES ('408', 'Bohagno', '1605029054', '1605', '23', '50.17090', '11.07110');
+INSERT INTO `settlement` VALUES ('409', 'Buruc', '1605039038', '1605', '23', '49.68235', '11.47327');
+INSERT INTO `settlement` VALUES ('410', 'Butiyaalo', '1605039032', '1605', '23', '49.94633', '11.47435');
+INSERT INTO `settlement` VALUES ('411', 'Canjeel', '1605039006', '1605', '23', '50.27698', '10.95261');
+INSERT INTO `settlement` VALUES ('412', 'Ceel Gaal', '1605039030', '1605', '23', '50.39469', '11.37637');
+INSERT INTO `settlement` VALUES ('413', 'Cogarti', '1605029056', '1605', '23', '50.29840', '11.52140');
+INSERT INTO `settlement` VALUES ('414', 'Dadar', '1605039022', '1605', '23', '49.87076', '11.12468');
+INSERT INTO `settlement` VALUES ('415', 'Dandamale', '1605039012', '1605', '23', '49.99398', '10.99555');
+INSERT INTO `settlement` VALUES ('416', 'Daradhur', '1605029058', '1605', '23', '50.07270', '11.15090');
+INSERT INTO `settlement` VALUES ('417', 'Daray Madoobe', '1605049092', '1605', '23', '49.96444', '11.00361');
+INSERT INTO `settlement` VALUES ('418', 'Dasaan 2', '1605049104', '1605', '23', '49.82389', '11.17028');
+INSERT INTO `settlement` VALUES ('419', 'Dhaadaar', '1605049094', '1605', '23', '49.87556', '11.12806');
+INSERT INTO `settlement` VALUES ('420', 'Dhaankadus', '1605039014', '1605', '23', '50.30168', '11.27876');
+INSERT INTO `settlement` VALUES ('421', 'Dhasaan 1', '1605049102', '1605', '23', '49.83389', '11.17861');
+INSERT INTO `settlement` VALUES ('422', 'Dhurbo', '1605039028', '1605', '23', '50.35268', '11.63608');
+INSERT INTO `settlement` VALUES ('423', 'Didinchi', '1605029088', '1605', '23', '49.61520', '11.44260');
+INSERT INTO `settlement` VALUES ('424', 'El Ahg', '1605029060', '1605', '23', '49.64980', '11.45130');
+INSERT INTO `settlement` VALUES ('425', 'El Arare', '1605029062', '1605', '23', '50.29830', '10.75010');
+INSERT INTO `settlement` VALUES ('426', 'Fangarar', '1605029064', '1605', '23', '49.67220', '11.45170');
+INSERT INTO `settlement` VALUES ('427', 'Gaatir Oodan', '1605039026', '1605', '23', '49.94026', '11.03029');
+INSERT INTO `settlement` VALUES ('428', 'Gammedin', '1605029074', '1605', '23', '50.01910', '11.28120');
+INSERT INTO `settlement` VALUES ('429', 'Garaar', '1605049098', '1605', '23', '49.86945', '11.12694');
+INSERT INTO `settlement` VALUES ('430', 'Gheda Dauho', '1605029076', '1605', '23', '50.16950', '11.27070');
+INSERT INTO `settlement` VALUES ('431', 'Guriasamo', '1605029078', '1605', '23', '49.79720', '11.27290');
+INSERT INTO `settlement` VALUES ('432', 'Gurur', '1605039020', '1605', '23', '50.32496', '11.08423');
+INSERT INTO `settlement` VALUES ('433', 'Hagia Ceel', '1605029080', '1605', '23', '50.06710', '11.24720');
+INSERT INTO `settlement` VALUES ('434', 'Haraaryo', '1605049090', '1605', '23', '50.08694', '10.98167');
+INSERT INTO `settlement` VALUES ('435', 'Hemanle', '1605029082', '1605', '23', '49.96970', '11.44890');
+INSERT INTO `settlement` VALUES ('436', 'Hollis', '1605029084', '1605', '23', '49.79940', '11.31770');
+INSERT INTO `settlement` VALUES ('437', 'Homisso', '1605029086', '1605', '23', '49.88220', '11.23040');
+INSERT INTO `settlement` VALUES ('438', 'Karin', '1605039016', '1605', '23', '50.32624', '11.28839');
+INSERT INTO `settlement` VALUES ('439', 'Kayaho', '1605049108', '1605', '23', '49.91417', '11.08389');
+INSERT INTO `settlement` VALUES ('440', 'Legunle', '1605029040', '1605', '23', '50.33140', '10.72110');
+INSERT INTO `settlement` VALUES ('441', 'Magaaloyar', '1605039036', '1605', '23', '49.88452', '11.48001');
+INSERT INTO `settlement` VALUES ('442', 'Medlehe', '1605029042', '1605', '23', '49.99900', '11.39840');
+INSERT INTO `settlement` VALUES ('443', 'Melha', '1605029044', '1605', '23', '50.27840', '11.45160');
+INSERT INTO `settlement` VALUES ('444', 'Modoh', '1605029046', '1605', '23', '50.29720', '11.37840');
+INSERT INTO `settlement` VALUES ('445', 'Qallocan', '1605049100', '1605', '23', '49.88833', '11.13250');
+INSERT INTO `settlement` VALUES ('446', 'Qoori', '1605039034', '1605', '23', '49.91979', '11.50008');
+INSERT INTO `settlement` VALUES ('447', 'Qural', '1605039002', '1605', '23', '50.01819', '10.99398');
+INSERT INTO `settlement` VALUES ('448', 'Rio Culul', '1605029066', '1605', '23', '50.24800', '11.57960');
+INSERT INTO `settlement` VALUES ('449', 'Saforrei', '1605029068', '1605', '23', '49.74840', '11.22960');
+INSERT INTO `settlement` VALUES ('450', 'Scemiz', '1605029070', '1605', '23', '50.29970', '11.52050');
+INSERT INTO `settlement` VALUES ('451', 'Sheebaab', '1605039024', '1605', '23', '49.90768', '11.08105');
+INSERT INTO `settlement` VALUES ('452', 'Tuur Masaale', '1605049110', '1605', '23', '50.23750', '10.93972');
+INSERT INTO `settlement` VALUES ('453', 'Warmaddow', '1605029072', '1605', '23', '49.75290', '11.32810');
+INSERT INTO `settlement` VALUES ('454', 'Xarago', '1605039008', '1605', '23', '50.33026', '10.98174');
+INSERT INTO `settlement` VALUES ('455', 'Xijijle', '1605039004', '1605', '23', '50.24554', '10.93259');
+INSERT INTO `settlement` VALUES ('456', 'Adego', '1606029048', '1606', '24', '49.57730', '8.96930');
+INSERT INTO `settlement` VALUES ('457', 'Adinsoone', '1606039016', '1606', '24', '49.22960', '9.53048');
+INSERT INTO `settlement` VALUES ('458', 'Anghor Daban', '1606029050', '1606', '24', '49.37730', '10.03100');
+INSERT INTO `settlement` VALUES ('459', 'Cajin', '1606029052', '1606', '24', '49.88110', '8.42250');
+INSERT INTO `settlement` VALUES ('460', 'Cambaar', '1606039026', '1606', '24', '49.44719', '9.73838');
+INSERT INTO `settlement` VALUES ('461', 'Cambaar Hoose', '1606039022', '1606', '24', '49.55711', '9.74584');
+INSERT INTO `settlement` VALUES ('462', 'Cambaar Sare', '1606049088', '1606', '24', '49.48778', '9.67444');
+INSERT INTO `settlement` VALUES ('463', 'Ceel Buh', '1606039004', '1606', '24', '49.58643', '9.08801');
+INSERT INTO `settlement` VALUES ('464', 'Ceelay', '1606039028', '1606', '24', '49.15950', '9.79352');
+INSERT INTO `settlement` VALUES ('465', 'Ciddei Jebis', '1606029054', '1606', '24', '50.07160', '9.79750');
+INSERT INTO `settlement` VALUES ('466', 'Ciiradhame', '1606039038', '1606', '24', '49.34392', '10.49943');
+INSERT INTO `settlement` VALUES ('467', 'Dalweyn', '1606049090', '1606', '24', '49.06667', '10.26667');
+INSERT INTO `settlement` VALUES ('468', 'Dardare', '1606049096', '1606', '24', '49.06889', '9.41056');
+INSERT INTO `settlement` VALUES ('469', 'Dariiqada Xerta', '1606049092', '1606', '24', '49.71806', '9.77306');
+INSERT INTO `settlement` VALUES ('470', 'El Abgal', '1606029056', '1606', '24', '49.08050', '9.49770');
+INSERT INTO `settlement` VALUES ('471', 'El Aragghelo', '1606029058', '1606', '24', '49.07790', '9.60240');
+INSERT INTO `settlement` VALUES ('472', 'El Dubat', '1606029060', '1606', '24', '49.07940', '9.51930');
+INSERT INTO `settlement` VALUES ('473', 'El Harre', '1606029062', '1606', '24', '49.07740', '9.61900');
+INSERT INTO `settlement` VALUES ('474', 'El Medo', '1606029064', '1606', '24', '49.21950', '10.24820');
+INSERT INTO `settlement` VALUES ('475', 'Gaal Goble', '1606029066', '1606', '24', '49.79700', '9.86980');
+INSERT INTO `settlement` VALUES ('476', 'Gool Weyne', '1606029068', '1606', '24', '49.08280', '9.42020');
+INSERT INTO `settlement` VALUES ('477', 'Guud Cad', '1606039030', '1606', '24', '49.19646', '9.75021');
+INSERT INTO `settlement` VALUES ('478', 'Hanghei', '1606029070', '1606', '24', '49.08220', '10.20070');
+INSERT INTO `settlement` VALUES ('479', 'Iskushub', '1606039010', '1606', '24', '49.21261', '9.09099');
+INSERT INTO `settlement` VALUES ('480', 'Jiingada', '1606049082', '1606', '24', '49.47944', '10.23611');
+INSERT INTO `settlement` VALUES ('481', 'Kelyexeed', '1606029040', '1606', '24', '49.20250', '8.76980');
+INSERT INTO `settlement` VALUES ('482', 'Kubo', '1606039014', '1606', '24', '49.06359', '9.50196');
+INSERT INTO `settlement` VALUES ('483', 'Kuddo', '1606029042', '1606', '24', '49.52250', '10.06760');
+INSERT INTO `settlement` VALUES ('484', 'Laasa Carro', '1606029044', '1606', '24', '49.52280', '9.82770');
+INSERT INTO `settlement` VALUES ('485', 'Laasa Jaddad', '1606039018', '1606', '24', '49.58747', '9.40415');
+INSERT INTO `settlement` VALUES ('486', 'Libax Xaar', '1606049094', '1606', '24', '49.39695', '9.48500');
+INSERT INTO `settlement` VALUES ('487', 'Libow', '1606039012', '1606', '24', '49.18298', '9.14236');
+INSERT INTO `settlement` VALUES ('488', 'Liqaan', '1606049086', '1606', '24', '49.60194', '9.78528');
+INSERT INTO `settlement` VALUES ('489', 'Magacaley', '1606049072', '1606', '24', '49.58556', '9.08750');
+INSERT INTO `settlement` VALUES ('490', 'Meereysane', '1606049074', '1606', '24', '49.33889', '8.72472');
+INSERT INTO `settlement` VALUES ('491', 'Meygaag', '1606049080', '1606', '24', '49.92056', '9.51750');
+INSERT INTO `settlement` VALUES ('492', 'Oisame', '1606029046', '1606', '24', '49.27170', '8.99890');
+INSERT INTO `settlement` VALUES ('493', 'Oormo Buur Cad', '1606039020', '1606', '24', '49.65108', '9.37938');
+INSERT INTO `settlement` VALUES ('494', 'Qabaal', '1606049076', '1606', '24', '49.26472', '8.99278');
+INSERT INTO `settlement` VALUES ('495', 'Qodax', '1606049084', '1606', '24', '49.82389', '9.64500');
+INSERT INTO `settlement` VALUES ('496', 'Rako Raxo', '1606039024', '1606', '24', '49.72919', '9.78058');
+INSERT INTO `settlement` VALUES ('497', 'Samaysa Dheer', '1606039034', '1606', '24', '49.09052', '9.86415');
+INSERT INTO `settlement` VALUES ('498', 'Sheerbi', '1606049098', '1606', '24', '49.09083', '9.86306');
+INSERT INTO `settlement` VALUES ('499', 'Uskure', '1606039006', '1606', '24', '49.71997', '8.80833');
+INSERT INTO `settlement` VALUES ('500', 'Xabaal Reer', '1606039032', '1606', '24', '49.37104', '9.83114');
+INSERT INTO `settlement` VALUES ('501', 'Xaji Kheyr', '1606049100', '1606', '24', '49.26417', '8.99389');
+INSERT INTO `settlement` VALUES ('502', 'Xidda', '1606039036', '1606', '24', '49.05368', '9.95736');
+INSERT INTO `settlement` VALUES ('503', 'Xunbeys', '1606049078', '1606', '24', '49.89000', '9.64028');
+INSERT INTO `settlement` VALUES ('504', 'Yaka', '1606039008', '1606', '24', '49.12254', '9.22128');
+INSERT INTO `settlement` VALUES ('505', 'Aabarak', '2401039708', '2401', '53', '43.48864', '3.06683');
+INSERT INTO `settlement` VALUES ('506', 'Aadan Waraabow', '2401029782', '2401', '53', '43.87090', '3.58090');
+INSERT INTO `settlement` VALUES ('507', 'Aayolay', '2401039186', '2401', '53', '43.90334', '3.06832');
+INSERT INTO `settlement` VALUES ('508', 'Abag Dheere', '2401039530', '2401', '53', '43.85853', '3.65461');
+INSERT INTO `settlement` VALUES ('509', 'Abdurug', '2401039712', '2401', '53', '43.48764', '3.02123');
+INSERT INTO `settlement` VALUES ('510', 'Abees Eamid', '2401039702', '2401', '53', '43.46576', '3.11159');
+INSERT INTO `settlement` VALUES ('511', 'Abeesgarwaal', '2401039706', '2401', '53', '43.49205', '3.12210');
+INSERT INTO `settlement` VALUES ('512', 'Adable-Quunre', '2401039696', '2401', '53', '43.31843', '3.11685');
+INSERT INTO `settlement` VALUES ('513', 'Adegow', '2401039032', '2401', '53', '43.40030', '3.42494');
+INSERT INTO `settlement` VALUES ('514', 'Afaryag', '2401039438', '2401', '53', '43.54461', '3.27953');
+INSERT INTO `settlement` VALUES ('515', 'Afhuug', '2401039588', '2401', '53', '43.62139', '3.15002');
+INSERT INTO `settlement` VALUES ('516', 'Afjiinow', '2401039094', '2401', '53', '43.63158', '2.93972');
+INSERT INTO `settlement` VALUES ('517', 'Alla Gabe', '2401039556', '2401', '53', '43.75526', '3.73735');
+INSERT INTO `settlement` VALUES ('518', 'Areeg', '2401039266', '2401', '53', '43.76135', '3.18248');
+INSERT INTO `settlement` VALUES ('519', 'Arkijedi', '2401039284', '2401', '53', '43.61300', '3.19773');
+INSERT INTO `settlement` VALUES ('520', 'Aroos Ibir', '2401039470', '2401', '53', '43.55363', '3.08670');
+INSERT INTO `settlement` VALUES ('521', 'Aroos Xaawa', '2401039664', '2401', '53', '43.48239', '3.18604');
+INSERT INTO `settlement` VALUES ('522', 'Asha Fartow', '2401039372', '2401', '53', '43.56786', '3.27386');
+INSERT INTO `settlement` VALUES ('523', 'Asha Gab', '2401039306', '2401', '53', '43.61203', '3.26473');
+INSERT INTO `settlement` VALUES ('524', 'Ashagow', '2401039472', '2401', '53', '43.55500', '3.07530');
+INSERT INTO `settlement` VALUES ('525', 'Astur', '2401039592', '2401', '53', '43.87701', '3.13653');
+INSERT INTO `settlement` VALUES ('526', 'Aw Aadan Fayi', '2401029784', '2401', '53', '43.78070', '3.60210');
+INSERT INTO `settlement` VALUES ('527', 'Aw Shini', '2401039676', '2401', '53', '43.39103', '3.21971');
+INSERT INTO `settlement` VALUES ('528', 'Awdey', '2401029786', '2401', '53', '43.76930', '3.61760');
+INSERT INTO `settlement` VALUES ('529', 'Awdheere', '2401039680', '2401', '53', '43.27879', '3.21048');
+INSERT INTO `settlement` VALUES ('530', 'Awdiinle', '2401039668', '2401', '53', '43.40851', '3.17155');
+INSERT INTO `settlement` VALUES ('531', 'Aweey', '2401039576', '2401', '53', '43.88379', '3.20404');
+INSERT INTO `settlement` VALUES ('532', 'Awgoosh', '2401039450', '2401', '53', '43.52289', '3.13896');
+INSERT INTO `settlement` VALUES ('533', 'Awle', '2401039368', '2401', '53', '43.56163', '3.23368');
+INSERT INTO `settlement` VALUES ('534', 'Ayroobely', '2401029788', '2401', '53', '43.66710', '3.35210');
+INSERT INTO `settlement` VALUES ('535', 'Baahan', '2401039734', '2401', '53', '43.45283', '3.08189');
+INSERT INTO `settlement` VALUES ('536', 'Baanyaale', '2401039054', '2401', '53', '43.75101', '3.02881');
+INSERT INTO `settlement` VALUES ('537', 'Baanyale Banka', '2401039600', '2401', '53', '43.76402', '3.00871');
+INSERT INTO `settlement` VALUES ('538', 'Baanyale Mubaarak', '2401039056', '2401', '53', '43.77104', '2.99634');
+INSERT INTO `settlement` VALUES ('539', 'Badandadu', '2401029790', '2401', '53', '43.61910', '3.62160');
+INSERT INTO `settlement` VALUES ('540', 'Baemada', '2401029792', '2401', '53', '43.51940', '3.29810');
+INSERT INTO `settlement` VALUES ('541', 'Bakdaad', '2401039010', '2401', '53', '43.19415', '3.40442');
+INSERT INTO `settlement` VALUES ('542', 'Banbusul', '2401029794', '2401', '53', '43.56800', '3.52240');
+INSERT INTO `settlement` VALUES ('543', 'Ban-Chi Surta', '2401029796', '2401', '53', '44.18050', '3.27010');
+INSERT INTO `settlement` VALUES ('544', 'Baqalley', '2401039638', '2401', '53', '43.42556', '3.25992');
+INSERT INTO `settlement` VALUES ('545', 'Barako', '2401039150', '2401', '53', '43.36999', '2.91956');
+INSERT INTO `settlement` VALUES ('546', 'Barkale', '2401039518', '2401', '53', '43.73529', '3.65506');
+INSERT INTO `settlement` VALUES ('547', 'Barkhadlow', '2401039044', '2401', '53', '43.76944', '2.95375');
+INSERT INTO `settlement` VALUES ('548', 'Barow', '2401039178', '2401', '53', '44.02391', '3.23631');
+INSERT INTO `settlement` VALUES ('549', 'Bashir Beere', '2401039724', '2401', '53', '43.41930', '3.04012');
+INSERT INTO `settlement` VALUES ('550', 'Bedanbedey', '2401039714', '2401', '53', '43.46605', '3.03188');
+INSERT INTO `settlement` VALUES ('551', 'Beer Guduud', '2401039342', '2401', '53', '43.69007', '3.24549');
+INSERT INTO `settlement` VALUES ('552', 'Beer Shabeel', '2401039184', '2401', '53', '44.16964', '3.25961');
+INSERT INTO `settlement` VALUES ('553', 'Ber Au Duben', '2401029798', '2401', '53', '43.38210', '3.02120');
+INSERT INTO `settlement` VALUES ('554', 'Biliil', '2401039018', '2401', '53', '43.25112', '3.34614');
+INSERT INTO `settlement` VALUES ('555', 'Biyoley', '2401039326', '2401', '53', '43.64484', '3.31711');
+INSERT INTO `settlement` VALUES ('556', 'Biyoley', '2401039542', '2401', '53', '43.92244', '3.60488');
+INSERT INTO `settlement` VALUES ('557', 'Biyoley', '2401039710', '2401', '53', '43.47884', '3.03856');
+INSERT INTO `settlement` VALUES ('558', 'Blowka', '2401039756', '2401', '53', '43.44317', '3.05334');
+INSERT INTO `settlement` VALUES ('559', 'Boberreh', '2401039534', '2401', '53', '43.87186', '3.63814');
+INSERT INTO `settlement` VALUES ('560', 'Boddi Cadde', '2401039396', '2401', '53', '43.56126', '3.14350');
+INSERT INTO `settlement` VALUES ('561', 'Boolmadu', '2401039436', '2401', '53', '43.53591', '3.26949');
+INSERT INTO `settlement` VALUES ('562', 'Boonkay', '2401039268', '2401', '53', '43.62705', '3.15786');
+INSERT INTO `settlement` VALUES ('563', 'Boorka', '2401039654', '2401', '53', '43.46662', '3.21573');
+INSERT INTO `settlement` VALUES ('564', 'Borama', '2401039080', '2401', '53', '43.69738', '2.92540');
+INSERT INTO `settlement` VALUES ('565', 'Borama', '2401039238', '2401', '53', '43.63932', '3.03479');
+INSERT INTO `settlement` VALUES ('566', 'Borame', '2401039602', '2401', '53', '43.19539', '3.31732');
+INSERT INTO `settlement` VALUES ('567', 'Borgof', '2401029800', '2401', '53', '43.27870', '2.82170');
+INSERT INTO `settlement` VALUES ('568', 'Borosole', '2401039584', '2401', '53', '43.52918', '3.14496');
+INSERT INTO `settlement` VALUES ('569', 'Borow', '2401039554', '2401', '53', '43.72084', '3.72600');
+INSERT INTO `settlement` VALUES ('570', 'Bottis', '2401039156', '2401', '53', '43.39497', '2.85487');
+INSERT INTO `settlement` VALUES ('571', 'Buklaabow', '2401039752', '2401', '53', '43.35892', '3.01057');
+INSERT INTO `settlement` VALUES ('572', 'Bulaas', '2401029802', '2401', '53', '43.52170', '3.42990');
+INSERT INTO `settlement` VALUES ('573', 'Bulo Abdille', '2401029804', '2401', '53', '43.36710', '2.87250');
+INSERT INTO `settlement` VALUES ('574', 'Bulo Balamal', '2401029806', '2401', '53', '43.75060', '3.53300');
+INSERT INTO `settlement` VALUES ('575', 'Bulo Biliscai', '2401029808', '2401', '53', '43.27150', '2.89750');
+INSERT INTO `settlement` VALUES ('576', 'Bulo Fiada', '2401029810', '2401', '53', '43.38120', '2.97270');
+INSERT INTO `settlement` VALUES ('577', 'Bulo Gasei', '2401029812', '2401', '53', '43.82080', '2.97860');
+INSERT INTO `settlement` VALUES ('578', 'Bulo Haldid', '2401029814', '2401', '53', '43.74940', '3.63070');
+INSERT INTO `settlement` VALUES ('579', 'Burey Mannas', '2401039106', '2401', '53', '43.53682', '2.85148');
+INSERT INTO `settlement` VALUES ('580', 'Busley', '2401039126', '2401', '53', '43.45180', '2.90461');
+INSERT INTO `settlement` VALUES ('581', 'Busley', '2401039406', '2401', '53', '43.52210', '3.17293');
+INSERT INTO `settlement` VALUES ('582', 'Busley', '2401039674', '2401', '53', '43.37355', '3.22966');
+INSERT INTO `settlement` VALUES ('583', 'Buukoh', '2401039408', '2401', '53', '43.53316', '3.17112');
+INSERT INTO `settlement` VALUES ('584', 'Buul Galoole', '2401039024', '2401', '53', '43.41625', '3.35197');
+INSERT INTO `settlement` VALUES ('585', 'Buulo - Jannaay', '2401039632', '2401', '53', '43.41973', '3.28905');
+INSERT INTO `settlement` VALUES ('586', 'Buulo Bilaan', '2401039502', '2401', '53', '44.03955', '3.53238');
+INSERT INTO `settlement` VALUES ('587', 'Buulo Dhaaya', '2401039748', '2401', '53', '43.13060', '3.08317');
+INSERT INTO `settlement` VALUES ('588', 'Buulo Duff', '2401039112', '2401', '53', '43.43740', '2.97105');
+INSERT INTO `settlement` VALUES ('589', 'Buulo Edeega', '2401039730', '2401', '53', '43.39572', '3.03018');
+INSERT INTO `settlement` VALUES ('590', 'Buulo Fajir', '2401039520', '2401', '53', '43.77562', '3.64186');
+INSERT INTO `settlement` VALUES ('591', 'Buulo Guduud', '2401039616', '2401', '53', '43.30436', '3.27257');
+INSERT INTO `settlement` VALUES ('592', 'Buulo Guduud', '2401039738', '2401', '53', '43.39813', '3.03870');
+INSERT INTO `settlement` VALUES ('593', 'Buulo Gurundhow', '2401039260', '2401', '53', '43.61089', '3.10660');
+INSERT INTO `settlement` VALUES ('594', 'Buulo Marer', '2401039182', '2401', '53', '44.06936', '3.30187');
+INSERT INTO `settlement` VALUES ('595', 'Buulo Mintaan', '2401029816', '2401', '53', '43.54920', '3.35200');
+INSERT INTO `settlement` VALUES ('596', 'Buulo Sabar', '2401039506', '2401', '53', '44.05685', '3.53160');
+INSERT INTO `settlement` VALUES ('597', 'Buulo Shanta', '2401039028', '2401', '53', '43.48844', '3.36520');
+INSERT INTO `settlement` VALUES ('598', 'Buulo Uusla', '2401029818', '2401', '53', '43.49970', '3.39790');
+INSERT INTO `settlement` VALUES ('599', 'Buulo Wacalim', '2401039174', '2401', '53', '44.01437', '3.22595');
+INSERT INTO `settlement` VALUES ('600', 'Buulo Warabe', '2401039344', '2401', '53', '43.59417', '3.32044');
+INSERT INTO `settlement` VALUES ('601', 'Buulo Warriiray', '2401039698', '2401', '53', '43.38336', '3.11628');
+INSERT INTO `settlement` VALUES ('602', 'Buulo Yuusuf', '2401039720', '2401', '53', '43.41845', '3.06016');
+INSERT INTO `settlement` VALUES ('603', 'Buulohilowle', '2401039356', '2401', '53', '43.58130', '3.25196');
+INSERT INTO `settlement` VALUES ('604', 'Buur Baan', '2401039136', '2401', '53', '43.38908', '2.97454');
+INSERT INTO `settlement` VALUES ('605', 'Buur Halab', '2401039208', '2401', '53', '43.82055', '3.09437');
+INSERT INTO `settlement` VALUES ('606', 'Buuray Shunle', '2401039630', '2401', '53', '43.40495', '3.30368');
+INSERT INTO `settlement` VALUES ('607', 'Buurfuule', '2401039670', '2401', '53', '43.46406', '3.16856');
+INSERT INTO `settlement` VALUES ('608', 'Caadey', '2401039272', '2401', '53', '46.31722', '3.98722');
+INSERT INTO `settlement` VALUES ('609', 'Caashe', '2401039038', '2401', '53', '43.77657', '2.92084');
+INSERT INTO `settlement` VALUES ('610', 'Cabdi Garuun', '2401039146', '2401', '53', '43.38013', '2.95010');
+INSERT INTO `settlement` VALUES ('611', 'Caddi Qoqonay', '2401039460', '2401', '53', '43.51699', '3.10522');
+INSERT INTO `settlement` VALUES ('612', 'Cadel Barrey', '2401039120', '2401', '53', '43.43828', '2.94072');
+INSERT INTO `settlement` VALUES ('613', 'Calanle', '2401039378', '2401', '53', '43.57985', '3.22381');
+INSERT INTO `settlement` VALUES ('614', 'Caliyo Marayle', '2401039144', '2401', '53', '43.33552', '2.93701');
+INSERT INTO `settlement` VALUES ('615', 'Caliyow', '2401039432', '2401', '53', '43.51700', '3.25552');
+INSERT INTO `settlement` VALUES ('616', 'Caliyow Muumin', '2401039100', '2401', '53', '43.51488', '2.98545');
+INSERT INTO `settlement` VALUES ('617', 'Camalka', '2401039390', '2401', '53', '43.56786', '3.16609');
+INSERT INTO `settlement` VALUES ('618', 'Careh Guduud', '2401039500', '2401', '53', '43.58644', '3.11046');
+INSERT INTO `settlement` VALUES ('619', 'Cashow', '2401029820', '2401', '53', '43.52010', '3.41890');
+INSERT INTO `settlement` VALUES ('620', 'Cashur', '2401039524', '2401', '53', '43.84994', '3.58544');
+INSERT INTO `settlement` VALUES ('621', 'Ceel Bay', '2401039572', '2401', '53', '43.29665', '2.77354');
+INSERT INTO `settlement` VALUES ('622', 'Ceel Doon', '2401039340', '2401', '53', '43.69222', '3.22125');
+INSERT INTO `settlement` VALUES ('623', 'Ceel Gool', '2401039568', '2401', '53', '43.68525', '2.91016');
+INSERT INTO `settlement` VALUES ('624', 'Cumarow', '2401039312', '2401', '53', '43.61482', '3.28559');
+INSERT INTO `settlement` VALUES ('625', 'Daauudow', '2401039090', '2401', '53', '43.68416', '2.98945');
+INSERT INTO `settlement` VALUES ('626', 'Dabeylow', '2401039300', '2401', '53', '43.59890', '3.23367');
+INSERT INTO `settlement` VALUES ('627', 'Dadjenai', '2401039244', '2401', '53', '43.60367', '3.05973');
+INSERT INTO `settlement` VALUES ('628', 'Dambale', '2401039496', '2401', '53', '43.51012', '3.01339');
+INSERT INTO `settlement` VALUES ('629', 'Danbar', '2401039296', '2401', '53', '43.60812', '3.22938');
+INSERT INTO `settlement` VALUES ('630', 'Danyar', '2401039258', '2401', '53', '43.61141', '3.11389');
+INSERT INTO `settlement` VALUES ('631', 'Darrow', '2401039004', '2401', '53', '43.12716', '3.33658');
+INSERT INTO `settlement` VALUES ('632', 'Daynuunay', '2401039224', '2401', '53', '43.79688', '3.03985');
+INSERT INTO `settlement` VALUES ('633', 'Debweyn', '2401039172', '2401', '53', '43.14936', '2.65521');
+INSERT INTO `settlement` VALUES ('634', 'Deeleb', '2401039218', '2401', '53', '43.84536', '3.22046');
+INSERT INTO `settlement` VALUES ('635', 'Deg Gonay', '2401039488', '2401', '53', '43.55423', '3.03250');
+INSERT INTO `settlement` VALUES ('636', 'Deygab', '2401039516', '2401', '53', '43.64642', '3.64990');
+INSERT INTO `settlement` VALUES ('637', 'Dhahiro', '2401039254', '2401', '53', '43.59531', '3.08747');
+INSERT INTO `settlement` VALUES ('638', 'Dhamaji', '2401039226', '2401', '53', '43.81515', '3.03732');
+INSERT INTO `settlement` VALUES ('639', 'Dheere', '2401039336', '2401', '53', '43.65466', '3.18642');
+INSERT INTO `settlement` VALUES ('640', 'Dhejiile-Masbadane', '2401039684', '2401', '53', '43.13344', '3.14768');
+INSERT INTO `settlement` VALUES ('641', 'Dhex - Yaal', '2401039634', '2401', '53', '43.40723', '3.28990');
+INSERT INTO `settlement` VALUES ('642', 'Dhuboy', '2401039716', '2401', '53', '43.45085', '3.04098');
+INSERT INTO `settlement` VALUES ('643', 'Dhulbaanta', '2401039092', '2401', '53', '43.67093', '2.92805');
+INSERT INTO `settlement` VALUES ('644', 'Dhusundhus', '2401039384', '2401', '53', '43.55326', '3.18857');
+INSERT INTO `settlement` VALUES ('645', 'Dhuur Belle', '2401039016', '2401', '53', '43.22114', '3.37370');
+INSERT INTO `settlement` VALUES ('646', 'Dib Dabiib', '2401029834', '2401', '53', '43.46890', '2.87220');
+INSERT INTO `settlement` VALUES ('647', 'Digto', '2401029836', '2401', '53', '44.23270', '3.30150');
+INSERT INTO `settlement` VALUES ('648', 'Diiga', '2401039552', '2401', '53', '43.71913', '3.66924');
+INSERT INTO `settlement` VALUES ('649', 'Diiqow', '2401039374', '2401', '53', '43.55025', '3.22229');
+INSERT INTO `settlement` VALUES ('650', 'Doomaar', '2401039532', '2401', '53', '43.85559', '3.64454');
+INSERT INTO `settlement` VALUES ('651', 'Doora Weere', '2401039560', '2401', '53', '43.79292', '3.73020');
+INSERT INTO `settlement` VALUES ('652', 'Drersin', '2401039526', '2401', '53', '43.84476', '3.54998');
+INSERT INTO `settlement` VALUES ('653', 'Dugsiro', '2401039366', '2401', '53', '43.55811', '3.23855');
+INSERT INTO `settlement` VALUES ('654', 'Duluunka', '2401039314', '2401', '53', '43.62203', '3.29261');
+INSERT INTO `settlement` VALUES ('655', 'Dusiilow', '2401029838', '2401', '53', '43.56790', '3.46960');
+INSERT INTO `settlement` VALUES ('656', 'Dusta', '2401039142', '2401', '53', '43.33813', '2.96734');
+INSERT INTO `settlement` VALUES ('657', 'Duubugaas', '2401029840', '2401', '53', '43.81900', '3.64860');
+INSERT INTO `settlement` VALUES ('658', 'Eeden Dheere', '2401039128', '2401', '53', '43.49391', '2.84920');
+INSERT INTO `settlement` VALUES ('659', 'Eedin Gaal Benle', '2401039760', '2401', '53', '43.46562', '3.01270');
+INSERT INTO `settlement` VALUES ('660', 'Eela Rog', '2401039594', '2401', '53', '43.92443', '3.15696');
+INSERT INTO `settlement` VALUES ('661', 'El Au Uegher', '2401029842', '2401', '53', '43.67840', '3.13280');
+INSERT INTO `settlement` VALUES ('662', 'El Gof', '2401029844', '2401', '53', '43.17090', '3.20040');
+INSERT INTO `settlement` VALUES ('663', 'El Ille', '2401029846', '2401', '53', '43.50100', '2.93100');
+INSERT INTO `settlement` VALUES ('664', 'Erjeegle', '2401039076', '2401', '53', '43.71611', '2.96287');
+INSERT INTO `settlement` VALUES ('665', 'Eynabadow', '2401039398', '2401', '53', '43.58154', '3.13886');
+INSERT INTO `settlement` VALUES ('666', 'Faajir', '2401039564', '2401', '53', '43.82286', '3.69066');
+INSERT INTO `settlement` VALUES ('667', 'Fiinka Ware', '2401029848', '2401', '53', '43.79870', '3.54790');
+INSERT INTO `settlement` VALUES ('668', 'Futuug', '2401029850', '2401', '53', '43.87220', '3.57110');
+INSERT INTO `settlement` VALUES ('669', 'Gaal Looge', '2401039070', '2401', '53', '43.73829', '2.97552');
+INSERT INTO `settlement` VALUES ('670', 'Gaal Madooba', '2401039514', '2401', '53', '43.67301', '3.64011');
+INSERT INTO `settlement` VALUES ('671', 'Gaal Somaal', '2401039304', '2401', '53', '43.60013', '3.25011');
+INSERT INTO `settlement` VALUES ('672', 'Gaaloolow', '2401039346', '2401', '53', '43.55453', '3.30225');
+INSERT INTO `settlement` VALUES ('673', 'Gaalsomale', '2401039302', '2401', '53', '43.58883', '3.25245');
+INSERT INTO `settlement` VALUES ('674', 'Gabaal', '2401039620', '2401', '53', '43.32709', '3.32215');
+INSERT INTO `settlement` VALUES ('675', 'Gafayl', '2401039190', '2401', '53', '43.93056', '3.08962');
+INSERT INTO `settlement` VALUES ('676', 'Gal Madowle', '2401039050', '2401', '53', '43.77096', '2.96816');
+INSERT INTO `settlement` VALUES ('677', 'Galamo', '2401039352', '2401', '53', '43.58675', '3.28104');
+INSERT INTO `settlement` VALUES ('678', 'Galamo Macala Weyn', '2401039350', '2401', '53', '43.57806', '3.28765');
+INSERT INTO `settlement` VALUES ('679', 'Galda', '2401039700', '2401', '53', '43.45156', '3.11741');
+INSERT INTO `settlement` VALUES ('680', 'Gallow', '2401039042', '2401', '53', '43.76344', '2.94750');
+INSERT INTO `settlement` VALUES ('681', 'Galol', '2401039510', '2401', '53', '43.54760', '3.59656');
+INSERT INTO `settlement` VALUES ('682', 'Galool', '2401029866', '2401', '53', '43.83050', '3.62710');
+INSERT INTO `settlement` VALUES ('683', 'Galool Dheer', '2401039204', '2401', '53', '43.88132', '3.03373');
+INSERT INTO `settlement` VALUES ('684', 'Galoolo Heer Huun', '2401039348', '2401', '53', '43.57307', '3.29668');
+INSERT INTO `settlement` VALUES ('685', 'Galoshe', '2401039476', '2401', '53', '43.54320', '3.06384');
+INSERT INTO `settlement` VALUES ('686', 'Galweel', '2401039334', '2401', '53', '43.65557', '3.23984');
+INSERT INTO `settlement` VALUES ('687', 'Gamarey', '2401039466', '2401', '53', '43.54430', '3.09201');
+INSERT INTO `settlement` VALUES ('688', 'Ganber', '2401039048', '2401', '53', '43.75703', '2.96399');
+INSERT INTO `settlement` VALUES ('689', 'Ganta', '2401029868', '2401', '53', '43.62230', '3.34940');
+INSERT INTO `settlement` VALUES ('690', 'Ganug', '2401029870', '2401', '53', '43.85140', '3.63280');
+INSERT INTO `settlement` VALUES ('691', 'Garal-Duure', '2401039754', '2401', '53', '43.39913', '3.05106');
+INSERT INTO `settlement` VALUES ('692', 'Garmagal', '2401039354', '2401', '53', '43.58443', '3.25960');
+INSERT INTO `settlement` VALUES ('693', 'Gasarla', '2401039590', '2401', '53', '43.72284', '3.10066');
+INSERT INTO `settlement` VALUES ('694', 'Gawaan', '2401039598', '2401', '53', '43.87485', '3.06420');
+INSERT INTO `settlement` VALUES ('695', 'Geba Gebah', '2401039504', '2401', '53', '44.04659', '3.53435');
+INSERT INTO `settlement` VALUES ('696', 'Geedey', '2401029872', '2401', '53', '43.57170', '3.40280');
+INSERT INTO `settlement` VALUES ('697', 'Gerer Weyn', '2401039490', '2401', '53', '43.53108', '3.02562');
+INSERT INTO `settlement` VALUES ('698', 'Gesareeb', '2401039280', '2401', '53', '43.64913', '3.15404');
+INSERT INTO `settlement` VALUES ('699', 'Ghelai', '2401029874', '2401', '53', '43.89790', '3.04980');
+INSERT INTO `settlement` VALUES ('700', 'Gherrogh', '2401029876', '2401', '53', '43.52740', '3.17080');
+INSERT INTO `settlement` VALUES ('701', 'Gobley', '2401039364', '2401', '53', '43.58490', '3.23817');
+INSERT INTO `settlement` VALUES ('702', 'Gobweyne', '2401039362', '2401', '53', '43.58200', '3.24361');
+INSERT INTO `settlement` VALUES ('703', 'Godoboy', '2401039448', '2401', '53', '43.52218', '3.31835');
+INSERT INTO `settlement` VALUES ('704', 'Goduen', '2401029878', '2401', '53', '43.49920', '3.04760');
+INSERT INTO `settlement` VALUES ('705', 'Gof Caddey', '2401039582', '2401', '53', '43.56577', '3.23264');
+INSERT INTO `settlement` VALUES ('706', 'Gol', '2401039062', '2401', '53', '43.80491', '2.98601');
+INSERT INTO `settlement` VALUES ('707', 'Golaai', '2401039474', '2401', '53', '43.53808', '3.07608');
+INSERT INTO `settlement` VALUES ('708', 'Goldhow', '2401039586', '2401', '53', '43.51974', '3.12301');
+INSERT INTO `settlement` VALUES ('709', 'Golmalad', '2401039440', '2401', '53', '43.53081', '3.28164');
+INSERT INTO `settlement` VALUES ('710', 'Gololka', '2401039686', '2401', '53', '43.19581', '3.13162');
+INSERT INTO `settlement` VALUES ('711', 'Gomar', '2401029880', '2401', '53', '43.53080', '3.44880');
+INSERT INTO `settlement` VALUES ('712', 'Gommarey', '2401039478', '2401', '53', '43.52300', '3.06558');
+INSERT INTO `settlement` VALUES ('713', 'Gonownog', '2401039228', '2401', '53', '43.77237', '3.05826');
+INSERT INTO `settlement` VALUES ('714', 'Gonreh', '2401039528', '2401', '53', '43.80438', '3.63065');
+INSERT INTO `settlement` VALUES ('715', 'Goodallow', '2401039652', '2401', '53', '43.46250', '3.22397');
+INSERT INTO `settlement` VALUES ('716', 'Goof Abaaley', '2401039648', '2401', '53', '43.49134', '3.31121');
+INSERT INTO `settlement` VALUES ('717', 'Goof Guduud', '2401039116', '2401', '53', '43.47406', '2.96221');
+INSERT INTO `settlement` VALUES ('718', 'Goof Guduud', '2401039646', '2401', '53', '43.47315', '3.31817');
+INSERT INTO `settlement` VALUES ('719', 'Goof-Maaday', '2401039660', '2401', '53', '43.47429', '3.19272');
+INSERT INTO `settlement` VALUES ('720', 'Goormay', '2401039194', '2401', '53', '43.90139', '3.10031');
+INSERT INTO `settlement` VALUES ('721', 'Gordan', '2401039212', '2401', '53', '43.83037', '3.16397');
+INSERT INTO `settlement` VALUES ('722', 'Gorey', '2401039292', '2401', '53', '43.62957', '3.21690');
+INSERT INTO `settlement` VALUES ('723', 'Gorisane', '2401039118', '2401', '53', '43.41995', '2.94672');
+INSERT INTO `settlement` VALUES ('724', 'Gorrog', '2401039410', '2401', '53', '43.51810', '3.17544');
+INSERT INTO `settlement` VALUES ('725', 'Grangrasle', '2401039206', '2401', '53', '43.82615', '3.03314');
+INSERT INTO `settlement` VALUES ('726', 'Grunlow', '2401039658', '2401', '53', '43.47415', '3.20153');
+INSERT INTO `settlement` VALUES ('727', 'Gubadi', '2401039360', '2401', '53', '43.57227', '3.23817');
+INSERT INTO `settlement` VALUES ('728', 'Gudero', '2401029882', '2401', '53', '43.51770', '3.02770');
+INSERT INTO `settlement` VALUES ('729', 'Guduudo', '2401039480', '2401', '53', '43.52300', '3.05903');
+INSERT INTO `settlement` VALUES ('730', 'Guduudo Dhunte', '2401039166', '2401', '53', '43.18782', '2.79967');
+INSERT INTO `settlement` VALUES ('731', 'Gumlsole', '2401039188', '2401', '53', '43.93290', '3.06277');
+INSERT INTO `settlement` VALUES ('732', 'Gurinlow', '2401039446', '2401', '53', '43.51653', '3.28917');
+INSERT INTO `settlement` VALUES ('733', 'Gurtimaley', '2401039482', '2401', '53', '43.52300', '3.05466');
+INSERT INTO `settlement` VALUES ('734', 'Gurubay', '2401039688', '2401', '53', '43.18146', '3.12367');
+INSERT INTO `settlement` VALUES ('735', 'Guumisow', '2401039596', '2401', '53', '43.92451', '3.16731');
+INSERT INTO `settlement` VALUES ('736', 'Guwela', '2401039252', '2401', '53', '43.60891', '3.08202');
+INSERT INTO `settlement` VALUES ('737', 'Haarbar Galad', '2401039418', '2401', '53', '43.52838', '3.20556');
+INSERT INTO `settlement` VALUES ('738', 'Habare', '2401039214', '2401', '53', '43.83136', '3.21788');
+INSERT INTO `settlement` VALUES ('739', 'Hafuul', '2401039570', '2401', '53', '43.50674', '2.96013');
+INSERT INTO `settlement` VALUES ('740', 'Halule', '2401039276', '2401', '53', '43.61391', '3.17632');
+INSERT INTO `settlement` VALUES ('741', 'Hara', '2401039464', '2401', '53', '43.56395', '3.10282');
+INSERT INTO `settlement` VALUES ('742', 'Hare', '2401029884', '2401', '53', '43.57780', '3.55110');
+INSERT INTO `settlement` VALUES ('743', 'Harrow', '2401029886', '2401', '53', '43.57240', '3.60160');
+INSERT INTO `settlement` VALUES ('744', 'Hartiganle', '2401039332', '2401', '53', '43.68800', '3.29280');
+INSERT INTO `settlement` VALUES ('745', 'Hawanley', '2401039428', '2401', '53', '43.52783', '3.24164');
+INSERT INTO `settlement` VALUES ('746', 'Haydabale', '2401029888', '2401', '53', '43.82290', '3.53210');
+INSERT INTO `settlement` VALUES ('747', 'Hereerra Jiifa', '2401039650', '2401', '53', '43.46065', '3.24287');
+INSERT INTO `settlement` VALUES ('748', 'Hobinsha', '2401039522', '2401', '53', '43.80008', '3.58859');
+INSERT INTO `settlement` VALUES ('749', 'Hobishole', '2401039132', '2401', '53', '43.35014', '2.98523');
+INSERT INTO `settlement` VALUES ('750', 'Hooday', '2401039498', '2401', '53', '43.50072', '3.00345');
+INSERT INTO `settlement` VALUES ('751', 'Humbow', '2401039008', '2401', '53', '43.19431', '3.42211');
+INSERT INTO `settlement` VALUES ('752', 'Ibdow', '2401029890', '2401', '53', '43.77970', '3.54750');
+INSERT INTO `settlement` VALUES ('753', 'Idadlow', '2401039020', '2401', '53', '43.25375', '3.35900');
+INSERT INTO `settlement` VALUES ('754', 'Idaw Madow', '2401039230', '2401', '53', '43.79295', '3.08067');
+INSERT INTO `settlement` VALUES ('755', 'Iddeed Wanle', '2401039744', '2401', '53', '43.18089', '3.07990');
+INSERT INTO `settlement` VALUES ('756', 'Ideedley', '2401039606', '2401', '53', '43.24483', '3.33039');
+INSERT INTO `settlement` VALUES ('757', 'Idinta', '2401039624', '2401', '53', '43.36887', '3.31732');
+INSERT INTO `settlement` VALUES ('758', 'Ifanta', '2401039662', '2401', '53', '43.46846', '3.18277');
+INSERT INTO `settlement` VALUES ('759', 'Illow Abow', '2401039454', '2401', '53', '43.53621', '3.12706');
+INSERT INTO `settlement` VALUES ('760', 'Illow Antow', '2401039402', '2401', '53', '43.54318', '3.13979');
+INSERT INTO `settlement` VALUES ('761', 'Ilooyi', '2401039550', '2401', '53', '43.72037', '3.69830');
+INSERT INTO `settlement` VALUES ('762', 'Inasoogsatu', '2401029892', '2401', '53', '43.62850', '3.63080');
+INSERT INTO `settlement` VALUES ('763', 'Intee Ka Kadiidaa', '2401039426', '2401', '53', '43.54610', '3.23686');
+INSERT INTO `settlement` VALUES ('764', 'Irrwar', '2401039678', '2401', '53', '43.33406', '3.21559');
+INSERT INTO `settlement` VALUES ('765', 'Isbiil', '2401039022', '2401', '53', '43.29391', '3.35622');
+INSERT INTO `settlement` VALUES ('766', 'Isgagoonaweyn', '2401039422', '2401', '53', '43.53026', '3.22650');
+INSERT INTO `settlement` VALUES ('767', 'Isgeed', '2401029894', '2401', '53', '43.53030', '3.46910');
+INSERT INTO `settlement` VALUES ('768', 'Isgow', '2401039758', '2401', '53', '43.45312', '3.00389');
+INSERT INTO `settlement` VALUES ('769', 'Isguuled', '2401039628', '2401', '53', '43.39288', '3.31348');
+INSERT INTO `settlement` VALUES ('770', 'Isha', '2401039380', '2401', '53', '43.58605', '3.19692');
+INSERT INTO `settlement` VALUES ('771', 'Iska-Reh', '2401039742', '2401', '53', '43.25478', '3.04154');
+INSERT INTO `settlement` VALUES ('772', 'Islan Wiyn', '2401039034', '2401', '53', '43.76031', '2.88785');
+INSERT INTO `settlement` VALUES ('773', 'Islan Yaray', '2401039036', '2401', '53', '43.74878', '2.89353');
+INSERT INTO `settlement` VALUES ('774', 'Jannal', '2401039538', '2401', '53', '43.87826', '3.61600');
+INSERT INTO `settlement` VALUES ('775', 'Jemeecada', '2401039064', '2401', '53', '43.80595', '2.98105');
+INSERT INTO `settlement` VALUES ('776', 'Jidow', '2401039704', '2401', '53', '43.47884', '3.10250');
+INSERT INTO `settlement` VALUES ('777', 'Jilibey', '2401039508', '2401', '53', '43.61201', '3.62327');
+INSERT INTO `settlement` VALUES ('778', 'Jirkaah', '2401039404', '2401', '53', '43.54121', '3.16540');
+INSERT INTO `settlement` VALUES ('779', 'Jiumdaale', '2401039544', '2401', '53', '43.95863', '3.56953');
+INSERT INTO `settlement` VALUES ('780', 'Kaay Sanay', '2401039012', '2401', '53', '43.21825', '3.40820');
+INSERT INTO `settlement` VALUES ('781', 'Kaaysiney', '2401039046', '2401', '53', '43.79818', '2.94702');
+INSERT INTO `settlement` VALUES ('782', 'Kaban Jife', '2401029762', '2401', '53', '43.51920', '3.51770');
+INSERT INTO `settlement` VALUES ('783', 'Kaiin', '2401039540', '2401', '53', '43.89693', '3.60865');
+INSERT INTO `settlement` VALUES ('784', 'Kashida', '2401029764', '2401', '53', '43.78170', '3.65010');
+INSERT INTO `settlement` VALUES ('785', 'Koban Kow Kow', '2401039308', '2401', '53', '43.59578', '3.28202');
+INSERT INTO `settlement` VALUES ('786', 'Kobonle', '2401039274', '2401', '53', '43.61069', '3.17238');
+INSERT INTO `settlement` VALUES ('787', 'Koonya Gaduud', '2401039084', '2401', '53', '43.72324', '2.94830');
+INSERT INTO `settlement` VALUES ('788', 'Korar', '2401039546', '2401', '53', '43.89791', '3.52842');
+INSERT INTO `settlement` VALUES ('789', 'Kormari', '2401039130', '2401', '53', '43.35286', '2.99494');
+INSERT INTO `settlement` VALUES ('790', 'Kormari', '2401039694', '2401', '53', '43.21641', '3.15080');
+INSERT INTO `settlement` VALUES ('791', 'Korudheer', '2401039154', '2401', '53', '43.40610', '2.86764');
+INSERT INTO `settlement` VALUES ('792', 'Kunyo Warabe', '2401039220', '2401', '53', '43.78565', '3.01429');
+INSERT INTO `settlement` VALUES ('793', 'Kunyogo', '2401039040', '2401', '53', '43.76584', '2.93973');
+INSERT INTO `settlement` VALUES ('794', 'Kurankuro', '2401039088', '2401', '53', '43.73397', '2.89530');
+INSERT INTO `settlement` VALUES ('795', 'Kurta', '2401039030', '2401', '53', '43.36245', '3.58490');
+INSERT INTO `settlement` VALUES ('796', 'Kuus', '2401039612', '2401', '53', '43.30124', '3.32471');
+INSERT INTO `settlement` VALUES ('797', 'Laan Garas', '2401039728', '2401', '53', '43.42740', '3.02222');
+INSERT INTO `settlement` VALUES ('798', 'Laaw Nasarow', '2401039006', '2401', '53', '43.15982', '3.41545');
+INSERT INTO `settlement` VALUES ('799', 'Labatan Jirow', '2401029766', '2401', '53', '43.75150', '3.53210');
+INSERT INTO `settlement` VALUES ('800', 'Lanbuule', '2401039278', '2401', '53', '43.63060', '3.17869');
+INSERT INTO `settlement` VALUES ('801', 'Lawiilay', '2401039236', '2401', '53', '43.71721', '3.03446');
+INSERT INTO `settlement` VALUES ('802', 'Leked', '2401039196', '2401', '53', '43.86687', '3.08602');
+INSERT INTO `settlement` VALUES ('803', 'Lo Gaddud', '2401039082', '2401', '53', '43.68873', '2.94966');
+INSERT INTO `settlement` VALUES ('804', 'Lojir', '2401039562', '2401', '53', '43.80550', '3.71749');
+INSERT INTO `settlement` VALUES ('805', 'Lolisce', '2401029768', '2401', '53', '44.04820', '3.27910');
+INSERT INTO `settlement` VALUES ('806', 'Low Buulo', '2401039060', '2401', '53', '43.79882', '2.99506');
+INSERT INTO `settlement` VALUES ('807', 'Lowa Isku Rogow', '2401039740', '2401', '53', '43.39927', '3.06570');
+INSERT INTO `settlement` VALUES ('808', 'Luqa Dheere', '2401039468', '2401', '53', '43.53829', '3.09245');
+INSERT INTO `settlement` VALUES ('809', 'Lusoluso', '2401039414', '2401', '53', '43.54231', '3.19621');
+INSERT INTO `settlement` VALUES ('810', 'Maar', '2401039250', '2401', '53', '43.60044', '3.07354');
+INSERT INTO `settlement` VALUES ('811', 'Madax Maroodi', '2401039558', '2401', '53', '43.77158', '3.73985');
+INSERT INTO `settlement` VALUES ('812', 'Madina', '2401039240', '2401', '53', '43.65075', '3.02558');
+INSERT INTO `settlement` VALUES ('813', 'Madoda', '2401039322', '2401', '53', '43.64244', '3.30808');
+INSERT INTO `settlement` VALUES ('814', 'Madooda', '2401039566', '2401', '53', '43.96236', '3.87467');
+INSERT INTO `settlement` VALUES ('815', 'Magdaad', '2401029770', '2401', '53', '44.20140', '3.57910');
+INSERT INTO `settlement` VALUES ('816', 'Maguurto', '2401039108', '2401', '53', '43.45922', '2.99712');
+INSERT INTO `settlement` VALUES ('817', 'Maka Yarey', '2401039210', '2401', '53', '43.85775', '3.16541');
+INSERT INTO `settlement` VALUES ('818', 'Malaag', '2401039400', '2401', '53', '43.55315', '3.12913');
+INSERT INTO `settlement` VALUES ('819', 'Malable', '2401039718', '2401', '53', '43.43877', '3.03813');
+INSERT INTO `settlement` VALUES ('820', 'Manaas', '2401039124', '2401', '53', '43.46664', '2.89360');
+INSERT INTO `settlement` VALUES ('821', 'Manaur', '2401039338', '2401', '53', '43.66388', '3.18921');
+INSERT INTO `settlement` VALUES ('822', 'Maranka', '2401039456', '2401', '53', '43.53851', '3.12127');
+INSERT INTO `settlement` VALUES ('823', 'Mareere', '2401039580', '2401', '53', '43.89906', '3.18612');
+INSERT INTO `settlement` VALUES ('824', 'Maroodile', '2401039290', '2401', '53', '43.60735', '3.21372');
+INSERT INTO `settlement` VALUES ('825', 'Maroodmadi', '2401039068', '2401', '53', '43.74054', '2.99666');
+INSERT INTO `settlement` VALUES ('826', 'Marreer', '2401039122', '2401', '53', '43.46762', '2.91116');
+INSERT INTO `settlement` VALUES ('827', 'Maserka', '2401039324', '2401', '53', '43.64302', '3.30392');
+INSERT INTO `settlement` VALUES ('828', 'Masgaale', '2401039388', '2401', '53', '43.54944', '3.17131');
+INSERT INTO `settlement` VALUES ('829', 'Matuuti', '2401039318', '2401', '53', '43.63145', '3.28455');
+INSERT INTO `settlement` VALUES ('830', 'Maxamuudow', '2401039058', '2401', '53', '43.78770', '2.98425');
+INSERT INTO `settlement` VALUES ('831', 'Mayafulka', '2401039264', '2401', '53', '43.70769', '3.14727');
+INSERT INTO `settlement` VALUES ('832', 'Maykoo Guuraaw', '2401039610', '2401', '53', '43.25861', '3.30936');
+INSERT INTO `settlement` VALUES ('833', 'Med Cerba', '2401029772', '2401', '53', '43.56880', '3.06890');
+INSERT INTO `settlement` VALUES ('834', 'Mediina', '2401039086', '2401', '53', '43.70314', '2.89954');
+INSERT INTO `settlement` VALUES ('835', 'Meyfah', '2401039140', '2401', '53', '43.35384', '2.96254');
+INSERT INTO `settlement` VALUES ('836', 'Miidaay', '2401039486', '2401', '53', '43.51383', '3.03523');
+INSERT INTO `settlement` VALUES ('837', 'Miire', '2401039462', '2401', '53', '43.55336', '3.10610');
+INSERT INTO `settlement` VALUES ('838', 'Mintaan', '2401029774', '2401', '53', '43.52840', '3.33110');
+INSERT INTO `settlement` VALUES ('839', 'Miudila', '2401039330', '2401', '53', '43.63438', '3.30028');
+INSERT INTO `settlement` VALUES ('840', 'Molmad Weyne', '2401029776', '2401', '53', '43.83160', '3.52930');
+INSERT INTO `settlement` VALUES ('841', 'Mood Mooda', '2401039202', '2401', '53', '43.84973', '3.00444');
+INSERT INTO `settlement` VALUES ('842', 'Mooshe', '2401039666', '2401', '53', '43.49148', '3.17297');
+INSERT INTO `settlement` VALUES ('843', 'Morbus', '2401039622', '2401', '53', '43.35025', '3.32215');
+INSERT INTO `settlement` VALUES ('844', 'Moro Goloole', '2401039608', '2401', '53', '43.23517', '3.30070');
+INSERT INTO `settlement` VALUES ('845', 'Mubarak', '2401039512', '2401', '53', '43.69120', '3.62161');
+INSERT INTO `settlement` VALUES ('846', 'Muddule', '2401039152', '2401', '53', '43.39540', '2.91487');
+INSERT INTO `settlement` VALUES ('847', 'Mugdile', '2401029778', '2401', '53', '43.91820', '3.12010');
+INSERT INTO `settlement` VALUES ('848', 'Mukubo', '2401039656', '2401', '53', '43.49489', '3.21502');
+INSERT INTO `settlement` VALUES ('849', 'Mursal', '2401039014', '2401', '53', '43.19967', '3.38305');
+INSERT INTO `settlement` VALUES ('850', 'Nasib', '2401039288', '2401', '53', '43.60176', '3.21105');
+INSERT INTO `settlement` VALUES ('851', 'Nunei', '2401029780', '2401', '53', '43.80140', '3.03250');
+INSERT INTO `settlement` VALUES ('852', 'Oagaduud', '2401039248', '2401', '53', '43.65245', '3.08768');
+INSERT INTO `settlement` VALUES ('853', 'Odomow', '2401039548', '2401', '53', '43.71975', '3.68077');
+INSERT INTO `settlement` VALUES ('854', 'Onaybo', '2401039578', '2401', '53', '43.87119', '3.18969');
+INSERT INTO `settlement` VALUES ('855', 'Oodan', '2401039102', '2401', '53', '43.49974', '2.97316');
+INSERT INTO `settlement` VALUES ('856', 'Oodan', '2401039494', '2401', '53', '43.52693', '3.01546');
+INSERT INTO `settlement` VALUES ('857', 'Ooro', '2401039492', '2401', '53', '43.54375', '3.01175');
+INSERT INTO `settlement` VALUES ('858', 'Osboola', '2401039096', '2401', '53', '43.50873', '2.99814');
+INSERT INTO `settlement` VALUES ('859', 'Qansax Sheb', '2401039162', '2401', '53', '43.32123', '2.82978');
+INSERT INTO `settlement` VALUES ('860', 'Qasallow', '2401039722', '2401', '53', '43.42186', '3.06968');
+INSERT INTO `settlement` VALUES ('861', 'Qomari', '2401039536', '2401', '53', '43.89074', '3.62890');
+INSERT INTO `settlement` VALUES ('862', 'Qorriile', '2401039072', '2401', '53', '43.69594', '2.97721');
+INSERT INTO `settlement` VALUES ('863', 'Rama', '2401039180', '2401', '53', '44.03315', '3.26022');
+INSERT INTO `settlement` VALUES ('864', 'Rebay', '2401039392', '2401', '53', '43.58407', '3.15999');
+INSERT INTO `settlement` VALUES ('865', 'Reydabale', '2401039316', '2401', '53', '43.61755', '3.30008');
+INSERT INTO `settlement` VALUES ('866', 'Robay Guduud', '2401039164', '2401', '53', '43.30978', '2.78189');
+INSERT INTO `settlement` VALUES ('867', 'Rubei', '2401029852', '2401', '53', '43.46830', '3.02780');
+INSERT INTO `settlement` VALUES ('868', 'Sabiyo', '2401039158', '2401', '53', '43.38221', '2.83513');
+INSERT INTO `settlement` VALUES ('869', 'Sada Kabad', '2401039424', '2401', '53', '43.51371', '3.23819');
+INSERT INTO `settlement` VALUES ('870', 'Sakdaad', '2401029854', '2401', '53', '43.19970', '3.39740');
+INSERT INTO `settlement` VALUES ('871', 'Salbuko', '2401039270', '2401', '53', '43.61273', '3.15306');
+INSERT INTO `settlement` VALUES ('872', 'Samriyo', '2401039452', '2401', '53', '43.52221', '3.13065');
+INSERT INTO `settlement` VALUES ('873', 'Sanilow', '2401039644', '2401', '53', '43.49219', '3.29572');
+INSERT INTO `settlement` VALUES ('874', 'Saoow', '2401039262', '2401', '53', '43.60353', '3.10042');
+INSERT INTO `settlement` VALUES ('875', 'Sarmaan - Dheer', '2401039626', '2401', '53', '43.35437', '3.28294');
+INSERT INTO `settlement` VALUES ('876', 'Saydheelow', '2401029856', '2401', '53', '43.67260', '3.36850');
+INSERT INTO `settlement` VALUES ('877', 'Senilow', '2401029858', '2401', '53', '43.50020', '3.29760');
+INSERT INTO `settlement` VALUES ('878', 'Sgoi', '2401029860', '2401', '53', '43.41730', '2.97730');
+INSERT INTO `settlement` VALUES ('879', 'Shabeelle', '2401039604', '2401', '53', '43.19212', '3.28123');
+INSERT INTO `settlement` VALUES ('880', 'Shagow', '2401039256', '2401', '53', '43.59249', '3.09608');
+INSERT INTO `settlement` VALUES ('881', 'Showle', '2401039078', '2401', '53', '43.71651', '2.95639');
+INSERT INTO `settlement` VALUES ('882', 'Siidow', '2401039148', '2401', '53', '43.39050', '2.94149');
+INSERT INTO `settlement` VALUES ('883', 'Sinqo', '2401039458', '2401', '53', '43.52136', '3.11090');
+INSERT INTO `settlement` VALUES ('884', 'Suge Weyne', '2401039642', '2401', '53', '43.49645', '3.27825');
+INSERT INTO `settlement` VALUES ('885', 'Suge Yarre', '2401039640', '2401', '53', '43.48764', '3.25623');
+INSERT INTO `settlement` VALUES ('886', 'Suntay', '2401029822', '2401', '53', '43.58160', '3.44980');
+INSERT INTO `settlement` VALUES ('887', 'Surma Daaraya', '2401039104', '2401', '53', '43.51582', '2.96961');
+INSERT INTO `settlement` VALUES ('888', 'Surweyn', '2401039574', '2401', '53', '43.89295', '3.22426');
+INSERT INTO `settlement` VALUES ('889', 'Tagaal', '2401029824', '2401', '53', '43.87040', '3.51930');
+INSERT INTO `settlement` VALUES ('890', 'Tajego', '2401039026', '2401', '53', '43.45562', '3.36856');
+INSERT INTO `settlement` VALUES ('891', 'Taliissa', '2401039746', '2401', '53', '43.14012', '3.06058');
+INSERT INTO `settlement` VALUES ('892', 'Tifow', '2401039246', '2401', '53', '43.62650', '3.07387');
+INSERT INTO `settlement` VALUES ('893', 'Tinjiroow', '2401039200', '2401', '53', '43.88554', '3.09078');
+INSERT INTO `settlement` VALUES ('894', 'Tirroon', '2401039732', '2401', '53', '43.46406', '3.07806');
+INSERT INTO `settlement` VALUES ('895', 'Toosweyne', '2401039690', '2401', '53', '43.20448', '3.10662');
+INSERT INTO `settlement` VALUES ('896', 'Tugeer', '2401039110', '2401', '53', '43.49009', '2.99341');
+INSERT INTO `settlement` VALUES ('897', 'Tugeere', '2401039736', '2401', '53', '43.42840', '3.08985');
+INSERT INTO `settlement` VALUES ('898', 'Turgodut', '2401029826', '2401', '53', '43.40080', '2.57170');
+INSERT INTO `settlement` VALUES ('899', 'Tuugar', '2401039358', '2401', '53', '43.56825', '3.24733');
+INSERT INTO `settlement` VALUES ('900', 'Ubor Uuma', '2401039484', '2401', '53', '43.51722', '3.04844');
+INSERT INTO `settlement` VALUES ('901', 'Udgashan', '2401039282', '2401', '53', '43.61709', '3.20390');
+INSERT INTO `settlement` VALUES ('902', 'Waabomte', '2401039066', '2401', '53', '43.72188', '2.99306');
+INSERT INTO `settlement` VALUES ('903', 'Wab Dooro', '2401029828', '2401', '53', '43.28070', '2.87960');
+INSERT INTO `settlement` VALUES ('904', 'Wabiyow', '2401039328', '2401', '53', '43.66999', '3.32199');
+INSERT INTO `settlement` VALUES ('905', 'Wabiyow', '2401039420', '2401', '53', '43.51488', '3.21434');
+INSERT INTO `settlement` VALUES ('906', 'Waday Roma', '2401029830', '2401', '53', '43.57100', '3.57990');
+INSERT INTO `settlement` VALUES ('907', 'Wanay', '2401039232', '2401', '53', '43.78026', '3.17017');
+INSERT INTO `settlement` VALUES ('908', 'Waney', '2401039412', '2401', '53', '43.53206', '3.18634');
+INSERT INTO `settlement` VALUES ('909', 'War Caasha', '2401039726', '2401', '53', '43.41390', '3.03131');
+INSERT INTO `settlement` VALUES ('910', 'War Cumar', '2401039434', '2401', '53', '43.52752', '3.26415');
+INSERT INTO `settlement` VALUES ('911', 'War Cumar', '2401039442', '2401', '53', '43.52265', '3.27466');
+INSERT INTO `settlement` VALUES ('912', 'War Dugsi', '2401039750', '2401', '53', '43.14054', '3.09880');
+INSERT INTO `settlement` VALUES ('913', 'War Gaduud', '2401039074', '2401', '53', '43.70330', '2.97953');
+INSERT INTO `settlement` VALUES ('914', 'War Garasle', '2401039310', '2401', '53', '43.59532', '3.30073');
+INSERT INTO `settlement` VALUES ('915', 'War Hawen', '2401039430', '2401', '53', '43.54085', '3.25066');
+INSERT INTO `settlement` VALUES ('916', 'War Isho', '2401039052', '2401', '53', '43.80731', '2.95783');
+INSERT INTO `settlement` VALUES ('917', 'War Umurrow', '2401039614', '2401', '53', '43.30138', '3.30169');
+INSERT INTO `settlement` VALUES ('918', 'Waraabow', '2401039672', '2401', '53', '43.35523', '3.22028');
+INSERT INTO `settlement` VALUES ('919', 'Waraaley', '2401039198', '2401', '53', '43.86244', '3.09978');
+INSERT INTO `settlement` VALUES ('920', 'Warabale', '2401039294', '2401', '53', '43.62743', '3.23497');
+INSERT INTO `settlement` VALUES ('921', 'Warabale Weyn', '2401039376', '2401', '53', '43.54944', '3.21268');
+INSERT INTO `settlement` VALUES ('922', 'Warabale Yar', '2401039382', '2401', '53', '43.55766', '3.20503');
+INSERT INTO `settlement` VALUES ('923', 'Waraji', '2401039242', '2401', '53', '43.62077', '3.04646');
+INSERT INTO `settlement` VALUES ('924', 'Wargarasle', '2401039692', '2401', '53', '43.17251', '3.10832');
+INSERT INTO `settlement` VALUES ('925', 'Wariyala', '2401039386', '2401', '53', '43.56624', '3.18197');
+INSERT INTO `settlement` VALUES ('926', 'Warqaday', '2401039192', '2401', '53', '43.89555', '3.08631');
+INSERT INTO `settlement` VALUES ('927', 'Waryaryoyi', '2401039370', '2401', '53', '43.57783', '3.27084');
+INSERT INTO `settlement` VALUES ('928', 'Watanle', '2401039286', '2401', '53', '43.62684', '3.19149');
+INSERT INTO `settlement` VALUES ('929', 'Weedhirr', '2401039636', '2401', '53', '43.40836', '3.26390');
+INSERT INTO `settlement` VALUES ('930', 'Weel Harare', '2401039168', '2401', '53', '43.18640', '2.81309');
+INSERT INTO `settlement` VALUES ('931', 'Weriri', '2401039134', '2401', '53', '43.37119', '2.98425');
+INSERT INTO `settlement` VALUES ('932', 'Xabaalo Barbar', '2401039170', '2401', '53', '43.16153', '2.74230');
+INSERT INTO `settlement` VALUES ('933', 'Xabsac', '2401029832', '2401', '53', '43.52830', '3.51890');
+INSERT INTO `settlement` VALUES ('934', 'Xagal', '2401039618', '2401', '53', '43.29214', '3.25395');
+INSERT INTO `settlement` VALUES ('935', 'Xagarka', '2401039160', '2401', '53', '43.31305', '2.90265');
+INSERT INTO `settlement` VALUES ('936', 'Xalmeey', '2401039216', '2401', '53', '43.84348', '3.19390');
+INSERT INTO `settlement` VALUES ('937', 'Xasna Yusuf', '2401039394', '2401', '53', '43.58547', '3.17363');
+INSERT INTO `settlement` VALUES ('938', 'Xiyaad Yarey', '2401039114', '2401', '53', '43.43991', '2.95818');
+INSERT INTO `settlement` VALUES ('939', 'Yaarbiyow', '2401039444', '2401', '53', '43.52053', '3.27898');
+INSERT INTO `settlement` VALUES ('940', 'Yageg', '2401029862', '2401', '53', '43.99810', '3.26890');
+INSERT INTO `settlement` VALUES ('941', 'Yanle', '2401039298', '2401', '53', '43.61742', '3.23861');
+INSERT INTO `settlement` VALUES ('942', 'Zauel', '2401029864', '2401', '53', '43.75110', '3.55220');
+INSERT INTO `settlement` VALUES ('943', 'Aabaan Weyn', '2402039594', '2402', '54', '44.01572', '2.64585');
+INSERT INTO `settlement` VALUES ('944', 'Aabaan Yare', '2402039584', '2402', '54', '44.03845', '2.62840');
+INSERT INTO `settlement` VALUES ('945', 'Aabow', '2402039662', '2402', '54', '44.16656', '3.03334');
+INSERT INTO `settlement` VALUES ('946', 'Aawla', '2402039390', '2402', '54', '44.01857', '2.95761');
+INSERT INTO `settlement` VALUES ('947', 'Abaar Yoma', '2402039328', '2402', '54', '44.10537', '2.69246');
+INSERT INTO `settlement` VALUES ('948', 'Abac Gurei', '2402029726', '2402', '54', '43.77710', '2.76950');
+INSERT INTO `settlement` VALUES ('949', 'Abaqsaarre', '2402039708', '2402', '54', '44.05250', '2.91463');
+INSERT INTO `settlement` VALUES ('950', 'Abawle', '2402039314', '2402', '54', '44.09516', '2.76920');
+INSERT INTO `settlement` VALUES ('951', 'Abdi Uurane', '2402039490', '2402', '54', '43.87489', '2.88585');
+INSERT INTO `settlement` VALUES ('952', 'Aborko', '2402039420', '2402', '54', '43.94775', '2.89289');
+INSERT INTO `settlement` VALUES ('953', 'Adeile', '2402029728', '2402', '54', '43.30140', '1.92970');
+INSERT INTO `settlement` VALUES ('954', 'Af Ed', '2402029730', '2402', '54', '43.36720', '1.96700');
+INSERT INTO `settlement` VALUES ('955', 'Afaalo', '2402039632', '2402', '54', '43.76526', '2.34465');
+INSERT INTO `settlement` VALUES ('956', 'Aifodo', '2402029732', '2402', '54', '44.19770', '2.90170');
+INSERT INTO `settlement` VALUES ('957', 'Ailesho', '2402039626', '2402', '54', '43.97505', '2.56975');
+INSERT INTO `settlement` VALUES ('958', 'Alol Lamma Gad', '2402029734', '2402', '54', '43.38060', '1.97700');
+INSERT INTO `settlement` VALUES ('959', 'Aw Baasow', '2402039300', '2402', '54', '44.10984', '2.81189');
+INSERT INTO `settlement` VALUES ('960', 'Aw Daarow', '2402029736', '2402', '54', '44.20050', '2.88160');
+INSERT INTO `settlement` VALUES ('961', 'Aw Dhuroow', '2402039178', '2402', '54', '44.17228', '2.82098');
+INSERT INTO `settlement` VALUES ('962', 'Aw Dhuubow', '2402039324', '2402', '54', '44.08175', '2.71056');
+INSERT INTO `settlement` VALUES ('963', 'Aw Humoow', '2402039054', '2402', '54', '44.24569', '2.80431');
+INSERT INTO `settlement` VALUES ('964', 'Aw Jiloole', '2402039414', '2402', '54', '43.95127', '2.94694');
+INSERT INTO `settlement` VALUES ('965', 'Aw Kuulaw', '2402039154', '2402', '54', '44.18769', '2.90054');
+INSERT INTO `settlement` VALUES ('966', 'Aw Mayow', '2402039174', '2402', '54', '44.17056', '2.83483');
+INSERT INTO `settlement` VALUES ('967', 'Aw Misigey', '2402039086', '2402', '54', '44.27247', '2.87971');
+INSERT INTO `settlement` VALUES ('968', 'Aw Mordi', '2402039672', '2402', '54', '44.19045', '3.02923');
+INSERT INTO `settlement` VALUES ('969', 'Aw Nagay', '2402039650', '2402', '54', '44.09482', '3.08325');
+INSERT INTO `settlement` VALUES ('970', 'Aw Reenow', '2402039146', '2402', '54', '44.17552', '2.94516');
+INSERT INTO `settlement` VALUES ('971', 'Aw Riinow', '2402039360', '2402', '54', '44.03556', '2.80481');
+INSERT INTO `settlement` VALUES ('972', 'Aw Shabeel Isaaq', '2402039658', '2402', '54', '44.16048', '3.04886');
+INSERT INTO `settlement` VALUES ('973', 'Aw Yaale', '2402039074', '2402', '54', '44.26559', '2.85340');
+INSERT INTO `settlement` VALUES ('974', 'Aw Yaay', '2402039364', '2402', '54', '44.04793', '2.81494');
+INSERT INTO `settlement` VALUES ('975', 'Aw Yarow', '2402039066', '2402', '54', '44.24895', '2.84531');
+INSERT INTO `settlement` VALUES ('976', 'Ay Dooya', '2402039096', '2402', '54', '44.21799', '2.89719');
+INSERT INTO `settlement` VALUES ('977', 'Ay Guud Wiin', '2402039050', '2402', '54', '44.21176', '2.80328');
+INSERT INTO `settlement` VALUES ('978', 'Ayaroy', '2402039656', '2402', '54', '44.14579', '3.05997');
+INSERT INTO `settlement` VALUES ('979', 'Baale', '2402039374', '2402', '54', '44.04383', '2.88199');
+INSERT INTO `settlement` VALUES ('980', 'Baas Ma Lah', '2402039560', '2402', '54', '43.62955', '2.73273');
+INSERT INTO `settlement` VALUES ('981', 'Babelow', '2402039568', '2402', '54', '44.14664', '2.60630');
+INSERT INTO `settlement` VALUES ('982', 'Balaaw', '2402039162', '2402', '54', '44.17548', '2.86851');
+INSERT INTO `settlement` VALUES ('983', 'Balaaw', '2402039168', '2402', '54', '44.18382', '2.85361');
+INSERT INTO `settlement` VALUES ('984', 'Balaaw', '2402039312', '2402', '54', '44.08533', '2.78052');
+INSERT INTO `settlement` VALUES ('985', 'Balad Al Amiin', '2402039544', '2402', '54', '43.74494', '2.86887');
+INSERT INTO `settlement` VALUES ('986', 'Ballow', '2402039458', '2402', '54', '43.94735', '2.68528');
+INSERT INTO `settlement` VALUES ('987', 'Baloole', '2402039622', '2402', '54', '43.95967', '2.59648');
+INSERT INTO `settlement` VALUES ('988', 'Bamburaale', '2402039224', '2402', '54', '44.12906', '2.80555');
+INSERT INTO `settlement` VALUES ('989', 'Bansoole', '2402039344', '2402', '54', '44.04115', '2.74655');
+INSERT INTO `settlement` VALUES ('990', 'Banyaal', '2402039108', '2402', '54', '44.18870', '2.94051');
+INSERT INTO `settlement` VALUES ('991', 'Barabuula', '2402039438', '2402', '54', '43.96553', '2.84037');
+INSERT INTO `settlement` VALUES ('992', 'Barkaan Caliyow', '2402039332', '2402', '54', '46.68373', '4.50016');
+INSERT INTO `settlement` VALUES ('993', 'Barkadle', '2402039208', '2402', '54', '44.13420', '2.74826');
+INSERT INTO `settlement` VALUES ('994', 'Baryaalo', '2402039444', '2402', '54', '43.98658', '2.81675');
+INSERT INTO `settlement` VALUES ('995', 'Bashmaale', '2402039430', '2402', '54', '43.96553', '2.88024');
+INSERT INTO `settlement` VALUES ('996', 'Beled Amiin', '2402039014', '2402', '54', '44.37213', '2.73288');
+INSERT INTO `settlement` VALUES ('997', 'Beled Amiin', '2402039586', '2402', '54', '44.04248', '2.60218');
+INSERT INTO `settlement` VALUES ('998', 'Benbesle', '2402039562', '2402', '54', '44.15685', '2.66250');
+INSERT INTO `settlement` VALUES ('999', 'Bercadle', '2402029738', '2402', '54', '44.13170', '3.03220');
+INSERT INTO `settlement` VALUES ('1000', 'Biyooley', '2402039112', '2402', '54', '44.23175', '2.95874');
+INSERT INTO `settlement` VALUES ('1001', 'Bocole', '2402029740', '2402', '54', '44.12740', '2.72920');
+INSERT INTO `settlement` VALUES ('1002', 'Bog Daadi', '2402039412', '2402', '54', '43.93468', '2.96224');
+INSERT INTO `settlement` VALUES ('1003', 'Boonka', '2402039276', '2402', '54', '44.08108', '2.91552');
+INSERT INTO `settlement` VALUES ('1004', 'Buakay', '2402039486', '2402', '54', '43.93326', '2.86543');
+INSERT INTO `settlement` VALUES ('1005', 'Bulo Cugno', '2402029742', '2402', '54', '43.97150', '2.67960');
+INSERT INTO `settlement` VALUES ('1006', 'Bulo Hirso', '2402029744', '2402', '54', '43.93120', '2.65070');
+INSERT INTO `settlement` VALUES ('1007', 'Bulo Tugar', '2402029746', '2402', '54', '43.83250', '2.75230');
+INSERT INTO `settlement` VALUES ('1008', 'Buulaal', '2402039228', '2402', '54', '44.15052', '2.83073');
+INSERT INTO `settlement` VALUES ('1009', 'Buulo Amiin', '2402039298', '2402', '54', '44.11088', '2.82984');
+INSERT INTO `settlement` VALUES ('1010', 'Buulo Bullow', '2402029748', '2402', '54', '44.25130', '3.00130');
+INSERT INTO `settlement` VALUES ('1011', 'Buulo Dhenforur', '2402039640', '2402', '54', '44.04894', '3.03243');
+INSERT INTO `settlement` VALUES ('1012', 'Buulo Fulaay', '2402039688', '2402', '54', '43.52003', '2.11860');
+INSERT INTO `settlement` VALUES ('1013', 'Buulo Hanyow', '2402039540', '2402', '54', '43.81316', '2.85606');
+INSERT INTO `settlement` VALUES ('1014', 'Buulo Massib', '2402039310', '2402', '54', '44.06842', '2.79557');
+INSERT INTO `settlement` VALUES ('1015', 'Buulo Subto', '2402039644', '2402', '54', '44.02962', '3.08789');
+INSERT INTO `settlement` VALUES ('1016', 'Buulo Xasanow', '2402039638', '2402', '54', '44.04035', '3.05252');
+INSERT INTO `settlement` VALUES ('1017', 'Buur Dhajis', '2402039670', '2402', '54', '44.19121', '3.01828');
+INSERT INTO `settlement` VALUES ('1018', 'Buur Dhijis', '2402039666', '2402', '54', '44.15994', '3.00268');
+INSERT INTO `settlement` VALUES ('1019', 'Buur Heybo', '2402039710', '2402', '54', '44.30592', '2.99262');
+INSERT INTO `settlement` VALUES ('1020', 'Buur Kuulow', '2402039018', '2402', '54', '44.39744', '2.80997');
+INSERT INTO `settlement` VALUES ('1021', 'Cabdi Gurey', '2402039040', '2402', '54', '44.23016', '2.72816');
+INSERT INTO `settlement` VALUES ('1022', 'Cabdiyow Geedow', '2402039072', '2402', '54', '44.24672', '2.86362');
+INSERT INTO `settlement` VALUES ('1023', 'Caday Kud', '2402039462', '2402', '54', '43.96993', '2.66927');
+INSERT INTO `settlement` VALUES ('1024', 'Cahow Berkaan', '2402039392', '2402', '54', '44.04197', '2.95016');
+INSERT INTO `settlement` VALUES ('1025', 'Caje', '2402039188', '2402', '54', '44.16721', '2.72256');
+INSERT INTO `settlement` VALUES ('1026', 'Caliyow Cusmaan', '2402039186', '2402', '54', '44.18911', '2.75504');
+INSERT INTO `settlement` VALUES ('1027', 'Caliyow Dooyo', '2402039514', '2402', '54', '43.80363', '2.89313');
+INSERT INTO `settlement` VALUES ('1028', 'Cambuul Lebi', '2402039200', '2402', '54', '44.13122', '2.71846');
+INSERT INTO `settlement` VALUES ('1029', 'Cambuul Madhabey', '2402039194', '2402', '54', '44.12921', '2.69342');
+INSERT INTO `settlement` VALUES ('1030', 'Cambuul Weyne', '2402039196', '2402', '54', '44.13726', '2.70341');
+INSERT INTO `settlement` VALUES ('1031', 'Cambuul Xaraar', '2402039198', '2402', '54', '44.12981', '2.71272');
+INSERT INTO `settlement` VALUES ('1032', 'Caraay', '2402039290', '2402', '54', '44.06171', '2.83349');
+INSERT INTO `settlement` VALUES ('1033', 'Caro', '2402029750', '2402', '54', '44.08240', '2.90020');
+INSERT INTO `settlement` VALUES ('1034', 'Ceel Bisiq Cadde', '2402039636', '2402', '54', '43.77345', '2.46072');
+INSERT INTO `settlement` VALUES ('1035', 'Ceel Matarro', '2402039624', '2402', '54', '43.92902', '2.58955');
+INSERT INTO `settlement` VALUES ('1036', 'Cigala Hooleey', '2402039704', '2402', '54', '44.52565', '2.66114');
+INSERT INTO `settlement` VALUES ('1037', 'Cigalle Hooley', '2402039010', '2402', '54', '44.47645', '2.72396');
+INSERT INTO `settlement` VALUES ('1038', 'Cugni Fara', '2402029760', '2402', '54', '44.13290', '2.57760');
+INSERT INTO `settlement` VALUES ('1039', 'Curunlow', '2402039504', '2402', '54', '43.88874', '2.97344');
+INSERT INTO `settlement` VALUES ('1040', 'Daabale', '2402039362', '2402', '54', '44.02021', '2.82783');
+INSERT INTO `settlement` VALUES ('1041', 'Daarow', '2402039080', '2402', '54', '44.20413', '2.88092');
+INSERT INTO `settlement` VALUES ('1042', 'Dacarre', '2402039294', '2402', '54', '44.08853', '2.81650');
+INSERT INTO `settlement` VALUES ('1043', 'Dacarre Yarey', '2402039302', '2402', '54', '44.09218', '2.81248');
+INSERT INTO `settlement` VALUES ('1044', 'Danaaley', '2402039244', '2402', '54', '44.11692', '2.86605');
+INSERT INTO `settlement` VALUES ('1045', 'Danab Qoy', '2402039466', '2402', '54', '43.93158', '2.72459');
+INSERT INTO `settlement` VALUES ('1046', 'Darabqooy', '2402039464', '2402', '54', '43.92509', '2.70193');
+INSERT INTO `settlement` VALUES ('1047', 'Daylaale', '2402039218', '2402', '54', '44.15089', '2.78767');
+INSERT INTO `settlement` VALUES ('1048', 'Deega', '2402039270', '2402', '54', '44.10053', '2.94838');
+INSERT INTO `settlement` VALUES ('1049', 'Degdaa', '2402039158', '2402', '54', '44.18814', '2.88207');
+INSERT INTO `settlement` VALUES ('1050', 'Dereboshile', '2402039532', '2402', '54', '43.77080', '2.79729');
+INSERT INTO `settlement` VALUES ('1051', 'Dhaayow', '2402039190', '2402', '54', '44.17898', '2.69551');
+INSERT INTO `settlement` VALUES ('1052', 'Dhafaad Fuurka', '2402039556', '2402', '54', '43.62848', '2.69481');
+INSERT INTO `settlement` VALUES ('1053', 'Dhagardheere', '2402039606', '2402', '54', '44.01089', '2.52585');
+INSERT INTO `settlement` VALUES ('1054', 'Dhawey', '2402039564', '2402', '54', '44.16446', '2.64469');
+INSERT INTO `settlement` VALUES ('1055', 'Dheenka', '2402039620', '2402', '54', '43.95007', '2.62255');
+INSERT INTO `settlement` VALUES ('1056', 'Dhiigtaar', '2402039176', '2402', '54', '44.17898', '2.82895');
+INSERT INTO `settlement` VALUES ('1057', 'Dhumey', '2402039410', '2402', '54', '43.94332', '2.96234');
+INSERT INTO `settlement` VALUES ('1058', 'Dhun Dhufaay', '2402039538', '2402', '54', '43.77921', '2.85630');
+INSERT INTO `settlement` VALUES ('1059', 'Dhuubow', '2402029762', '2402', '54', '44.07770', '2.72030');
+INSERT INTO `settlement` VALUES ('1060', 'Dodole', '2402039696', '2402', '54', '43.56897', '2.32024');
+INSERT INTO `settlement` VALUES ('1061', 'Dooday', '2402039580', '2402', '54', '44.06584', '2.62303');
+INSERT INTO `settlement` VALUES ('1062', 'Doog Yarey', '2402039076', '2402', '54', '44.20692', '2.85721');
+INSERT INTO `settlement` VALUES ('1063', 'Dooy Gadahay', '2402039664', '2402', '54', '44.12259', '3.00550');
+INSERT INTO `settlement` VALUES ('1064', 'Dooy Ruq', '2402039338', '2402', '54', '44.06037', '2.69804');
+INSERT INTO `settlement` VALUES ('1065', 'Dooye Shiidle', '2402039340', '2402', '54', '44.03466', '2.72375');
+INSERT INTO `settlement` VALUES ('1066', 'Dudumiya', '2402039232', '2402', '54', '44.12355', '2.83699');
+INSERT INTO `settlement` VALUES ('1067', 'Dugdumaale', '2402039060', '2402', '54', '44.27377', '2.83527');
+INSERT INTO `settlement` VALUES ('1068', 'Dugulle', '2402039702', '2402', '54', '44.52480', '2.27853');
+INSERT INTO `settlement` VALUES ('1069', 'Dukaanka', '2402039520', '2402', '54', '43.82821', '2.74605');
+INSERT INTO `settlement` VALUES ('1070', 'Duura', '2402039152', '2402', '54', '44.17034', '2.92088');
+INSERT INTO `settlement` VALUES ('1071', 'Erjeegle', '2402039552', '2402', '54', '43.65079', '2.69142');
+INSERT INTO `settlement` VALUES ('1072', 'Farfanqoron', '2402039646', '2402', '54', '44.07945', '3.08257');
+INSERT INTO `settlement` VALUES ('1073', 'Farta', '2402039282', '2402', '54', '44.06313', '2.89153');
+INSERT INTO `settlement` VALUES ('1074', 'Fiinka', '2402039334', '2402', '54', '44.10366', '2.70989');
+INSERT INTO `settlement` VALUES ('1075', 'Fulaayka', '2402039122', '2402', '54', '44.14819', '2.95098');
+INSERT INTO `settlement` VALUES ('1076', 'Fuud Dooro', '2402039202', '2402', '54', '44.13726', '2.72881');
+INSERT INTO `settlement` VALUES ('1077', 'Fuud Saqaar', '2402039234', '2402', '54', '44.15119', '2.84377');
+INSERT INTO `settlement` VALUES ('1078', 'Gaal Guuris', '2402039150', '2402', '54', '44.17578', '2.92476');
+INSERT INTO `settlement` VALUES ('1079', 'Gabiushaale', '2402039058', '2402', '54', '44.24597', '2.82030');
+INSERT INTO `settlement` VALUES ('1080', 'Gadiisaay', '2402039382', '2402', '54', '44.03176', '2.92476');
+INSERT INTO `settlement` VALUES ('1081', 'Gadiisey', '2402039250', '2402', '54', '44.12996', '2.91880');
+INSERT INTO `settlement` VALUES ('1082', 'Gagaoy', '2402039432', '2402', '54', '43.99531', '2.87648');
+INSERT INTO `settlement` VALUES ('1083', 'Gagso', '2402029770', '2402', '54', '43.98170', '2.87210');
+INSERT INTO `settlement` VALUES ('1084', 'Galay', '2402039296', '2402', '54', '44.09732', '2.83543');
+INSERT INTO `settlement` VALUES ('1085', 'Galbow', '2402039714', '2402', '54', '43.91410', '3.00432');
+INSERT INTO `settlement` VALUES ('1086', 'Galboy', '2402039682', '2402', '54', '43.93432', '3.01042');
+INSERT INTO `settlement` VALUES ('1087', 'Galgalow', '2402039164', '2402', '54', '44.15626', '2.87477');
+INSERT INTO `settlement` VALUES ('1088', 'Gallool', '2402039614', '2402', '54', '43.99434', '2.64093');
+INSERT INTO `settlement` VALUES ('1089', 'Galool Dheere', '2402039070', '2402', '54', '44.23881', '2.86176');
+INSERT INTO `settlement` VALUES ('1090', 'Galool Dheere', '2402039102', '2402', '54', '44.20609', '2.92787');
+INSERT INTO `settlement` VALUES ('1091', 'Galool Oomane', '2402039026', '2402', '54', '44.28511', '2.95632');
+INSERT INTO `settlement` VALUES ('1092', 'Galool Tuure', '2402039378', '2402', '54', '44.04286', '2.91090');
+INSERT INTO `settlement` VALUES ('1093', 'Galool Yar', '2402039210', '2402', '54', '44.12556', '2.77486');
+INSERT INTO `settlement` VALUES ('1094', 'Galoole', '2402039368', '2402', '54', '44.02081', '2.86359');
+INSERT INTO `settlement` VALUES ('1095', 'Galoole', '2402039388', '2402', '54', '44.05590', '2.93958');
+INSERT INTO `settlement` VALUES ('1096', 'Galoollo', '2402039610', '2402', '54', '43.97045', '2.66674');
+INSERT INTO `settlement` VALUES ('1097', 'Galoolow', '2402039260', '2402', '54', '44.11148', '2.98876');
+INSERT INTO `settlement` VALUES ('1098', 'Gamber', '2402039676', '2402', '54', '43.99144', '3.02631');
+INSERT INTO `settlement` VALUES ('1099', 'Gannana', '2402039684', '2402', '54', '43.35958', '2.18769');
+INSERT INTO `settlement` VALUES ('1100', 'Garaagarow', '2402039572', '2402', '54', '44.11533', '2.64415');
+INSERT INTO `settlement` VALUES ('1101', 'Garba Dheer', '2402039592', '2402', '54', '44.01939', '2.60746');
+INSERT INTO `settlement` VALUES ('1102', 'Gariire', '2402039242', '2402', '54', '44.11073', '2.86449');
+INSERT INTO `settlement` VALUES ('1103', 'Gariro', '2402039448', '2402', '54', '43.93734', '2.78817');
+INSERT INTO `settlement` VALUES ('1104', 'Garriida', '2402039440', '2402', '54', '43.95840', '2.81595');
+INSERT INTO `settlement` VALUES ('1105', 'Gawaanka', '2402039022', '2402', '54', '44.31896', '2.97873');
+INSERT INTO `settlement` VALUES ('1106', 'Godka', '2402039316', '2402', '54', '44.07795', '2.74841');
+INSERT INTO `settlement` VALUES ('1107', 'Godka', '2402039346', '2402', '54', '44.01522', '2.75057');
+INSERT INTO `settlement` VALUES ('1108', 'Godobay', '2402039286', '2402', '54', '44.06864', '2.86113');
+INSERT INTO `settlement` VALUES ('1109', 'Gogolis', '2402039206', '2402', '54', '44.13390', '2.74245');
+INSERT INTO `settlement` VALUES ('1110', 'Gollay', '2402039706', '2402', '54', '43.58517', '2.34366');
+INSERT INTO `settlement` VALUES ('1111', 'Golol Dheere', '2402039598', '2402', '54', '44.03487', '2.58438');
+INSERT INTO `settlement` VALUES ('1112', 'Goloole Bar', '2402029772', '2402', '54', '43.65270', '2.02270');
+INSERT INTO `settlement` VALUES ('1113', 'Golooley', '2402039602', '2402', '54', '44.05152', '2.58375');
+INSERT INTO `settlement` VALUES ('1114', 'Goloonle', '2402039478', '2402', '54', '43.88794', '2.81427');
+INSERT INTO `settlement` VALUES ('1115', 'Golwiin', '2402039342', '2402', '54', '44.03117', '2.73589');
+INSERT INTO `settlement` VALUES ('1116', 'Goof', '2402039116', '2402', '54', '44.19102', '2.97854');
+INSERT INTO `settlement` VALUES ('1117', 'Gorgor', '2402039686', '2402', '54', '43.49604', '2.15889');
+INSERT INTO `settlement` VALUES ('1118', 'Gudolaab', '2402039370', '2402', '54', '44.05568', '2.84474');
+INSERT INTO `settlement` VALUES ('1119', 'Gugumaale', '2402039036', '2402', '54', '44.30687', '2.80477');
+INSERT INTO `settlement` VALUES ('1120', 'Gumbi', '2402039384', '2402', '54', '44.03630', '2.93035');
+INSERT INTO `settlement` VALUES ('1121', 'Guubatii', '2402039182', '2402', '54', '44.18822', '2.81129');
+INSERT INTO `settlement` VALUES ('1122', 'Guudka', '2402039142', '2402', '54', '44.14320', '2.92652');
+INSERT INTO `settlement` VALUES ('1123', 'Guumba', '2402039258', '2402', '54', '44.06745', '2.99271');
+INSERT INTO `settlement` VALUES ('1124', 'Guunyo Rooble', '2402039192', '2402', '54', '44.14389', '2.67182');
+INSERT INTO `settlement` VALUES ('1125', 'Haarow', '2402039092', '2402', '54', '44.26057', '2.89988');
+INSERT INTO `settlement` VALUES ('1126', 'Haat', '2402039120', '2402', '54', '44.16313', '2.98868');
+INSERT INTO `settlement` VALUES ('1127', 'Habey Gare', '2402039496', '2402', '54', '43.92533', '2.93813');
+INSERT INTO `settlement` VALUES ('1128', 'Hagarrow', '2402039322', '2402', '54', '44.10783', '2.73567');
+INSERT INTO `settlement` VALUES ('1129', 'Hambawe', '2402039604', '2402', '54', '44.06190', '2.57793');
+INSERT INTO `settlement` VALUES ('1130', 'Hararec', '2402029774', '2402', '54', '44.11930', '2.68060');
+INSERT INTO `settlement` VALUES ('1131', 'Harganta Enow', '2402039674', '2402', '54', '44.25054', '3.01396');
+INSERT INTO `settlement` VALUES ('1132', 'Hebadow', '2402039570', '2402', '54', '44.10485', '2.64773');
+INSERT INTO `settlement` VALUES ('1133', 'Heeboy', '2402039084', '2402', '54', '44.24625', '2.89040');
+INSERT INTO `settlement` VALUES ('1134', 'Heer Aw Cise', '2402039264', '2402', '54', '44.08853', '2.96864');
+INSERT INTO `settlement` VALUES ('1135', 'Heer Aw Eaden', '2402039088', '2402', '54', '44.27182', '2.88640');
+INSERT INTO `settlement` VALUES ('1136', 'Heer Aw Madow', '2402039134', '2402', '54', '44.16702', '2.94589');
+INSERT INTO `settlement` VALUES ('1137', 'Heer Caliyow Mamow', '2402039148', '2402', '54', '44.17375', '2.93799');
+INSERT INTO `settlement` VALUES ('1138', 'Heer Eaqi', '2402039106', '2402', '54', '44.19958', '2.92666');
+INSERT INTO `settlement` VALUES ('1139', 'Heer Isaaq', '2402039104', '2402', '54', '44.20079', '2.91634');
+INSERT INTO `settlement` VALUES ('1140', 'Heer Macalim', '2402039254', '2402', '54', '44.15491', '2.96700');
+INSERT INTO `settlement` VALUES ('1141', 'Heer Mataan', '2402039068', '2402', '54', '44.23240', '2.86251');
+INSERT INTO `settlement` VALUES ('1142', 'Her Ay Casha', '2402039136', '2402', '54', '44.16507', '2.93831');
+INSERT INTO `settlement` VALUES ('1143', 'Hera Mata', '2402039118', '2402', '54', '44.16815', '2.97845');
+INSERT INTO `settlement` VALUES ('1144', 'Heudooliyow', '2402039024', '2402', '54', '44.33495', '2.97426');
+INSERT INTO `settlement` VALUES ('1145', 'Heydabta', '2402039524', '2402', '54', '43.80723', '2.75277');
+INSERT INTO `settlement` VALUES ('1146', 'Hooday', '2402039138', '2402', '54', '44.16182', '2.93269');
+INSERT INTO `settlement` VALUES ('1147', 'Hoogey', '2402039094', '2402', '54', '44.22942', '2.90872');
+INSERT INTO `settlement` VALUES ('1148', 'Hoogey', '2402039238', '2402', '54', '44.14061', '2.87924');
+INSERT INTO `settlement` VALUES ('1149', 'Hoosow', '2402039480', '2402', '54', '43.88306', '2.84926');
+INSERT INTO `settlement` VALUES ('1150', 'Hubsaay', '2402039354', '2402', '54', '44.02655', '2.78752');
+INSERT INTO `settlement` VALUES ('1151', 'Huley', '2402029776', '2402', '54', '44.36950', '2.22110');
+INSERT INTO `settlement` VALUES ('1152', 'Ibooto', '2402039356', '2402', '54', '44.04480', '2.79557');
+INSERT INTO `settlement` VALUES ('1153', 'Idaada', '2402039216', '2402', '54', '44.16028', '2.77046');
+INSERT INTO `settlement` VALUES ('1154', 'Idaadlow Mataakooy', '2402039144', '2402', '54', '44.16628', '2.95952');
+INSERT INTO `settlement` VALUES ('1155', 'Idaaloow', '2402039226', '2402', '54', '44.15268', '2.82388');
+INSERT INTO `settlement` VALUES ('1156', 'Igeysi', '2402039180', '2402', '54', '44.19321', '2.82075');
+INSERT INTO `settlement` VALUES ('1157', 'Ikirray', '2402039616', '2402', '54', '43.94322', '2.64393');
+INSERT INTO `settlement` VALUES ('1158', 'Irwarka', '2402039550', '2402', '54', '43.64982', '2.66901');
+INSERT INTO `settlement` VALUES ('1159', 'Isgoy', '2402039554', '2402', '54', '43.65797', '2.69869');
+INSERT INTO `settlement` VALUES ('1160', 'Jaag Ura', '2402039692', '2402', '54', '43.56687', '2.13908');
+INSERT INTO `settlement` VALUES ('1161', 'Jameeca', '2402039038', '2402', '54', '44.21259', '2.72063');
+INSERT INTO `settlement` VALUES ('1162', 'Jameeco Aaminey', '2402039712', '2402', '54', '44.09960', '2.86449');
+INSERT INTO `settlement` VALUES ('1163', 'Jarada Buur Kuulow', '2402039012', '2402', '54', '44.38814', '2.73173');
+INSERT INTO `settlement` VALUES ('1164', 'Jembecada', '2402039522', '2402', '54', '43.85455', '2.73236');
+INSERT INTO `settlement` VALUES ('1165', 'Jemeecada', '2402039436', '2402', '54', '43.95480', '2.82972');
+INSERT INTO `settlement` VALUES ('1166', 'Jimcada Dheen', '2402039042', '2402', '54', '44.24885', '2.74926');
+INSERT INTO `settlement` VALUES ('1167', 'Karre', '2402029716', '2402', '54', '44.37050', '3.26830');
+INSERT INTO `settlement` VALUES ('1168', 'Karrow', '2402039442', '2402', '54', '43.99243', '2.84301');
+INSERT INTO `settlement` VALUES ('1169', 'Kashid', '2402039618', '2402', '54', '43.92885', '2.62723');
+INSERT INTO `settlement` VALUES ('1170', 'Kaysannay', '2402039518', '2402', '54', '43.86056', '2.75374');
+INSERT INTO `settlement` VALUES ('1171', 'Kerrow Deqa', '2402039476', '2402', '54', '43.91132', '2.81475');
+INSERT INTO `settlement` VALUES ('1172', 'Kiisuro', '2402039262', '2402', '54', '44.11595', '2.97773');
+INSERT INTO `settlement` VALUES ('1173', 'Kiyaan', '2402039170', '2402', '54', '44.16758', '2.85257');
+INSERT INTO `settlement` VALUES ('1174', 'Kiyaanno', '2402039446', '2402', '54', '43.93254', '2.81939');
+INSERT INTO `settlement` VALUES ('1175', 'Koboogobta', '2402039450', '2402', '54', '43.95504', '2.78696');
+INSERT INTO `settlement` VALUES ('1176', 'Konkorey', '2402039668', '2402', '54', '44.16200', '3.01158');
+INSERT INTO `settlement` VALUES ('1177', 'Koranbod', '2402039578', '2402', '54', '44.13743', '2.56075');
+INSERT INTO `settlement` VALUES ('1178', 'Korey', '2402039132', '2402', '54', '44.15371', '2.93626');
+INSERT INTO `settlement` VALUES ('1179', 'Kormarey', '2402039048', '2402', '54', '44.19911', '2.78924');
+INSERT INTO `settlement` VALUES ('1180', 'Kormary', '2402039406', '2402', '54', '43.96849', '2.98773');
+INSERT INTO `settlement` VALUES ('1181', 'Korooy', '2402039266', '2402', '54', '44.07177', '2.95970');
+INSERT INTO `settlement` VALUES ('1182', 'Korow', '2402039452', '2402', '54', '43.96577', '2.77640');
+INSERT INTO `settlement` VALUES ('1183', 'Korrow Shidleey', '2402039454', '2402', '54', '43.99691', '2.78376');
+INSERT INTO `settlement` VALUES ('1184', 'Krow', '2402039306', '2402', '54', '44.10180', '2.79922');
+INSERT INTO `settlement` VALUES ('1185', 'Krow Ay Dhuubay', '2402039212', '2402', '54', '44.12988', '2.76607');
+INSERT INTO `settlement` VALUES ('1186', 'Kubcadoy', '2402029718', '2402', '54', '44.06990', '3.07780');
+INSERT INTO `settlement` VALUES ('1187', 'Kuniyo', '2402039652', '2402', '54', '44.13141', '3.08279');
+INSERT INTO `settlement` VALUES ('1188', 'Kunyabuurow', '2402039472', '2402', '54', '43.91292', '2.73556');
+INSERT INTO `settlement` VALUES ('1189', 'Kuun Shabeelle', '2402039330', '2402', '54', '44.07892', '2.67696');
+INSERT INTO `settlement` VALUES ('1190', 'Kuuniyo', '2402039418', '2402', '54', '43.99715', '2.93853');
+INSERT INTO `settlement` VALUES ('1191', 'Kuunya', '2402039474', '2402', '54', '43.92365', '2.80410');
+INSERT INTO `settlement` VALUES ('1192', 'Kuunya Dhoollo', '2402039612', '2402', '54', '43.99059', '2.64895');
+INSERT INTO `settlement` VALUES ('1193', 'Kuunyada Boodh', '2402039494', '2402', '54', '43.93030', '2.92868');
+INSERT INTO `settlement` VALUES ('1194', 'Kuunyo', '2402039078', '2402', '54', '44.20367', '2.86837');
+INSERT INTO `settlement` VALUES ('1195', 'Kuunyo', '2402039100', '2402', '54', '44.22496', '2.92815');
+INSERT INTO `settlement` VALUES ('1196', 'Kuunyo', '2402039114', '2402', '54', '44.25555', '2.96859');
+INSERT INTO `settlement` VALUES ('1197', 'Kuunyow Qarrow', '2402039460', '2402', '54', '43.95087', '2.67303');
+INSERT INTO `settlement` VALUES ('1198', 'Kuusley', '2402039648', '2402', '54', '44.08166', '3.09778');
+INSERT INTO `settlement` VALUES ('1199', 'Laabay', '2402039630', '2402', '54', '43.84564', '2.33599');
+INSERT INTO `settlement` VALUES ('1200', 'Laambuul', '2402039256', '2402', '54', '44.14605', '2.97579');
+INSERT INTO `settlement` VALUES ('1201', 'Lafa', '2402039386', '2402', '54', '44.05769', '2.92528');
+INSERT INTO `settlement` VALUES ('1202', 'Laqaadi Waay', '2402039002', '2402', '54', '44.66911', '3.01967');
+INSERT INTO `settlement` VALUES ('1203', 'Lawiiley', '2402039184', '2402', '54', '44.19843', '2.79713');
+INSERT INTO `settlement` VALUES ('1204', 'Leego', '2402039008', '2402', '54', '44.51203', '2.71597');
+INSERT INTO `settlement` VALUES ('1205', 'Leeska', '2402039274', '2402', '54', '44.11364', '2.96968');
+INSERT INTO `settlement` VALUES ('1206', 'Libayle', '2402039596', '2402', '54', '44.02378', '2.59860');
+INSERT INTO `settlement` VALUES ('1207', 'Liimaale', '2402039372', '2402', '54', '44.01306', '2.89004');
+INSERT INTO `settlement` VALUES ('1208', 'Loowley', '2402039426', '2402', '54', '43.98730', '2.90146');
+INSERT INTO `settlement` VALUES ('1209', 'Lowiga', '2402039558', '2402', '54', '43.61956', '2.71469');
+INSERT INTO `settlement` VALUES ('1210', 'Lugabaro', '2402039492', '2402', '54', '43.92813', '2.91820');
+INSERT INTO `settlement` VALUES ('1211', 'Lumi', '2402029720', '2402', '54', '43.95180', '2.97050');
+INSERT INTO `settlement` VALUES ('1212', 'Macalim Midan', '2402039526', '2402', '54', '43.78593', '2.76575');
+INSERT INTO `settlement` VALUES ('1213', 'Macaruufa', '2402039230', '2402', '54', '44.12906', '2.83073');
+INSERT INTO `settlement` VALUES ('1214', 'Mada Barodi', '2402039396', '2402', '54', '44.00531', '2.95121');
+INSERT INTO `settlement` VALUES ('1215', 'Madije Madishe', '2402039582', '2402', '54', '44.06029', '2.63610');
+INSERT INTO `settlement` VALUES ('1216', 'Madow Burre', '2402039110', '2402', '54', '44.20776', '2.95976');
+INSERT INTO `settlement` VALUES ('1217', 'Madox Maroodi', '2402029722', '2402', '54', '44.59760', '2.64770');
+INSERT INTO `settlement` VALUES ('1218', 'Magaay Muusa', '2402039404', '2402', '54', '43.94570', '2.98395');
+INSERT INTO `settlement` VALUES ('1219', 'Mahadoy', '2402039062', '2402', '54', '44.21622', '2.84419');
+INSERT INTO `settlement` VALUES ('1220', 'Mahamudo', '2402029724', '2402', '54', '44.25060', '2.92740');
+INSERT INTO `settlement` VALUES ('1221', 'Makaay Edde', '2402039172', '2402', '54', '44.19127', '2.83364');
+INSERT INTO `settlement` VALUES ('1222', 'Malaayka', '2402039130', '2402', '54', '44.14299', '2.93885');
+INSERT INTO `settlement` VALUES ('1223', 'Mansuur', '2402039548', '2402', '54', '43.70715', '2.69224');
+INSERT INTO `settlement` VALUES ('1224', 'Marmarkaa', '2402039278', '2402', '54', '44.10127', '2.92699');
+INSERT INTO `settlement` VALUES ('1225', 'Maroodey', '2402039214', '2402', '54', '44.15656', '2.76249');
+INSERT INTO `settlement` VALUES ('1226', 'Marrerrey', '2402039004', '2402', '54', '44.64431', '2.23342');
+INSERT INTO `settlement` VALUES ('1227', 'Masuusu', '2402039292', '2402', '54', '44.07661', '2.81464');
+INSERT INTO `settlement` VALUES ('1228', 'Mataanyaha', '2402039468', '2402', '54', '43.87553', '2.71602');
+INSERT INTO `settlement` VALUES ('1229', 'Mayfuurre', '2402039484', '2402', '54', '43.93734', '2.84389');
+INSERT INTO `settlement` VALUES ('1230', 'Meene Karron', '2402039428', '2402', '54', '43.94183', '2.85446');
+INSERT INTO `settlement` VALUES ('1231', 'Mehey', '2402039318', '2402', '54', '44.10887', '2.74617');
+INSERT INTO `settlement` VALUES ('1232', 'Meykootuurey', '2402039126', '2402', '54', '44.16615', '2.95509');
+INSERT INTO `settlement` VALUES ('1233', 'Minshaan', '2402039128', '2402', '54', '44.15165', '2.94762');
+INSERT INTO `settlement` VALUES ('1234', 'Mintaal Amiin', '2402039394', '2402', '54', '44.01269', '2.97378');
+INSERT INTO `settlement` VALUES ('1235', 'Mintalamiin', '2402039678', '2402', '54', '43.98950', '3.03477');
+INSERT INTO `settlement` VALUES ('1236', 'Miriqlay', '2402039512', '2402', '54', '43.81716', '2.90498');
+INSERT INTO `settlement` VALUES ('1237', 'Miski Roon', '2402039280', '2402', '54', '44.11528', '2.91917');
+INSERT INTO `settlement` VALUES ('1238', 'Misnsqate', '2402039252', '2402', '54', '44.12988', '2.93064');
+INSERT INTO `settlement` VALUES ('1239', 'Moorqoloole', '2402039032', '2402', '54', '44.30055', '2.89858');
+INSERT INTO `settlement` VALUES ('1240', 'Moq Dor', '2402039220', '2402', '54', '44.15439', '2.79676');
+INSERT INTO `settlement` VALUES ('1241', 'Morgawaan', '2402039660', '2402', '54', '44.13293', '3.04544');
+INSERT INTO `settlement` VALUES ('1242', 'Moroligoy', '2402039408', '2402', '54', '43.97400', '2.96451');
+INSERT INTO `settlement` VALUES ('1243', 'Munyow', '2402039642', '2402', '54', '44.01090', '3.01866');
+INSERT INTO `settlement` VALUES ('1244', 'Muunya', '2402039398', '2402', '54', '44.02885', '2.98198');
+INSERT INTO `settlement` VALUES ('1245', 'Oodan', '2402039320', '2402', '54', '44.09851', '2.74178');
+INSERT INTO `settlement` VALUES ('1246', 'Orostolo', '2402039056', '2402', '54', '44.21445', '2.81100');
+INSERT INTO `settlement` VALUES ('1247', 'Orow', '2402039204', '2402', '54', '44.14799', '2.73433');
+INSERT INTO `settlement` VALUES ('1248', 'Ou Jesow', '2402039576', '2402', '54', '44.11219', '2.55547');
+INSERT INTO `settlement` VALUES ('1249', 'Qabdalle Shacbaan', '2402039046', '2402', '54', '44.19688', '2.78236');
+INSERT INTO `settlement` VALUES ('1250', 'Qadiidle Xarey', '2402039502', '2402', '54', '43.90820', '2.96496');
+INSERT INTO `settlement` VALUES ('1251', 'Qadjidle', '2402039500', '2402', '54', '43.89387', '2.96568');
+INSERT INTO `settlement` VALUES ('1252', 'Qalanol', '2402039434', '2402', '54', '43.95256', '2.83541');
+INSERT INTO `settlement` VALUES ('1253', 'Qaranka', '2402039156', '2402', '54', '44.18144', '2.88632');
+INSERT INTO `settlement` VALUES ('1254', 'Qarankaa', '2402039030', '2402', '54', '44.28939', '2.89756');
+INSERT INTO `settlement` VALUES ('1255', 'Qardhaalo', '2402039304', '2402', '54', '44.09404', '2.80630');
+INSERT INTO `settlement` VALUES ('1256', 'Qardho', '2402039016', '2402', '54', '44.34231', '2.73748');
+INSERT INTO `settlement` VALUES ('1257', 'Qorontoola', '2402039508', '2402', '54', '43.83582', '2.90979');
+INSERT INTO `settlement` VALUES ('1258', 'Quunya Harraagow', '2402039470', '2402', '54', '43.87561', '2.74133');
+INSERT INTO `settlement` VALUES ('1259', 'Raarka', '2402039284', '2402', '54', '44.09159', '2.88080');
+INSERT INTO `settlement` VALUES ('1260', 'Raaydaboo', '2402039236', '2402', '54', '44.14158', '2.85562');
+INSERT INTO `settlement` VALUES ('1261', 'Ramo Dheer', '2402039698', '2402', '54', '43.64615', '2.26620');
+INSERT INTO `settlement` VALUES ('1262', 'Ramudle', '2402039690', '2402', '54', '43.52502', '2.17042');
+INSERT INTO `settlement` VALUES ('1263', 'Raydabow', '2402039488', '2402', '54', '43.90035', '2.87752');
+INSERT INTO `settlement` VALUES ('1264', 'Reebbay', '2402039588', '2402', '54', '44.00087', '2.63574');
+INSERT INTO `settlement` VALUES ('1265', 'Rooble', '2402039246', '2402', '54', '44.11550', '2.88184');
+INSERT INTO `settlement` VALUES ('1266', 'Rooble Shiikh', '2402039498', '2402', '54', '43.90259', '2.94117');
+INSERT INTO `settlement` VALUES ('1267', 'Ruqiya', '2402039336', '2402', '54', '44.03474', '2.68538');
+INSERT INTO `settlement` VALUES ('1268', 'Ruudah', '2402039546', '2402', '54', '43.76047', '2.87039');
+INSERT INTO `settlement` VALUES ('1269', 'Sabid', '2402039482', '2402', '54', '43.88666', '2.87304');
+INSERT INTO `settlement` VALUES ('1270', 'Saha Uen', '2402029764', '2402', '54', '44.47780', '2.85160');
+INSERT INTO `settlement` VALUES ('1271', 'Sal Misge', '2402039222', '2402', '54', '44.15305', '2.80429');
+INSERT INTO `settlement` VALUES ('1272', 'Salam Maroodi', '2402039416', '2402', '54', '43.96913', '2.93389');
+INSERT INTO `settlement` VALUES ('1273', 'Samaanley', '2402039350', '2402', '54', '44.01418', '2.76093');
+INSERT INTO `settlement` VALUES ('1274', 'Samakaya', '2402039680', '2402', '54', '43.93640', '3.02563');
+INSERT INTO `settlement` VALUES ('1275', 'Saraar Goobo', '2402039006', '2402', '54', '44.56931', '2.43923');
+INSERT INTO `settlement` VALUES ('1276', 'Scima', '2402029766', '2402', '54', '44.05130', '2.98100');
+INSERT INTO `settlement` VALUES ('1277', 'Shaamburow', '2402039600', '2402', '54', '44.04696', '2.57632');
+INSERT INTO `settlement` VALUES ('1278', 'Shabeele', '2402039140', '2402', '54', '44.15338', '2.92901');
+INSERT INTO `settlement` VALUES ('1279', 'Shan Hagar', '2402039166', '2402', '54', '44.17309', '2.85942');
+INSERT INTO `settlement` VALUES ('1280', 'Shawgah', '2402039530', '2402', '54', '43.80747', '2.76727');
+INSERT INTO `settlement` VALUES ('1281', 'Sheeble', '2402039366', '2402', '54', '44.02319', '2.85033');
+INSERT INTO `settlement` VALUES ('1282', 'Shiidaalow', '2402039090', '2402', '54', '44.26884', '2.89077');
+INSERT INTO `settlement` VALUES ('1283', 'Shiidlow', '2402039288', '2402', '54', '44.07862', '2.84869');
+INSERT INTO `settlement` VALUES ('1284', 'Shiima', '2402039268', '2402', '54', '44.07505', '2.94614');
+INSERT INTO `settlement` VALUES ('1285', 'Shillow', '2402039516', '2402', '54', '43.84879', '2.75342');
+INSERT INTO `settlement` VALUES ('1286', 'Shinbir', '2402039506', '2402', '54', '43.87649', '2.98441');
+INSERT INTO `settlement` VALUES ('1287', 'Shirfoole', '2402039034', '2402', '54', '44.32742', '2.83740');
+INSERT INTO `settlement` VALUES ('1288', 'Shuun Qaayle', '2402039124', '2402', '54', '44.15143', '2.95801');
+INSERT INTO `settlement` VALUES ('1289', 'Siigolay', '2402039542', '2402', '54', '43.77865', '2.87800');
+INSERT INTO `settlement` VALUES ('1290', 'Silaata', '2402039380', '2402', '54', '44.01239', '2.92752');
+INSERT INTO `settlement` VALUES ('1291', 'Sneeb', '2402039308', '2402', '54', '44.09539', '2.79333');
+INSERT INTO `settlement` VALUES ('1292', 'Sodori', '2402039628', '2402', '54', '43.98898', '2.54863');
+INSERT INTO `settlement` VALUES ('1293', 'Sool', '2402039358', '2402', '54', '44.04711', '2.80414');
+INSERT INTO `settlement` VALUES ('1294', 'Surkun', '2402039608', '2402', '54', '44.07353', '2.53560');
+INSERT INTO `settlement` VALUES ('1295', 'Suruqle', '2402039272', '2402', '54', '44.11341', '2.95732');
+INSERT INTO `settlement` VALUES ('1296', 'Takow', '2402039376', '2402', '54', '44.04987', '2.89756');
+INSERT INTO `settlement` VALUES ('1297', 'Totoorow', '2402039044', '2402', '54', '44.19446', '2.76396');
+INSERT INTO `settlement` VALUES ('1298', 'Turkarey', '2402039700', '2402', '54', '43.27357', '1.98666');
+INSERT INTO `settlement` VALUES ('1299', 'Uar Girgirin', '2402029752', '2402', '54', '43.47170', '1.86850');
+INSERT INTO `settlement` VALUES ('1300', 'Uar Lechin', '2402029754', '2402', '54', '43.39730', '1.91810');
+INSERT INTO `settlement` VALUES ('1301', 'Ubaare', '2402039348', '2402', '54', '44.03794', '2.75645');
+INSERT INTO `settlement` VALUES ('1302', 'Uel Cobon', '2402029756', '2402', '54', '44.27180', '2.57230');
+INSERT INTO `settlement` VALUES ('1303', 'Uel Doden', '2402029758', '2402', '54', '43.51950', '1.85290');
+INSERT INTO `settlement` VALUES ('1304', 'Ugaari', '2402039402', '2402', '54', '44.00427', '2.85689');
+INSERT INTO `settlement` VALUES ('1305', 'Ugarow', '2402039160', '2402', '54', '44.18837', '2.87126');
+INSERT INTO `settlement` VALUES ('1306', 'Uqoonta', '2402039082', '2402', '54', '44.20460', '2.87562');
+INSERT INTO `settlement` VALUES ('1307', 'Waagle', '2402039028', '2402', '54', '44.29729', '2.95083');
+INSERT INTO `settlement` VALUES ('1308', 'Waama', '2402039400', '2402', '54', '44.05918', '2.99509');
+INSERT INTO `settlement` VALUES ('1309', 'Wafdhey Weyn', '2402039240', '2402', '54', '44.11841', '2.87290');
+INSERT INTO `settlement` VALUES ('1310', 'Wagadoy', '2402039424', '2402', '54', '43.98082', '2.91964');
+INSERT INTO `settlement` VALUES ('1311', 'Wagalow', '2402039654', '2402', '54', '44.15683', '3.07853');
+INSERT INTO `settlement` VALUES ('1312', 'War Aaw Kheero', '2402039634', '2402', '54', '43.74266', '2.41553');
+INSERT INTO `settlement` VALUES ('1313', 'Waraabalow', '2402039510', '2402', '54', '43.80827', '2.91347');
+INSERT INTO `settlement` VALUES ('1314', 'Waraabo Bedow', '2402039574', '2402', '54', '44.13018', '2.63601');
+INSERT INTO `settlement` VALUES ('1315', 'Warfaa', '2402039098', '2402', '54', '44.20534', '2.89719');
+INSERT INTO `settlement` VALUES ('1316', 'Watariiriya', '2402039352', '2402', '54', '44.04398', '2.77761');
+INSERT INTO `settlement` VALUES ('1317', 'Weelbisigle', '2402029768', '2402', '54', '43.76750', '2.32940');
+INSERT INTO `settlement` VALUES ('1318', 'Weelbisigle', '2402039536', '2402', '54', '43.77496', '2.83925');
+INSERT INTO `settlement` VALUES ('1319', 'Xagarow', '2402039694', '2402', '54', '43.60064', '2.20198');
+INSERT INTO `settlement` VALUES ('1320', 'Xaliimay', '2402039456', '2402', '54', '43.93895', '2.71546');
+INSERT INTO `settlement` VALUES ('1321', 'Xanyayi', '2402039534', '2402', '54', '43.78529', '2.83773');
+INSERT INTO `settlement` VALUES ('1322', 'Xasan Daa\'Uud', '2402039020', '2402', '54', '44.32383', '2.98391');
+INSERT INTO `settlement` VALUES ('1323', 'Xawaal Arundi', '2402039422', '2402', '54', '43.95616', '2.88825');
+INSERT INTO `settlement` VALUES ('1324', 'Xudow', '2402039528', '2402', '54', '43.79410', '2.77199');
+INSERT INTO `settlement` VALUES ('1325', 'Yaaq', '2402039566', '2402', '54', '44.18808', '2.61847');
+INSERT INTO `settlement` VALUES ('1326', 'Yoma Balaaw', '2402039326', '2402', '54', '44.09576', '2.70199');
+INSERT INTO `settlement` VALUES ('1327', 'Yuubka', '2402039590', '2402', '54', '44.01295', '2.62393');
+INSERT INTO `settlement` VALUES ('1328', 'Abaali', '2403039082', '2403', '55', '42.52056', '2.09274');
+INSERT INTO `settlement` VALUES ('1329', 'Allenta', '2403029098', '2403', '55', '42.98200', '2.52260');
+INSERT INTO `settlement` VALUES ('1330', 'Arbohiray', '2403039044', '2403', '55', '42.90255', '1.85040');
+INSERT INTO `settlement` VALUES ('1331', 'Bagaadey', '2403039028', '2403', '55', '42.64984', '1.81680');
+INSERT INTO `settlement` VALUES ('1332', 'Ban Dhuub', '2403039070', '2403', '55', '42.86870', '2.41592');
+INSERT INTO `settlement` VALUES ('1333', 'Banaada', '2403039008', '2403', '55', '42.56455', '1.90198');
+INSERT INTO `settlement` VALUES ('1334', 'Booshol', '2403039040', '2403', '55', '42.80233', '1.98265');
+INSERT INTO `settlement` VALUES ('1335', 'Buulo Guduud', '2403039094', '2403', '55', '42.67608', '2.14935');
+INSERT INTO `settlement` VALUES ('1336', 'Caddey', '2403039068', '2403', '55', '42.82598', '2.41334');
+INSERT INTO `settlement` VALUES ('1337', 'Caliyo Erbow', '2403039032', '2403', '55', '42.65907', '1.86494');
+INSERT INTO `settlement` VALUES ('1338', 'Cananoola', '2403039018', '2403', '55', '42.61024', '1.93628');
+INSERT INTO `settlement` VALUES ('1339', 'Cashaaro', '2403039034', '2403', '55', '42.67774', '1.82505');
+INSERT INTO `settlement` VALUES ('1340', 'Ceel Garas', '2403039050', '2403', '55', '42.59165', '2.37959');
+INSERT INTO `settlement` VALUES ('1341', 'Cilaan', '2403039052', '2403', '55', '42.54778', '2.50227');
+INSERT INTO `settlement` VALUES ('1342', 'Dooday', '2403039084', '2403', '55', '42.63643', '2.05045');
+INSERT INTO `settlement` VALUES ('1343', 'El Deladoi', '2403029104', '2403', '55', '43.06980', '2.19850');
+INSERT INTO `settlement` VALUES ('1344', 'El Sceled', '2403029106', '2403', '55', '43.07900', '2.39850');
+INSERT INTO `settlement` VALUES ('1345', 'El Turulloro', '2403029108', '2403', '55', '43.07830', '2.17180');
+INSERT INTO `settlement` VALUES ('1346', 'Er Mescid', '2403029112', '2403', '55', '43.02990', '2.39810');
+INSERT INTO `settlement` VALUES ('1347', 'Erbare', '2403029110', '2403', '55', '42.96890', '2.37010');
+INSERT INTO `settlement` VALUES ('1348', 'Foorsa', '2403039026', '2403', '55', '42.61073', '1.80687');
+INSERT INTO `settlement` VALUES ('1349', 'Gaduud', '2403039062', '2403', '55', '42.83237', '2.53220');
+INSERT INTO `settlement` VALUES ('1350', 'Gaduuday', '2403039012', '2403', '55', '42.58352', '1.83831');
+INSERT INTO `settlement` VALUES ('1351', 'Gal Gal Onlay', '2403039016', '2403', '55', '42.57959', '1.99012');
+INSERT INTO `settlement` VALUES ('1352', 'Garaska Shabada', '2403039048', '2403', '55', '42.56873', '2.33710');
+INSERT INTO `settlement` VALUES ('1353', 'Garou', '2403039088', '2403', '55', '42.68548', '2.20337');
+INSERT INTO `settlement` VALUES ('1354', 'Giuarei', '2403029120', '2403', '55', '42.71890', '1.97070');
+INSERT INTO `settlement` VALUES ('1355', 'Gol Ladda', '2403029122', '2403', '55', '42.57780', '2.33120');
+INSERT INTO `settlement` VALUES ('1356', 'Goloolay', '2403039022', '2403', '55', '42.62606', '1.86170');
+INSERT INTO `settlement` VALUES ('1357', 'Goombir', '2403039036', '2403', '55', '42.72599', '1.83655');
+INSERT INTO `settlement` VALUES ('1358', 'Goomuur', '2403039030', '2403', '55', '42.63972', '1.87496');
+INSERT INTO `settlement` VALUES ('1359', 'Guduud', '2403039066', '2403', '55', '42.79245', '2.40795');
+INSERT INTO `settlement` VALUES ('1360', 'Hareeri', '2403039020', '2403', '55', '42.62360', '1.93136');
+INSERT INTO `settlement` VALUES ('1361', 'Hemin Gurei', '2403029124', '2403', '55', '43.12230', '1.88130');
+INSERT INTO `settlement` VALUES ('1362', 'Horoflillo', '2403029126', '2403', '55', '42.58260', '2.17090');
+INSERT INTO `settlement` VALUES ('1363', 'Ibrahim Gurban', '2403039058', '2403', '55', '42.78157', '2.37377');
+INSERT INTO `settlement` VALUES ('1364', 'Idad Geeri', '2403039090', '2403', '55', '42.72348', '2.33178');
+INSERT INTO `settlement` VALUES ('1365', 'Juwaarey', '2403039010', '2403', '55', '42.50059', '1.89668');
+INSERT INTO `settlement` VALUES ('1366', 'Juwaarey', '2403039042', '2403', '55', '42.80420', '1.97184');
+INSERT INTO `settlement` VALUES ('1367', 'Kadyow', '2403039004', '2403', '55', '43.11559', '1.81543');
+INSERT INTO `settlement` VALUES ('1368', 'Kormey', '2403039046', '2403', '55', '42.46452', '2.15571');
+INSERT INTO `settlement` VALUES ('1369', 'Korow', '2403039064', '2403', '55', '42.79017', '2.44768');
+INSERT INTO `settlement` VALUES ('1370', 'Kurman', '2403039060', '2403', '55', '42.82447', '2.52457');
+INSERT INTO `settlement` VALUES ('1371', 'Kurman', '2403039074', '2403', '55', '42.86869', '2.48088');
+INSERT INTO `settlement` VALUES ('1372', 'Kut Kapan', '2403029096', '2403', '55', '43.13060', '1.61800');
+INSERT INTO `settlement` VALUES ('1373', 'Lebiley', '2403039086', '2403', '55', '42.67896', '2.21976');
+INSERT INTO `settlement` VALUES ('1374', 'Rama Caddey', '2403039038', '2403', '55', '42.80106', '1.99680');
+INSERT INTO `settlement` VALUES ('1375', 'Ras Caddey', '2403039076', '2403', '55', '42.86541', '2.55391');
+INSERT INTO `settlement` VALUES ('1376', 'Raxoole', '2403039072', '2403', '55', '42.92867', '2.42142');
+INSERT INTO `settlement` VALUES ('1377', 'Reydaba', '2403039014', '2403', '55', '42.56534', '1.97302');
+INSERT INTO `settlement` VALUES ('1378', 'Robodi', '2403029114', '2403', '55', '42.79910', '2.20060');
+INSERT INTO `settlement` VALUES ('1379', 'Shongolou', '2403039080', '2403', '55', '42.52637', '2.27935');
+INSERT INTO `settlement` VALUES ('1380', 'Uacalla Iero', '2403029100', '2403', '55', '42.58090', '1.90200');
+INSERT INTO `settlement` VALUES ('1381', 'Uar Au Seigou', '2403029102', '2403', '55', '42.97980', '1.57030');
+INSERT INTO `settlement` VALUES ('1382', 'Waambato', '2403039006', '2403', '55', '43.02538', '1.89100');
+INSERT INTO `settlement` VALUES ('1383', 'Warirei', '2403039078', '2403', '55', '42.97617', '2.50029');
+INSERT INTO `settlement` VALUES ('1384', 'Weel Tugar', '2403039092', '2403', '55', '42.98150', '2.25304');
+INSERT INTO `settlement` VALUES ('1385', 'Weeyl Daage', '2403029116', '2403', '55', '43.12170', '2.20130');
+INSERT INTO `settlement` VALUES ('1386', 'Wereg', '2403029118', '2403', '55', '43.24990', '2.17900');
+INSERT INTO `settlement` VALUES ('1387', 'Xabibayal', '2403039056', '2403', '55', '42.66309', '2.35229');
+INSERT INTO `settlement` VALUES ('1388', 'Xafata', '2403039054', '2403', '55', '42.70702', '2.41236');
+INSERT INTO `settlement` VALUES ('1389', 'Yaaq Braawe', '2403039002', '2403', '55', '43.19458', '1.95085');
+INSERT INTO `settlement` VALUES ('1390', 'Yaniis', '2403039024', '2403', '55', '42.60150', '1.84451');
+INSERT INTO `settlement` VALUES ('1391', 'Ban Reer', '2404039014', '2404', '56', '43.10919', '2.61180');
+INSERT INTO `settlement` VALUES ('1392', 'Beled Amin', '2404039006', '2404', '56', '43.05648', '2.82837');
+INSERT INTO `settlement` VALUES ('1393', 'Bulo Ghedudo', '2404029038', '2404', '56', '43.02150', '2.86990');
+INSERT INTO `settlement` VALUES ('1394', 'Bulo Uar Uen', '2404029040', '2404', '56', '42.99990', '2.92760');
+INSERT INTO `settlement` VALUES ('1395', 'Buro Garas', '2404039028', '2404', '56', '42.98020', '2.85482');
+INSERT INTO `settlement` VALUES ('1396', 'Buulo Daar', '2404039018', '2404', '56', '42.82458', '2.78370');
+INSERT INTO `settlement` VALUES ('1397', 'Buulo Dooday', '2404029042', '2404', '56', '43.01750', '2.84920');
+INSERT INTO `settlement` VALUES ('1398', 'Buulo Oon Jirre', '2404039034', '2404', '56', '43.09621', '3.04438');
+INSERT INTO `settlement` VALUES ('1399', 'Buulo Xaawiyow', '2404039036', '2404', '56', '43.11568', '3.06001');
+INSERT INTO `settlement` VALUES ('1400', 'Dhuboi', '2404039020', '2404', '56', '42.90318', '2.70277');
+INSERT INTO `settlement` VALUES ('1401', 'Dure Emed', '2404039024', '2404', '56', '42.92974', '2.83366');
+INSERT INTO `settlement` VALUES ('1402', 'Edain Caboba', '2404029044', '2404', '56', '42.97260', '3.02090');
+INSERT INTO `settlement` VALUES ('1403', 'Garas Mankey', '2404039032', '2404', '56', '42.82299', '2.66461');
+INSERT INTO `settlement` VALUES ('1404', 'Goodey', '2404039016', '2404', '56', '42.82076', '2.73355');
+INSERT INTO `settlement` VALUES ('1405', 'Hareri Falaq', '2404039022', '2404', '56', '42.84309', '2.83706');
+INSERT INTO `settlement` VALUES ('1406', 'Ismaaciil', '2404039010', '2404', '56', '43.04044', '2.89207');
+INSERT INTO `settlement` VALUES ('1407', 'Korunbod', '2404039004', '2404', '56', '43.07830', '2.80338');
+INSERT INTO `settlement` VALUES ('1408', 'Miisra', '2404039012', '2404', '56', '43.08297', '2.59637');
+INSERT INTO `settlement` VALUES ('1409', 'Mowkubow', '2404039008', '2404', '56', '43.01481', '2.89840');
+INSERT INTO `settlement` VALUES ('1410', 'Qansaxdheere', '2404039030', '2404', '56', '42.93116', '2.88901');
+INSERT INTO `settlement` VALUES ('1411', 'Tirrka', '2404039026', '2404', '56', '42.96638', '2.85980');
+INSERT INTO `settlement` VALUES ('1412', 'Weel Dink', '2404029046', '2404', '56', '42.72820', '2.69810');
+INSERT INTO `settlement` VALUES ('1413', 'Bohol', '1902039006', '1902', '34', '46.22778', '5.74741');
+INSERT INTO `settlement` VALUES ('1414', 'Farmalagial', '1902029008', '1902', '34', '45.62770', '5.43010');
+INSERT INTO `settlement` VALUES ('1415', 'Goragiahor', '1902029012', '1902', '34', '45.80030', '5.41720');
+INSERT INTO `settlement` VALUES ('1416', 'Qaradhi', '1902039004', '1902', '34', '46.61588', '6.01140');
+INSERT INTO `settlement` VALUES ('1417', 'Safsaaf', '1902029010', '1902', '34', '46.26760', '6.16710');
+INSERT INTO `settlement` VALUES ('1418', 'Balli Angie Berdo', '1903029012', '1903', '35', '46.81940', '6.12780');
+INSERT INTO `settlement` VALUES ('1419', 'Balliiano', '1903029014', '1903', '35', '46.83280', '6.43120');
+INSERT INTO `settlement` VALUES ('1420', 'Baxdo', '1903039004', '1903', '35', '47.22586', '5.78878');
+INSERT INTO `settlement` VALUES ('1421', 'Daieno', '1903029016', '1903', '35', '46.68210', '6.30080');
+INSERT INTO `settlement` VALUES ('1422', 'Doongaab', '1903039006', '1903', '35', '47.41323', '6.12542');
+INSERT INTO `settlement` VALUES ('1423', 'En Gomot', '1903029018', '1903', '35', '47.02050', '6.09910');
+INSERT INTO `settlement` VALUES ('1424', 'Gaxabdho', '1903029020', '1903', '35', '47.12930', '5.96800');
+INSERT INTO `settlement` VALUES ('1425', 'Gellinsoor', '1903029022', '1903', '35', '46.70110', '6.42890');
+INSERT INTO `settlement` VALUES ('1426', 'Gidhees', '1903039002', '1903', '35', '46.68095', '6.01665');
+INSERT INTO `settlement` VALUES ('1427', 'Gubet Fara', '1903029024', '1903', '35', '46.90090', '5.85160');
+INSERT INTO `settlement` VALUES ('1428', 'Idoole', '1903029026', '1903', '35', '46.85160', '6.16830');
+INSERT INTO `settlement` VALUES ('1429', 'Lababulscio', '1903029010', '1903', '35', '47.07090', '6.18110');
+INSERT INTO `settlement` VALUES ('1430', 'War Galon', '1903039008', '1903', '35', '47.52013', '6.26302');
+INSERT INTO `settlement` VALUES ('1431', 'Aual Alas', '1904029032', '1904', '36', '47.45030', '4.92200');
+INSERT INTO `settlement` VALUES ('1432', 'Aual Giohar', '1904029034', '1904', '36', '46.63230', '4.62750');
+INSERT INTO `settlement` VALUES ('1433', 'Beruged', '1904029036', '1904', '36', '46.24790', '4.94810');
+INSERT INTO `settlement` VALUES ('1434', 'Cali cadi', '1904039020', '1904', '36', '47.44352', '4.50329');
+INSERT INTO `settlement` VALUES ('1435', 'Capanne', '1904029038', '1904', '36', '46.63030', '4.53190');
+INSERT INTO `settlement` VALUES ('1436', 'Ceel Baxan', '1904039012', '1904', '36', '46.16042', '4.79496');
+INSERT INTO `settlement` VALUES ('1437', 'Ceel Qoxle', '1904039018', '1904', '36', '46.52099', '4.84886');
+INSERT INTO `settlement` VALUES ('1438', 'Cehan', '1904029040', '1904', '36', '46.47930', '4.62740');
+INSERT INTO `settlement` VALUES ('1439', 'Daafeed', '1904029042', '1904', '36', '46.77090', '4.63060');
+INSERT INTO `settlement` VALUES ('1440', 'Dab Nar', '1904029044', '1904', '36', '46.42730', '4.59920');
+INSERT INTO `settlement` VALUES ('1441', 'Dab Xarar', '1904039014', '1904', '36', '46.45435', '4.62130');
+INSERT INTO `settlement` VALUES ('1442', 'Darcheimo', '1904029046', '1904', '36', '46.33100', '4.30080');
+INSERT INTO `settlement` VALUES ('1443', 'Derri', '1904039010', '1904', '36', '46.61406', '4.32528');
+INSERT INTO `settlement` VALUES ('1444', 'Gabodayo', '1904039006', '1904', '36', '46.73700', '4.41537');
+INSERT INTO `settlement` VALUES ('1445', 'Gal Adole', '1904029050', '1904', '36', '46.79710', '4.83220');
+INSERT INTO `settlement` VALUES ('1446', 'Garable', '1904039022', '1904', '36', '47.16232', '4.67611');
+INSERT INTO `settlement` VALUES ('1447', 'Goof Ganaan', '1904029052', '1904', '36', '47.52010', '4.83180');
+INSERT INTO `settlement` VALUES ('1448', 'Goxoo', '1904029054', '1904', '36', '47.37010', '5.05270');
+INSERT INTO `settlement` VALUES ('1449', 'Gubet Lafole', '1904029056', '1904', '36', '47.45290', '4.84730');
+INSERT INTO `settlement` VALUES ('1450', 'Hariyo', '1904029060', '1904', '36', '47.38300', '4.99830');
+INSERT INTO `settlement` VALUES ('1451', 'Jacar', '1904039004', '1904', '36', '46.88370', '4.41664');
+INSERT INTO `settlement` VALUES ('1452', 'Jarad', '1904029062', '1904', '36', '46.68230', '4.50120');
+INSERT INTO `settlement` VALUES ('1453', 'Jawle', '1904049064', '1904', '36', '47.51389', '4.65917');
+INSERT INTO `settlement` VALUES ('1454', 'Levi Fartag', '1904029026', '1904', '36', '47.50080', '4.68220');
+INSERT INTO `settlement` VALUES ('1455', 'Libimaay', '1904039024', '1904', '36', '47.53455', '5.02285');
+INSERT INTO `settlement` VALUES ('1456', 'Maalin Gur', '1904029028', '1904', '36', '46.46720', '4.96760');
+INSERT INTO `settlement` VALUES ('1457', 'Marai Ascia Mussa', '1904029030', '1904', '36', '47.15020', '4.60110');
+INSERT INTO `settlement` VALUES ('1458', 'Ris', '1904049066', '1904', '36', '47.44917', '4.50889');
+INSERT INTO `settlement` VALUES ('1459', 'Wabxo', '1904039016', '1904', '36', '46.28289', '4.51374');
+INSERT INTO `settlement` VALUES ('1460', 'Warshubo', '1904029048', '1904', '36', '47.43250', '5.13200');
+INSERT INTO `settlement` VALUES ('1461', 'Abaaji', '1905039006', '1905', '37', '46.94372', '3.58394');
+INSERT INTO `settlement` VALUES ('1462', 'Bargaan', '1905039022', '1905', '37', '47.04663', '4.36581');
+INSERT INTO `settlement` VALUES ('1463', 'Bud Bud', '1905039014', '1905', '37', '46.47416', '4.19267');
+INSERT INTO `settlement` VALUES ('1464', 'Bur Carrowlay', '1905039026', '1905', '37', '47.55281', '4.44450');
+INSERT INTO `settlement` VALUES ('1465', 'Cagacade', '1905039018', '1905', '37', '47.36927', '4.41073');
+INSERT INTO `settlement` VALUES ('1466', 'Callyabaal', '1905039008', '1905', '37', '47.08439', '3.97188');
+INSERT INTO `settlement` VALUES ('1467', 'Ceel Ableey', '1905029036', '1905', '37', '47.33200', '4.42210');
+INSERT INTO `settlement` VALUES ('1468', 'Ceel Bacad', '1905049072', '1905', '37', '46.52583', '3.81722');
+INSERT INTO `settlement` VALUES ('1469', 'Ceel Cali', '1905049074', '1905', '37', '46.56528', '3.84194');
+INSERT INTO `settlement` VALUES ('1470', 'Ceel Jilib', '1905029038', '1905', '37', '47.12240', '3.80240');
+INSERT INTO `settlement` VALUES ('1471', 'Damairor', '1905029040', '1905', '37', '46.46870', '4.14810');
+INSERT INTO `settlement` VALUES ('1472', 'El Cabobe', '1905029042', '1905', '37', '47.71890', '4.23250');
+INSERT INTO `settlement` VALUES ('1473', 'El Dehtal', '1905029044', '1905', '37', '47.70000', '4.19870');
+INSERT INTO `settlement` VALUES ('1474', 'El Endanane', '1905029046', '1905', '37', '47.17250', '3.61910');
+INSERT INTO `settlement` VALUES ('1475', 'El Garable', '1905029048', '1905', '37', '47.63030', '4.12810');
+INSERT INTO `settlement` VALUES ('1476', 'El Medei', '1905029050', '1905', '37', '47.62030', '4.09920');
+INSERT INTO `settlement` VALUES ('1477', 'Gaba Uen', '1905029056', '1905', '37', '47.53210', '4.02150');
+INSERT INTO `settlement` VALUES ('1478', 'Gahood Weeyn', '1905029058', '1905', '37', '47.49820', '4.00030');
+INSERT INTO `settlement` VALUES ('1479', 'Gal Gaafow', '1905039016', '1905', '37', '46.45497', '4.08129');
+INSERT INTO `settlement` VALUES ('1480', 'Gal Laghet', '1905029060', '1905', '37', '47.12120', '4.20130');
+INSERT INTO `settlement` VALUES ('1481', 'Galdhabo', '1905039024', '1905', '37', '47.52395', '4.43580');
+INSERT INTO `settlement` VALUES ('1482', 'Garas Afra Lere', '1905029062', '1905', '37', '46.77180', '3.79820');
+INSERT INTO `settlement` VALUES ('1483', 'Garsala Avascia', '1905029064', '1905', '37', '46.75040', '4.07980');
+INSERT INTO `settlement` VALUES ('1484', 'Garweyn', '1905039028', '1905', '37', '47.26986', '4.28576');
+INSERT INTO `settlement` VALUES ('1485', 'Gheriale', '1905029066', '1905', '37', '46.48190', '4.15270');
+INSERT INTO `settlement` VALUES ('1486', 'Ghet Barsce', '1905029068', '1905', '37', '46.87030', '3.69950');
+INSERT INTO `settlement` VALUES ('1487', 'Gof Gorioueine', '1905029070', '1905', '37', '47.51940', '4.41950');
+INSERT INTO `settlement` VALUES ('1488', 'Hareeri Kalle', '1905039004', '1905', '37', '47.35250', '4.57200');
+INSERT INTO `settlement` VALUES ('1489', 'Hilowle Gaab', '1905049076', '1905', '37', '46.85917', '3.64889');
+INSERT INTO `settlement` VALUES ('1490', 'Leba Hurow', '1905049078', '1905', '37', '46.89889', '3.69417');
+INSERT INTO `settlement` VALUES ('1491', 'Marjaan', '1905039020', '1905', '37', '47.32242', '4.35215');
+INSERT INTO `settlement` VALUES ('1492', 'Masagaweyn', '1905039010', '1905', '37', '47.01587', '3.70370');
+INSERT INTO `settlement` VALUES ('1493', 'Mereeg', '1905029030', '1905', '37', '47.29970', '3.77210');
+INSERT INTO `settlement` VALUES ('1494', 'Muqla Axmed', '1905029034', '1905', '37', '46.42090', '4.17270');
+INSERT INTO `settlement` VALUES ('1495', 'Nooleeye', '1905039012', '1905', '37', '46.91238', '4.16122');
+INSERT INTO `settlement` VALUES ('1496', 'Shaway', '1905029052', '1905', '37', '46.86980', '4.32700');
+INSERT INTO `settlement` VALUES ('1497', 'Xun Turrey', '1905029054', '1905', '37', '46.72120', '3.84980');
+INSERT INTO `settlement` VALUES ('1498', 'Adat', '1901029028', '1901', '33', '47.51840', '5.41750');
+INSERT INTO `settlement` VALUES ('1499', 'Balli Cad', '1901039016', '1901', '33', '46.09356', '5.48760');
+INSERT INTO `settlement` VALUES ('1500', 'Bulacle', '1901039022', '1901', '33', '46.47746', '5.33234');
+INSERT INTO `settlement` VALUES ('1501', 'Buulo Shaq', '1901039014', '1901', '33', '46.21643', '5.38938');
+INSERT INTO `settlement` VALUES ('1502', 'Ceel Dheere', '1901039012', '1901', '33', '46.18990', '5.36729');
+INSERT INTO `settlement` VALUES ('1503', 'Dadle', '1901029030', '1901', '33', '46.96880', '5.33010');
+INSERT INTO `settlement` VALUES ('1504', 'Dehi', '1901029032', '1901', '33', '47.45010', '5.22020');
+INSERT INTO `settlement` VALUES ('1505', 'Gadoon', '1901039008', '1901', '33', '46.68071', '5.68935');
+INSERT INTO `settlement` VALUES ('1506', 'Gadudaba', '1901039004', '1901', '33', '46.63097', '5.87738');
+INSERT INTO `settlement` VALUES ('1507', 'Galxagarre', '1901029036', '1901', '33', '47.45100', '5.51810');
+INSERT INTO `settlement` VALUES ('1508', 'Gian Der', '1901029038', '1901', '33', '47.40040', '5.61800');
+INSERT INTO `settlement` VALUES ('1509', 'Goble Hodan', '1901029040', '1901', '33', '47.57010', '5.28060');
+INSERT INTO `settlement` VALUES ('1510', 'Godinlabe', '1901029042', '1901', '33', '46.63170', '5.89740');
+INSERT INTO `settlement` VALUES ('1511', 'Las Eldit', '1901029024', '1901', '33', '46.69790', '5.62770');
+INSERT INTO `settlement` VALUES ('1512', 'Lebi Duulo', '1901039020', '1901', '33', '46.36056', '5.33010');
+INSERT INTO `settlement` VALUES ('1513', 'Mareer-Gur', '1901039006', '1901', '33', '46.50949', '5.74902');
+INSERT INTO `settlement` VALUES ('1514', 'Mirriq', '1901029026', '1901', '33', '46.42150', '5.66840');
+INSERT INTO `settlement` VALUES ('1515', 'Salaxdhadhaab', '1901039018', '1901', '33', '45.79361', '5.27362');
+INSERT INTO `settlement` VALUES ('1516', 'Sina Dhaga', '1901039010', '1901', '33', '46.34029', '5.37327');
+INSERT INTO `settlement` VALUES ('1517', 'Zeco', '1901029034', '1901', '33', '47.52010', '5.40250');
+INSERT INTO `settlement` VALUES ('1518', 'Aaminaay', '2602039070', '2602', '63', '42.33992', '2.30921');
+INSERT INTO `settlement` VALUES ('1519', 'Abaayle', '2602039102', '2602', '63', '42.24417', '2.09558');
+INSERT INTO `settlement` VALUES ('1520', 'Af Yar', '2602039030', '2602', '63', '42.31621', '2.44046');
+INSERT INTO `settlement` VALUES ('1521', 'Afgooye', '2602039082', '2602', '63', '42.27871', '2.21291');
+INSERT INTO `settlement` VALUES ('1522', 'Agghini', '2602029140', '2602', '63', '42.42940', '2.42170');
+INSERT INTO `settlement` VALUES ('1523', 'Arosurre', '2602039008', '2602', '63', '42.22809', '1.97811');
+INSERT INTO `settlement` VALUES ('1524', 'Baarta Faanye', '2602039100', '2602', '63', '42.25926', '2.10591');
+INSERT INTO `settlement` VALUES ('1525', 'Baarta Faniyo', '2602039106', '2602', '63', '42.22531', '2.06738');
+INSERT INTO `settlement` VALUES ('1526', 'Bakal', '2602039072', '2602', '63', '42.32777', '2.32136');
+INSERT INTO `settlement` VALUES ('1527', 'Bakal', '2602039114', '2602', '63', '42.19438', '2.13247');
+INSERT INTO `settlement` VALUES ('1528', 'Bakal', '2602039122', '2602', '63', '42.18472', '2.29865');
+INSERT INTO `settlement` VALUES ('1529', 'Bakhtiti', '2602029142', '2602', '63', '41.07810', '1.69710');
+INSERT INTO `settlement` VALUES ('1530', 'Bandar Salaam', '2602039042', '2602', '63', '42.16047', '2.34713');
+INSERT INTO `settlement` VALUES ('1531', 'Bannaan', '2602039024', '2602', '63', '42.35298', '2.42332');
+INSERT INTO `settlement` VALUES ('1532', 'Barow Diinle', '2602039002', '2602', '63', '42.32267', '1.97223');
+INSERT INTO `settlement` VALUES ('1533', 'Barta Faniyo', '2602029144', '2602', '63', '42.23210', '2.06710');
+INSERT INTO `settlement` VALUES ('1534', 'Behelidle', '2602029146', '2602', '63', '42.31860', '2.32010');
+INSERT INTO `settlement` VALUES ('1535', 'Benbahodi', '2602029148', '2602', '63', '42.33260', '2.37780');
+INSERT INTO `settlement` VALUES ('1536', 'Bender', '2602029150', '2602', '63', '42.27230', '2.29800');
+INSERT INTO `settlement` VALUES ('1537', 'Biciidley', '2602039044', '2602', '63', '42.20039', '2.33496');
+INSERT INTO `settlement` VALUES ('1538', 'Bilcisha', '2602039052', '2602', '63', '42.35596', '2.03440');
+INSERT INTO `settlement` VALUES ('1539', 'Bilis Yare', '2602039120', '2602', '63', '42.21264', '2.26654');
+INSERT INTO `settlement` VALUES ('1540', 'Bogo', '2602039020', '2602', '63', '42.06999', '2.88311');
+INSERT INTO `settlement` VALUES ('1541', 'Bulo Godut', '2602029152', '2602', '63', '42.23300', '2.62730');
+INSERT INTO `settlement` VALUES ('1542', 'Busleey', '2602039074', '2602', '63', '42.38412', '2.32045');
+INSERT INTO `settlement` VALUES ('1543', 'Caanoole', '2602039054', '2602', '63', '42.31422', '2.01512');
+INSERT INTO `settlement` VALUES ('1544', 'Caqaqable', '2602039118', '2602', '63', '42.15306', '2.18978');
+INSERT INTO `settlement` VALUES ('1545', 'Ceel Baari', '2602039050', '2602', '63', '42.39574', '2.05407');
+INSERT INTO `settlement` VALUES ('1546', 'Corsindere', '2602029162', '2602', '63', '42.29910', '2.54700');
+INSERT INTO `settlement` VALUES ('1547', 'Cuchettu', '2602029164', '2602', '63', '42.18290', '2.14740');
+INSERT INTO `settlement` VALUES ('1548', 'Curao', '2602029166', '2602', '63', '42.13080', '2.43280');
+INSERT INTO `settlement` VALUES ('1549', 'Dabo Dheer', '2602039088', '2602', '63', '42.27391', '2.15164');
+INSERT INTO `settlement` VALUES ('1550', 'Dag Mareer', '2602039016', '2602', '63', '42.20591', '2.68305');
+INSERT INTO `settlement` VALUES ('1551', 'Dag Qoono', '2602039034', '2602', '63', '42.29880', '2.51512');
+INSERT INTO `settlement` VALUES ('1552', 'Dejah Uar', '2602029168', '2602', '63', '41.86910', '2.27260');
+INSERT INTO `settlement` VALUES ('1553', 'Dheenjo', '2602039018', '2602', '63', '42.10038', '2.80919');
+INSERT INTO `settlement` VALUES ('1554', 'Dheenle', '2602039048', '2602', '63', '42.10345', '2.59899');
+INSERT INTO `settlement` VALUES ('1555', 'Dhisheek', '2602039056', '2602', '63', '42.31045', '2.16194');
+INSERT INTO `settlement` VALUES ('1556', 'Dhoobleey', '2602039032', '2602', '63', '42.31025', '2.48954');
+INSERT INTO `settlement` VALUES ('1557', 'El Mergis', '2602029170', '2602', '63', '41.59700', '2.00120');
+INSERT INTO `settlement` VALUES ('1558', 'Esgudut', '2602029172', '2602', '63', '41.42160', '1.32740');
+INSERT INTO `settlement` VALUES ('1559', 'Faafaxadhuun', '2602039014', '2602', '63', '41.62433', '2.20526');
+INSERT INTO `settlement` VALUES ('1560', 'Fuur', '2602039126', '2602', '63', '42.20393', '2.31897');
+INSERT INTO `settlement` VALUES ('1561', 'Gabri Sero Ali', '2602029174', '2602', '63', '41.86950', '2.55000');
+INSERT INTO `settlement` VALUES ('1562', 'Gantamaa', '2602039010', '2602', '63', '41.84109', '2.41827');
+INSERT INTO `settlement` VALUES ('1563', 'Guduud', '2602039094', '2602', '63', '42.23389', '2.13258');
+INSERT INTO `settlement` VALUES ('1564', 'Guuraay', '2602039068', '2602', '63', '42.38535', '2.25011');
+INSERT INTO `settlement` VALUES ('1565', 'Hara Cadera', '2602029178', '2602', '63', '41.02250', '2.15040');
+INSERT INTO `settlement` VALUES ('1566', 'Hareeri', '2602039004', '2602', '63', '42.35416', '1.96447');
+INSERT INTO `settlement` VALUES ('1567', 'Haroris', '2602029180', '2602', '63', '41.44960', '1.56920');
+INSERT INTO `settlement` VALUES ('1568', 'Hilfato', '2602039108', '2602', '63', '42.26940', '2.05415');
+INSERT INTO `settlement` VALUES ('1569', 'Hilo Ari', '2602039130', '2602', '63', '42.29978', '2.52633');
+INSERT INTO `settlement` VALUES ('1570', 'Hilo Shiid', '2602039128', '2602', '63', '42.19837', '2.31038');
+INSERT INTO `settlement` VALUES ('1571', 'Hureen', '2602039026', '2602', '63', '42.32505', '2.36685');
+INSERT INTO `settlement` VALUES ('1572', 'Koreey', '2602039064', '2602', '63', '42.32811', '2.23772');
+INSERT INTO `settlement` VALUES ('1573', 'Korkaamaray', '2602039078', '2602', '63', '42.28954', '2.25258');
+INSERT INTO `settlement` VALUES ('1574', 'Kukate', '2602039096', '2602', '63', '42.24345', '2.12235');
+INSERT INTO `settlement` VALUES ('1575', 'Kurmaan', '2602039076', '2602', '63', '42.28522', '2.31876');
+INSERT INTO `settlement` VALUES ('1576', 'Labi Cade', '2602039046', '2602', '63', '42.12622', '2.63554');
+INSERT INTO `settlement` VALUES ('1577', 'Labiileey', '2602039092', '2602', '63', '42.30225', '2.13195');
+INSERT INTO `settlement` VALUES ('1578', 'Lebi Addi', '2602029132', '2602', '63', '42.06810', '2.54900');
+INSERT INTO `settlement` VALUES ('1579', 'Lebi Gambeh', '2602029134', '2602', '63', '41.63000', '2.25230');
+INSERT INTO `settlement` VALUES ('1580', 'Madhakali', '2602039112', '2602', '63', '42.21148', '2.06521');
+INSERT INTO `settlement` VALUES ('1581', 'Maio', '2602029176', '2602', '63', '42.31790', '2.45240');
+INSERT INTO `settlement` VALUES ('1582', 'Marda', '2602029136', '2602', '63', '42.33090', '2.40290');
+INSERT INTO `settlement` VALUES ('1583', 'Meigach Mada', '2602029138', '2602', '63', '42.24700', '2.72270');
+INSERT INTO `settlement` VALUES ('1584', 'Mitaaniya', '2602039098', '2602', '63', '42.24994', '2.13020');
+INSERT INTO `settlement` VALUES ('1585', 'Qasaaleey', '2602039060', '2602', '63', '42.34778', '2.21301');
+INSERT INTO `settlement` VALUES ('1586', 'Qasalow', '2602039006', '2602', '63', '42.24715', '1.99401');
+INSERT INTO `settlement` VALUES ('1587', 'Qotiileey', '2602039086', '2602', '63', '42.27788', '2.17152');
+INSERT INTO `settlement` VALUES ('1588', 'Qotiileey', '2602039104', '2602', '63', '42.28304', '2.10534');
+INSERT INTO `settlement` VALUES ('1589', 'Sarinleey', '2602039040', '2602', '63', '42.28088', '2.37771');
+INSERT INTO `settlement` VALUES ('1590', 'Sharaaw', '2602039058', '2602', '63', '42.32760', '2.17802');
+INSERT INTO `settlement` VALUES ('1591', 'Sharijisaaq', '2602039116', '2602', '63', '42.15928', '2.15321');
+INSERT INTO `settlement` VALUES ('1592', 'Shiidole', '2602039022', '2602', '63', '42.42027', '2.34856');
+INSERT INTO `settlement` VALUES ('1593', 'Shimbiroole', '2602039028', '2602', '63', '42.29394', '2.41524');
+INSERT INTO `settlement` VALUES ('1594', 'Siidimo', '2602039012', '2602', '63', '41.96924', '2.44864');
+INSERT INTO `settlement` VALUES ('1595', 'Toorey', '2602039066', '2602', '63', '42.35587', '2.25957');
+INSERT INTO `settlement` VALUES ('1596', 'Tosilei', '2602029154', '2602', '63', '41.39940', '1.42190');
+INSERT INTO `settlement` VALUES ('1597', 'Tubaako', '2602039084', '2602', '63', '42.30702', '2.20683');
+INSERT INTO `settlement` VALUES ('1598', 'Uar Esgudud', '2602029156', '2602', '63', '41.38200', '1.27020');
+INSERT INTO `settlement` VALUES ('1599', 'Uar Libah Lou', '2602029158', '2602', '63', '41.92190', '2.32260');
+INSERT INTO `settlement` VALUES ('1600', 'Uusla', '2602039062', '2602', '63', '42.35342', '2.23627');
+INSERT INTO `settlement` VALUES ('1601', 'Waaba', '2602039110', '2602', '63', '42.17045', '2.00487');
+INSERT INTO `settlement` VALUES ('1602', 'Waamo Yarey', '2602039036', '2602', '63', '42.24898', '2.51425');
+INSERT INTO `settlement` VALUES ('1603', 'Washaaq', '2602039124', '2602', '63', '42.14278', '2.30830');
+INSERT INTO `settlement` VALUES ('1604', 'Weheloow', '2602039090', '2602', '63', '42.27951', '2.14356');
+INSERT INTO `settlement` VALUES ('1605', 'Xabaal Suran', '2602039038', '2602', '63', '42.25821', '2.41211');
+INSERT INTO `settlement` VALUES ('1606', 'Xanyaaleey', '2602039080', '2602', '63', '42.25941', '2.24380');
+INSERT INTO `settlement` VALUES ('1607', 'Xarianta', '2602029160', '2602', '63', '42.30290', '2.56720');
+INSERT INTO `settlement` VALUES ('1608', 'Baqtile', '2603039002', '2603', '64', '41.89117', '3.62534');
+INSERT INTO `settlement` VALUES ('1609', 'Coriamu', '2603029008', '2603', '64', '41.92220', '3.82970');
+INSERT INTO `settlement` VALUES ('1610', 'Dadabli', '2603029010', '2603', '64', '41.72240', '3.22950');
+INSERT INTO `settlement` VALUES ('1611', 'Dermo', '2603029012', '2603', '64', '41.75120', '3.49710');
+INSERT INTO `settlement` VALUES ('1612', 'Dhamas', '2603029014', '2603', '64', '41.32710', '3.15250');
+INSERT INTO `settlement` VALUES ('1613', 'El Geldes', '2603029016', '2603', '64', '41.84930', '3.37190');
+INSERT INTO `settlement` VALUES ('1614', 'El Uaro', '2603029018', '2603', '64', '41.64950', '3.57110');
+INSERT INTO `settlement` VALUES ('1615', 'Gebia', '2603029020', '2603', '64', '41.83190', '3.85010');
+INSERT INTO `settlement` VALUES ('1616', 'Gubbet Uasasa', '2603029022', '2603', '64', '41.62840', '3.45280');
+INSERT INTO `settlement` VALUES ('1617', 'Gubei', '2603029024', '2603', '64', '41.52830', '3.19740');
+INSERT INTO `settlement` VALUES ('1618', 'Guddama', '2603029026', '2603', '64', '41.47040', '3.30250');
+INSERT INTO `settlement` VALUES ('1619', 'Hara Buti', '2603029028', '2603', '64', '41.45040', '3.27840');
+INSERT INTO `settlement` VALUES ('1620', 'Hara Fara', '2603029030', '2603', '64', '41.72840', '3.36960');
+INSERT INTO `settlement` VALUES ('1621', 'Haro Buyo', '2603029032', '2603', '64', '41.72070', '3.29940');
+INSERT INTO `settlement` VALUES ('1622', 'Iacle', '2603029034', '2603', '64', '41.68190', '3.27290');
+INSERT INTO `settlement` VALUES ('1623', 'Malkaaray', '2603029004', '2603', '64', '41.93230', '3.97940');
+INSERT INTO `settlement` VALUES ('1624', 'Oda', '2603029006', '2603', '64', '41.97280', '4.02960');
+INSERT INTO `settlement` VALUES ('1625', 'Abrone', '2604029012', '2604', '65', '41.57830', '2.46940');
+INSERT INTO `settlement` VALUES ('1626', 'Bililscia', '2604029014', '2604', '65', '41.32020', '2.52770');
+INSERT INTO `settlement` VALUES ('1627', 'Busaar', '2604039002', '2604', '65', '41.32662', '2.67763');
+INSERT INTO `settlement` VALUES ('1628', 'Cocaio', '2604029022', '2604', '65', '41.14790', '2.76830');
+INSERT INTO `settlement` VALUES ('1629', 'Cursi', '2604029024', '2604', '65', '41.17200', '2.46780');
+INSERT INTO `settlement` VALUES ('1630', 'Daba', '2604029026', '2604', '65', '41.20150', '3.02080');
+INSERT INTO `settlement` VALUES ('1631', 'Daduma Addi', '2604029028', '2604', '65', '41.25280', '2.69780');
+INSERT INTO `settlement` VALUES ('1632', 'Dec Curbes', '2604029030', '2604', '65', '41.04850', '2.59800');
+INSERT INTO `settlement` VALUES ('1633', 'Deg-Ti Alima', '2604029032', '2604', '65', '41.68020', '2.78030');
+INSERT INTO `settlement` VALUES ('1634', 'Dhas', '2604029034', '2604', '65', '41.47220', '2.86810');
+INSERT INTO `settlement` VALUES ('1635', 'Doolaawle', '2604029056', '2604', '65', '41.00010', '2.56710');
+INSERT INTO `settlement` VALUES ('1636', 'El Beru Hagia', '2604029036', '2604', '65', '41.02240', '2.75230');
+INSERT INTO `settlement` VALUES ('1637', 'El Dudu', '2604029038', '2604', '65', '41.76780', '2.61980');
+INSERT INTO `settlement` VALUES ('1638', 'El Godgod', '2604029040', '2604', '65', '41.49860', '2.87770');
+INSERT INTO `settlement` VALUES ('1639', 'Galolca', '2604029044', '2604', '65', '41.57860', '2.29930');
+INSERT INTO `settlement` VALUES ('1640', 'Garsaale', '2604039004', '2604', '65', '41.27242', '2.81871');
+INSERT INTO `settlement` VALUES ('1641', 'Golati', '2604029046', '2604', '65', '41.05220', '2.84750');
+INSERT INTO `settlement` VALUES ('1642', 'Gologolsceval', '2604029048', '2604', '65', '41.63220', '2.48120');
+INSERT INTO `settlement` VALUES ('1643', 'Hara Madheera', '2604029050', '2604', '65', '41.72100', '2.86780');
+INSERT INTO `settlement` VALUES ('1644', 'Iedo', '2604029052', '2604', '65', '41.13110', '2.95010');
+INSERT INTO `settlement` VALUES ('1645', 'Iialo', '2604029054', '2604', '65', '41.01760', '2.32950');
+INSERT INTO `settlement` VALUES ('1646', 'Lafa Gheri', '2604029008', '2604', '65', '41.81920', '2.80070');
+INSERT INTO `settlement` VALUES ('1647', 'Maddoile', '2604029010', '2604', '65', '41.45240', '2.62990');
+INSERT INTO `settlement` VALUES ('1648', 'Ramo Derti', '2604029042', '2604', '65', '41.08260', '2.72080');
+INSERT INTO `settlement` VALUES ('1649', 'Samaroole', '2604039006', '2604', '65', '41.22748', '2.79292');
+INSERT INTO `settlement` VALUES ('1650', 'Uar Lebi God', '2604029016', '2604', '65', '41.65210', '2.92260');
+INSERT INTO `settlement` VALUES ('1651', 'Uar Matano', '2604029018', '2604', '65', '41.54970', '2.66780');
+INSERT INTO `settlement` VALUES ('1652', 'Uenti Digo', '2604029020', '2604', '65', '41.09820', '2.92100');
+INSERT INTO `settlement` VALUES ('1653', 'Bar canni', '2605039006', '2605', '66', '42.17287', '3.91895');
+INSERT INTO `settlement` VALUES ('1654', 'Dhuumow', '2605039008', '2605', '66', '42.25958', '3.91901');
+INSERT INTO `settlement` VALUES ('1655', 'Geedweyne', '2605039002', '2605', '66', '42.29429', '4.02930');
+INSERT INTO `settlement` VALUES ('1656', 'Shiidlay', '2605039004', '2605', '66', '42.32435', '4.07726');
+INSERT INTO `settlement` VALUES ('1657', 'Unzi Digo', '2605029010', '2605', '66', '41.96990', '4.07970');
+INSERT INTO `settlement` VALUES ('1658', 'Ajaaw', '2601039032', '2601', '62', '42.39659', '3.08222');
+INSERT INTO `settlement` VALUES ('1659', 'Arilay', '2601039024', '2601', '62', '43.06226', '3.16686');
+INSERT INTO `settlement` VALUES ('1660', 'Baarbadan', '2601039030', '2601', '62', '42.43277', '2.84346');
+INSERT INTO `settlement` VALUES ('1661', 'Balleey', '2601029038', '2601', '62', '42.46830', '2.88290');
+INSERT INTO `settlement` VALUES ('1662', 'Barwaaqo', '2601039008', '2601', '62', '42.18677', '3.48314');
+INSERT INTO `settlement` VALUES ('1663', 'Bulo Avor', '2601029040', '2601', '62', '42.48000', '3.27190');
+INSERT INTO `settlement` VALUES ('1664', 'Bura', '2601039012', '2601', '62', '42.13948', '3.17188');
+INSERT INTO `settlement` VALUES ('1665', 'Burcosera', '2601029042', '2601', '62', '42.06880', '3.02260');
+INSERT INTO `settlement` VALUES ('1666', 'Buur Xaraw', '2601039018', '2601', '62', '42.91513', '3.12272');
+INSERT INTO `settlement` VALUES ('1667', 'Buuro Bahale', '2601039006', '2601', '62', '41.95279', '2.99472');
+INSERT INTO `settlement` VALUES ('1668', 'Ceel Burro', '2601029044', '2601', '62', '42.57990', '2.98280');
+INSERT INTO `settlement` VALUES ('1669', 'Ceel Cadde', '2601039004', '2601', '62', '41.86778', '3.03672');
+INSERT INTO `settlement` VALUES ('1670', 'Ceel Guduud', '2601029048', '2601', '62', '42.60000', '3.07980');
+INSERT INTO `settlement` VALUES ('1671', 'Ceel Waran', '2601029050', '2601', '62', '42.73240', '3.23080');
+INSERT INTO `settlement` VALUES ('1672', 'Corfon', '2601029052', '2601', '62', '42.03030', '3.14750');
+INSERT INTO `settlement` VALUES ('1673', 'Deeday', '2601039016', '2601', '62', '42.93702', '3.21255');
+INSERT INTO `settlement` VALUES ('1674', 'Degta Reidab', '2601029054', '2601', '62', '42.27880', '2.84940');
+INSERT INTO `settlement` VALUES ('1675', 'Durole', '2601029056', '2601', '62', '42.50140', '3.40280');
+INSERT INTO `settlement` VALUES ('1676', 'El Calidat', '2601029058', '2601', '62', '42.08010', '3.44900');
+INSERT INTO `settlement` VALUES ('1677', 'El Dao', '2601029060', '2601', '62', '42.01810', '3.36960');
+INSERT INTO `settlement` VALUES ('1678', 'El Gurgura', '2601029062', '2601', '62', '41.97210', '3.35010');
+INSERT INTO `settlement` VALUES ('1679', 'Far Weeyn Dur', '2601029064', '2601', '62', '42.37110', '2.81960');
+INSERT INTO `settlement` VALUES ('1680', 'Hifay', '2601039022', '2601', '62', '42.50853', '3.21319');
+INSERT INTO `settlement` VALUES ('1681', 'Hilo Ari', '2601039028', '2601', '62', '42.44478', '2.85051');
+INSERT INTO `settlement` VALUES ('1682', 'Lele Scido', '2601029034', '2601', '62', '42.47200', '3.32870');
+INSERT INTO `settlement` VALUES ('1683', 'Leuhomene', '2601029036', '2601', '62', '42.97980', '3.30110');
+INSERT INTO `settlement` VALUES ('1684', 'Makuboy', '2601039026', '2601', '62', '43.05473', '3.09426');
+INSERT INTO `settlement` VALUES ('1685', 'Qayla Dheere', '2601039014', '2601', '62', '42.23478', '3.05970');
+INSERT INTO `settlement` VALUES ('1686', 'Raaudoola', '2601039020', '2601', '62', '42.62427', '3.15280');
+INSERT INTO `settlement` VALUES ('1687', 'Rabanaggi', '2601029066', '2601', '62', '42.64900', '3.22770');
+INSERT INTO `settlement` VALUES ('1688', 'Sciaule', '2601029068', '2601', '62', '43.09970', '3.09740');
+INSERT INTO `settlement` VALUES ('1689', 'Tacfile', '2601029046', '2601', '62', '42.63000', '3.21930');
+INSERT INTO `settlement` VALUES ('1690', 'Waandhay', '2601039010', '2601', '62', '42.09846', '3.32002');
+INSERT INTO `settlement` VALUES ('1691', 'Aggherar', '2606029022', '2606', '67', '42.66960', '4.05240');
+INSERT INTO `settlement` VALUES ('1692', 'Bar Ballei', '2606029024', '2606', '67', '42.44810', '4.17150');
+INSERT INTO `settlement` VALUES ('1693', 'Boran', '2606029044', '2606', '67', '43.08210', '3.60140');
+INSERT INTO `settlement` VALUES ('1694', 'Ceel Dheere', '2606039018', '2606', '67', '43.07206', '3.28578');
+INSERT INTO `settlement` VALUES ('1695', 'Ceel Dhooble', '2606039008', '2606', '67', '42.83080', '4.03896');
+INSERT INTO `settlement` VALUES ('1696', 'Ceel Garab Jeelow', '2606029026', '2606', '67', '42.49840', '3.66850');
+INSERT INTO `settlement` VALUES ('1697', 'Dagaalyaha', '2606039012', '2606', '67', '42.53202', '3.79246');
+INSERT INTO `settlement` VALUES ('1698', 'Dhigleey', '2606029028', '2606', '67', '42.92130', '4.22960');
+INSERT INTO `settlement` VALUES ('1699', 'Eeygadhalay', '2606029030', '2606', '67', '42.47290', '4.17700');
+INSERT INTO `settlement` VALUES ('1700', 'El Bascialeu', '2606029032', '2606', '67', '42.34730', '3.61890');
+INSERT INTO `settlement` VALUES ('1701', 'El Dur', '2606029034', '2606', '67', '43.08180', '3.75290');
+INSERT INTO `settlement` VALUES ('1702', 'El Ghelda', '2606029036', '2606', '67', '42.74800', '4.13020');
+INSERT INTO `settlement` VALUES ('1703', 'Gaider Ali Boran', '2606029042', '2606', '67', '43.07750', '3.60160');
+INSERT INTO `settlement` VALUES ('1704', 'Gauder Fullai', '2606029046', '2606', '67', '42.82990', '3.63070');
+INSERT INTO `settlement` VALUES ('1705', 'Goriale', '2606029048', '2606', '67', '42.71820', '4.21730');
+INSERT INTO `settlement` VALUES ('1706', 'Hagi Barro', '2606029050', '2606', '67', '42.45170', '4.07860');
+INSERT INTO `settlement` VALUES ('1707', 'Horma Liibaan', '2606039010', '2606', '67', '42.81765', '4.01778');
+INSERT INTO `settlement` VALUES ('1708', 'Laf Maakada', '2606039004', '2606', '67', '42.92966', '3.58892');
+INSERT INTO `settlement` VALUES ('1709', 'Mooyo', '2606039014', '2606', '67', '42.97715', '3.96901');
+INSERT INTO `settlement` VALUES ('1710', 'Qooney', '2606039006', '2606', '67', '42.64969', '4.10619');
+INSERT INTO `settlement` VALUES ('1711', 'Rahaman', '2606029020', '2606', '67', '42.82230', '4.24850');
+INSERT INTO `settlement` VALUES ('1712', 'Reidabal', '2606029038', '2606', '67', '42.87140', '4.17880');
+INSERT INTO `settlement` VALUES ('1713', 'Saamooley', '2606039016', '2606', '67', '43.05379', '3.77046');
+INSERT INTO `settlement` VALUES ('1714', 'Saxa Guduud', '2606029040', '2606', '67', '42.95200', '3.40140');
+INSERT INTO `settlement` VALUES ('1715', 'Urkut', '2606039002', '2606', '67', '42.76914', '3.52038');
+INSERT INTO `settlement` VALUES ('1716', '15-kakilomitir', '2001039074', '2001', '38', '45.24916', '4.74394');
+INSERT INTO `settlement` VALUES ('1717', '300-Ka Km', '2001039066', '2001', '38', '45.34261', '4.49539');
+INSERT INTO `settlement` VALUES ('1718', 'Aual Afra Mussa', '2001029084', '2001', '38', '46.01920', '4.93120');
+INSERT INTO `settlement` VALUES ('1719', 'Ba Aror', '2001029086', '2001', '38', '45.46790', '4.70170');
+INSERT INTO `settlement` VALUES ('1720', 'Baacyar', '2001039046', '2001', '38', '45.28802', '4.50569');
+INSERT INTO `settlement` VALUES ('1721', 'Baalcad', '2001039048', '2001', '38', '45.30442', '4.45837');
+INSERT INTO `settlement` VALUES ('1722', 'Baarey', '2001039040', '2001', '38', '45.27831', '4.54938');
+INSERT INTO `settlement` VALUES ('1723', 'Balad Amiin', '2001039042', '2001', '38', '45.28076', '4.54063');
+INSERT INTO `settlement` VALUES ('1724', 'Bar Ganlave', '2001029088', '2001', '38', '44.95180', '4.57860');
+INSERT INTO `settlement` VALUES ('1725', 'Bar Madeghe', '2001029090', '2001', '38', '45.07980', '4.61850');
+INSERT INTO `settlement` VALUES ('1726', 'Basaadlow', '2001039026', '2001', '38', '45.21593', '4.66458');
+INSERT INTO `settlement` VALUES ('1727', 'Beer Xaano', '2001039064', '2001', '38', '45.34188', '4.53529');
+INSERT INTO `settlement` VALUES ('1728', 'Berdile', '2001029092', '2001', '38', '45.22250', '4.67970');
+INSERT INTO `settlement` VALUES ('1729', 'Buqkoosaar', '2001039002', '2001', '38', '44.81709', '4.51383');
+INSERT INTO `settlement` VALUES ('1730', 'Buulo Obliko', '2001039008', '2001', '38', '45.18041', '4.80516');
+INSERT INTO `settlement` VALUES ('1731', 'Canolacaa', '2001039028', '2001', '38', '45.20376', '4.65753');
+INSERT INTO `settlement` VALUES ('1732', 'Ceel Cali', '2001039072', '2001', '38', '44.98773', '4.19498');
+INSERT INTO `settlement` VALUES ('1733', 'Ceel Gaal', '2001039006', '2001', '38', '45.23902', '4.84728');
+INSERT INTO `settlement` VALUES ('1734', 'Ceelgod', '2001029094', '2001', '38', '46.08090', '4.62960');
+INSERT INTO `settlement` VALUES ('1735', 'Cheli Gu', '2001029096', '2001', '38', '45.08080', '4.43180');
+INSERT INTO `settlement` VALUES ('1736', 'Chirchirri', '2001029098', '2001', '38', '44.69790', '4.71820');
+INSERT INTO `settlement` VALUES ('1737', 'Daaddaale', '2001039004', '2001', '38', '46.13703', '4.94394');
+INSERT INTO `settlement` VALUES ('1738', 'Dabaan', '2001039078', '2001', '38', '45.25862', '4.55032');
+INSERT INTO `settlement` VALUES ('1739', 'Dharkaynte', '2001039012', '2001', '38', '45.19875', '4.79147');
+INSERT INTO `settlement` VALUES ('1740', 'Dhoqol', '2001039044', '2001', '38', '45.28988', '4.53507');
+INSERT INTO `settlement` VALUES ('1741', 'Doon Dheere', '2001039058', '2001', '38', '45.30931', '4.41156');
+INSERT INTO `settlement` VALUES ('1742', 'El Avor', '2001029100', '2001', '38', '45.57760', '5.38130');
+INSERT INTO `settlement` VALUES ('1743', 'El Baccai', '2001029102', '2001', '38', '45.62180', '4.42030');
+INSERT INTO `settlement` VALUES ('1744', 'El Edat', '2001029104', '2001', '38', '44.91850', '4.69850');
+INSERT INTO `settlement` VALUES ('1745', 'El Gomo Uen', '2001029106', '2001', '38', '44.76990', '4.72280');
+INSERT INTO `settlement` VALUES ('1746', 'El Lehelei', '2001029108', '2001', '38', '45.42810', '4.47230');
+INSERT INTO `settlement` VALUES ('1747', 'El Uared', '2001029110', '2001', '38', '44.99900', '4.18210');
+INSERT INTO `settlement` VALUES ('1748', 'Far Aqable', '2001029112', '2001', '38', '44.70120', '4.35130');
+INSERT INTO `settlement` VALUES ('1749', 'Feerfeer', '2001029126', '2001', '38', '45.15810', '5.08630');
+INSERT INTO `settlement` VALUES ('1750', 'Garab Den', '2001029114', '2001', '38', '45.44870', '4.87790');
+INSERT INTO `settlement` VALUES ('1751', 'Ghel Medoi', '2001029116', '2001', '38', '45.48150', '4.94980');
+INSERT INTO `settlement` VALUES ('1752', 'Goofado', '2001039070', '2001', '38', '45.57524', '5.19400');
+INSERT INTO `settlement` VALUES ('1753', 'Gumborlaawe', '2001039024', '2001', '38', '45.20341', '4.70703');
+INSERT INTO `settlement` VALUES ('1754', 'Hadle', '2001029118', '2001', '38', '45.50060', '5.20040');
+INSERT INTO `settlement` VALUES ('1755', 'Hiiraan', '2001039076', '2001', '38', '45.21662', '4.83016');
+INSERT INTO `settlement` VALUES ('1756', 'Hilakalio', '2001039016', '2001', '38', '45.21661', '4.78983');
+INSERT INTO `settlement` VALUES ('1757', 'Hilla Bacaad', '2001039036', '2001', '38', '45.26406', '4.56934');
+INSERT INTO `settlement` VALUES ('1758', 'Hodlei', '2001029120', '2001', '38', '45.22180', '4.78060');
+INSERT INTO `settlement` VALUES ('1759', 'Iarmoghe', '2001029122', '2001', '38', '45.02990', '4.71760');
+INSERT INTO `settlement` VALUES ('1760', 'Iskashuo', '2001039050', '2001', '38', '45.28320', '4.45192');
+INSERT INTO `settlement` VALUES ('1761', 'Jiiqley', '2001039060', '2001', '38', '45.32311', '4.40069');
+INSERT INTO `settlement` VALUES ('1762', 'Kali Dheenle', '2001039052', '2001', '38', '45.32882', '4.44272');
+INSERT INTO `settlement` VALUES ('1763', 'Lap Dere', '2001029082', '2001', '38', '45.17270', '4.71730');
+INSERT INTO `settlement` VALUES ('1764', 'Leebow', '2001039010', '2001', '38', '45.19262', '4.79832');
+INSERT INTO `settlement` VALUES ('1765', 'Macaqal', '2001039034', '2001', '38', '45.24085', '4.57750');
+INSERT INTO `settlement` VALUES ('1766', 'Matabaan', '2001039068', '2001', '38', '45.52284', '5.19937');
+INSERT INTO `settlement` VALUES ('1767', 'Maxamad Xasam', '2001039062', '2001', '38', '45.33809', '4.57608');
+INSERT INTO `settlement` VALUES ('1768', 'Nuur Fanax', '2001039080', '2001', '38', '45.39156', '4.40555');
+INSERT INTO `settlement` VALUES ('1769', 'Oohaale', '2001029124', '2001', '38', '45.23910', '5.16740');
+INSERT INTO `settlement` VALUES ('1770', 'Oola Yaabeen', '2001039056', '2001', '38', '45.32749', '4.41995');
+INSERT INTO `settlement` VALUES ('1771', 'Ooolo Ooyan', '2001039054', '2001', '38', '45.31147', '4.42380');
+INSERT INTO `settlement` VALUES ('1772', 'Qeyaan', '2001039030', '2001', '38', '45.22512', '4.64952');
+INSERT INTO `settlement` VALUES ('1773', 'Qudhaeley', '2001039022', '2001', '38', '45.21041', '4.70473');
+INSERT INTO `settlement` VALUES ('1774', 'Sabeelley', '2001039020', '2001', '38', '45.21436', '4.71584');
+INSERT INTO `settlement` VALUES ('1775', 'Sagaarow', '2001039032', '2001', '38', '45.22461', '4.62957');
+INSERT INTO `settlement` VALUES ('1776', 'Shiniile', '2001039014', '2001', '38', '45.20702', '4.79591');
+INSERT INTO `settlement` VALUES ('1777', 'Sigaalow', '2001039018', '2001', '38', '45.18797', '4.75697');
+INSERT INTO `settlement` VALUES ('1778', 'Sugow', '2001039038', '2001', '38', '45.26763', '4.55754');
+INSERT INTO `settlement` VALUES ('1779', 'Aboray', '2002039036', '2002', '39', '45.68162', '4.01062');
+INSERT INTO `settlement` VALUES ('1780', 'Af Cad', '2002039088', '2002', '39', '45.67454', '3.59575');
+INSERT INTO `settlement` VALUES ('1781', 'Af Uen', '2002029104', '2002', '39', '45.15120', '3.29930');
+INSERT INTO `settlement` VALUES ('1782', 'Ag Bascir', '2002029106', '2002', '39', '45.57010', '3.95050');
+INSERT INTO `settlement` VALUES ('1783', 'Ar Gummo', '2002029108', '2002', '39', '44.90110', '3.72760');
+INSERT INTO `settlement` VALUES ('1784', 'Aveno', '2002029110', '2002', '39', '45.82880', '4.20110');
+INSERT INTO `settlement` VALUES ('1785', 'Berdaale', '2002039020', '2002', '39', '45.25829', '3.28077');
+INSERT INTO `settlement` VALUES ('1786', 'Ber-I Cobogori', '2002029112', '2002', '39', '44.80250', '3.35210');
+INSERT INTO `settlement` VALUES ('1787', 'Bodadheere', '2002039086', '2002', '39', '45.68024', '3.69167');
+INSERT INTO `settlement` VALUES ('1788', 'Bulo Caro', '2002029114', '2002', '39', '45.57050', '3.83260');
+INSERT INTO `settlement` VALUES ('1789', 'Buqda Caqable', '2002039030', '2002', '39', '45.25508', '4.05872');
+INSERT INTO `settlement` VALUES ('1790', 'Buulobarde', '2002029116', '2002', '39', '45.56770', '3.84720');
+INSERT INTO `settlement` VALUES ('1791', 'Buur Weyn', '2002039006', '2002', '39', '45.55727', '3.59811');
+INSERT INTO `settlement` VALUES ('1792', 'Caal Bashir', '2002039054', '2002', '39', '45.53328', '3.97696');
+INSERT INTO `settlement` VALUES ('1793', 'Caaqaboy', '2002039026', '2002', '39', '45.39108', '4.26266');
+INSERT INTO `settlement` VALUES ('1794', 'Calasow Aadan', '2002029118', '2002', '39', '46.36910', '4.22110');
+INSERT INTO `settlement` VALUES ('1795', 'Caymog', '2002039056', '2002', '39', '45.50934', '3.92701');
+INSERT INTO `settlement` VALUES ('1796', 'Ceel Cali Ahmed', '2002049140', '2002', '39', '46.32611', '4.03361');
+INSERT INTO `settlement` VALUES ('1797', 'Cuamr Bulle', '2002039064', '2002', '39', '45.61155', '3.76009');
+INSERT INTO `settlement` VALUES ('1798', 'Dabayoodle', '2002039084', '2002', '39', '45.46387', '4.05549');
+INSERT INTO `settlement` VALUES ('1799', 'Dabodheata', '2002039060', '2002', '39', '45.57636', '3.79932');
+INSERT INTO `settlement` VALUES ('1800', 'Daharro', '2002029122', '2002', '39', '45.55140', '3.88260');
+INSERT INTO `settlement` VALUES ('1801', 'Deb Gorum', '2002029124', '2002', '39', '45.13160', '3.28110');
+INSERT INTO `settlement` VALUES ('1802', 'Dhaxlar', '2002039046', '2002', '39', '45.62280', '4.17283');
+INSERT INTO `settlement` VALUES ('1803', 'El Dagno Ven', '2002029126', '2002', '39', '45.19840', '3.82050');
+INSERT INTO `settlement` VALUES ('1804', 'El Dere', '2002029128', '2002', '39', '45.56840', '4.29810');
+INSERT INTO `settlement` VALUES ('1805', 'El Gargaro', '2002029130', '2002', '39', '45.72770', '4.27880');
+INSERT INTO `settlement` VALUES ('1806', 'Fodel', '2002029132', '2002', '39', '44.86940', '3.31910');
+INSERT INTO `settlement` VALUES ('1807', 'Gabxanlow', '2002039090', '2002', '39', '45.60628', '3.63895');
+INSERT INTO `settlement` VALUES ('1808', 'Gadoon', '2002039038', '2002', '39', '45.61938', '4.31070');
+INSERT INTO `settlement` VALUES ('1809', 'Gawaanka', '2002039002', '2002', '39', '45.51259', '3.66425');
+INSERT INTO `settlement` VALUES ('1810', 'Ghel Magal', '2002029136', '2002', '39', '45.23040', '3.91800');
+INSERT INTO `settlement` VALUES ('1811', 'Habas Weyn', '2002039042', '2002', '39', '45.60002', '4.17876');
+INSERT INTO `settlement` VALUES ('1812', 'Halgen', '2002039040', '2002', '39', '45.56460', '4.21221');
+INSERT INTO `settlement` VALUES ('1813', 'Hesin', '2002039010', '2002', '39', '45.66612', '3.63125');
+INSERT INTO `settlement` VALUES ('1814', 'Hilobannaan', '2002039028', '2002', '39', '45.47451', '4.12497');
+INSERT INTO `settlement` VALUES ('1815', 'Jafoole', '2002039058', '2002', '39', '45.56116', '3.82909');
+INSERT INTO `settlement` VALUES ('1816', 'Jameeco Mubaarak', '2002039068', '2002', '39', '45.66334', '3.68512');
+INSERT INTO `settlement` VALUES ('1817', 'Jicibow', '2002039048', '2002', '39', '45.51955', '4.09619');
+INSERT INTO `settlement` VALUES ('1818', 'Kabxanlow', '2002039008', '2002', '39', '45.60247', '3.65808');
+INSERT INTO `settlement` VALUES ('1819', 'Karmale', '2002039052', '2002', '39', '44.94225', '3.41357');
+INSERT INTO `settlement` VALUES ('1820', 'Kulanka Xaji Cabdi', '2002039070', '2002', '39', '45.59106', '3.68975');
+INSERT INTO `settlement` VALUES ('1821', 'Kuusow', '2002039062', '2002', '39', '45.56689', '3.78547');
+INSERT INTO `settlement` VALUES ('1822', 'Lafowacayis', '2002029092', '2002', '39', '46.32170', '4.07110');
+INSERT INTO `settlement` VALUES ('1823', 'Luktooley', '2002029094', '2002', '39', '45.15010', '3.22800');
+INSERT INTO `settlement` VALUES ('1824', 'Mabaax', '2002039082', '2002', '39', '46.23420', '3.83518');
+INSERT INTO `settlement` VALUES ('1825', 'Magaaoole', '2002039018', '2002', '39', '45.06097', '3.42882');
+INSERT INTO `settlement` VALUES ('1826', 'Maxaas', '2002039024', '2002', '39', '46.08921', '4.39239');
+INSERT INTO `settlement` VALUES ('1827', 'Mooro Bullei', '2002029096', '2002', '39', '45.11820', '3.36780');
+INSERT INTO `settlement` VALUES ('1828', 'Mukayle', '2002039016', '2002', '39', '45.22318', '3.81559');
+INSERT INTO `settlement` VALUES ('1829', 'Muqakoor', '2002039022', '2002', '39', '46.13221', '4.06068');
+INSERT INTO `settlement` VALUES ('1830', 'Muqtaar', '2002039066', '2002', '39', '45.68296', '3.67748');
+INSERT INTO `settlement` VALUES ('1831', 'Noi', '2002029098', '2002', '39', '44.88260', '3.79760');
+INSERT INTO `settlement` VALUES ('1832', 'Olomal', '2002029100', '2002', '39', '45.18250', '3.52710');
+INSERT INTO `settlement` VALUES ('1833', 'Oodadheere', '2002029102', '2002', '39', '45.70100', '3.70110');
+INSERT INTO `settlement` VALUES ('1834', 'Qajawlaha', '2002039004', '2002', '39', '45.55267', '3.66343');
+INSERT INTO `settlement` VALUES ('1835', 'Qaraalyaan', '2002039050', '2002', '39', '45.45818', '4.33634');
+INSERT INTO `settlement` VALUES ('1836', 'Qoracdheer', '2002039080', '2002', '39', '45.50644', '3.67036');
+INSERT INTO `settlement` VALUES ('1837', 'Quracley', '2002039078', '2002', '39', '45.57117', '3.74185');
+INSERT INTO `settlement` VALUES ('1838', 'Ruruch', '2002029134', '2002', '39', '45.16850', '3.42870');
+INSERT INTO `settlement` VALUES ('1839', 'Shaybow', '2002039072', '2002', '39', '45.62867', '3.74611');
+INSERT INTO `settlement` VALUES ('1840', 'Shiin', '2002039076', '2002', '39', '45.65550', '3.71374');
+INSERT INTO `settlement` VALUES ('1841', 'Siiboy', '2002039014', '2002', '39', '45.65319', '3.56774');
+INSERT INTO `settlement` VALUES ('1842', 'Sooroboy', '2002039074', '2002', '39', '45.63675', '3.73144');
+INSERT INTO `settlement` VALUES ('1843', 'Wabxo', '2002039032', '2002', '39', '45.20398', '4.11497');
+INSERT INTO `settlement` VALUES ('1844', 'Xamiir Gaabo', '2002039012', '2002', '39', '45.65204', '3.62843');
+INSERT INTO `settlement` VALUES ('1845', 'Xoofow', '2002039044', '2002', '39', '45.60555', '4.16546');
+INSERT INTO `settlement` VALUES ('1846', 'Xoorwadde', '2002029120', '2002', '39', '45.59710', '3.80100');
+INSERT INTO `settlement` VALUES ('1847', 'Yasoomman', '2002039034', '2002', '39', '45.74549', '4.05465');
+INSERT INTO `settlement` VALUES ('1848', 'Adadere', '2003029070', '2003', '40', '45.62780', '3.26760');
+INSERT INTO `settlement` VALUES ('1849', 'Adale Afwayne', '2003039064', '2003', '40', '45.42449', '3.22044');
+INSERT INTO `settlement` VALUES ('1850', 'Afgooye Cadde', '2003039050', '2003', '40', '45.53940', '3.24640');
+INSERT INTO `settlement` VALUES ('1851', 'Baqdaad', '2003039020', '2003', '40', '45.61681', '3.41582');
+INSERT INTO `settlement` VALUES ('1852', 'Bioma', '2003029072', '2003', '40', '45.29850', '3.27210');
+INSERT INTO `settlement` VALUES ('1853', 'Biyo Kululo', '2003039058', '2003', '40', '45.48249', '3.32637');
+INSERT INTO `settlement` VALUES ('1854', 'Bukuraale', '2003039052', '2003', '40', '45.53252', '3.23076');
+INSERT INTO `settlement` VALUES ('1855', 'Burader', '2003029074', '2003', '40', '45.57770', '3.28230');
+INSERT INTO `settlement` VALUES ('1856', 'Buulo Cigalle', '2003039012', '2003', '40', '45.55374', '3.35658');
+INSERT INTO `settlement` VALUES ('1857', 'Buulo Qalal', '2003039010', '2003', '40', '45.52926', '3.39948');
+INSERT INTO `settlement` VALUES ('1858', 'Buulo Togo', '2003039002', '2003', '40', '45.51580', '3.52175');
+INSERT INTO `settlement` VALUES ('1859', 'Buurdheer', '2003039032', '2003', '40', '45.62724', '3.48451');
+INSERT INTO `settlement` VALUES ('1860', 'Caadle Dhalin', '2003039042', '2003', '40', '45.72109', '3.25218');
+INSERT INTO `settlement` VALUES ('1861', 'Caag Lebile', '2003039014', '2003', '40', '45.62487', '3.55042');
+INSERT INTO `settlement` VALUES ('1862', 'Cawle', '2003039024', '2003', '40', '45.59971', '3.55656');
+INSERT INTO `settlement` VALUES ('1863', 'Ceel Dheem', '2003039036', '2003', '40', '45.48242', '3.49441');
+INSERT INTO `settlement` VALUES ('1864', 'Ceel Lafoole', '2003039038', '2003', '40', '45.48644', '3.37703');
+INSERT INTO `settlement` VALUES ('1865', 'Cilmi Shiixaale', '2003039026', '2003', '40', '45.60873', '3.53373');
+INSERT INTO `settlement` VALUES ('1866', 'Damalle', '2003039018', '2003', '40', '45.60664', '3.42011');
+INSERT INTO `settlement` VALUES ('1867', 'Dariley', '2003039028', '2003', '40', '45.62201', '3.53962');
+INSERT INTO `settlement` VALUES ('1868', 'Dhejis', '2003039034', '2003', '40', '45.62274', '3.46036');
+INSERT INTO `settlement` VALUES ('1869', 'Docoley', '2003039044', '2003', '40', '45.72286', '3.24262');
+INSERT INTO `settlement` VALUES ('1870', 'Doondeere', '2003039016', '2003', '40', '45.58932', '3.43917');
+INSERT INTO `settlement` VALUES ('1871', 'Duurgoys', '2003039022', '2003', '40', '45.59135', '3.34772');
+INSERT INTO `settlement` VALUES ('1872', 'Gabaanyale', '2003039004', '2003', '40', '45.50894', '3.49787');
+INSERT INTO `settlement` VALUES ('1873', 'Garso', '2003029076', '2003', '40', '45.66780', '3.42070');
+INSERT INTO `settlement` VALUES ('1874', 'Gumarrey', '2003039008', '2003', '40', '45.51319', '3.41321');
+INSERT INTO `settlement` VALUES ('1875', 'Gurbud', '2003039066', '2003', '40', '45.36430', '3.27345');
+INSERT INTO `settlement` VALUES ('1876', 'Hareo Lugoole', '2003039060', '2003', '40', '45.47863', '3.26777');
+INSERT INTO `settlement` VALUES ('1877', 'Hillo Aw Mahad', '2003039048', '2003', '40', '45.56373', '3.27942');
+INSERT INTO `settlement` VALUES ('1878', 'Jibiley', '2003039006', '2003', '40', '45.51788', '3.42919');
+INSERT INTO `settlement` VALUES ('1879', 'Kulan Xagay', '2003039054', '2003', '40', '45.51841', '3.26903');
+INSERT INTO `settlement` VALUES ('1880', 'Mundul', '2003039056', '2003', '40', '45.51444', '3.24989');
+INSERT INTO `settlement` VALUES ('1881', 'Qoriley', '2003029068', '2003', '40', '45.63050', '3.53260');
+INSERT INTO `settlement` VALUES ('1882', 'Qoryole', '2003039040', '2003', '40', '45.69998', '3.26954');
+INSERT INTO `settlement` VALUES ('1883', 'Qurac Jafle', '2003039046', '2003', '40', '45.53644', '3.31118');
+INSERT INTO `settlement` VALUES ('1884', 'Quracii Tallal', '2003039030', '2003', '40', '45.60907', '3.51113');
+INSERT INTO `settlement` VALUES ('1885', 'Quracley', '2003039062', '2003', '40', '45.49574', '3.25972');
+INSERT INTO `settlement` VALUES ('1886', 'Aboli', '2802029076', '2802', '72', '41.67270', '0.40000');
+INSERT INTO `settlement` VALUES ('1887', 'Abu Gala', '2802029080', '2802', '72', '41.37030', '0.07260');
+INSERT INTO `settlement` VALUES ('1888', 'Abugal', '2802029078', '2802', '72', '41.60080', '0.17270');
+INSERT INTO `settlement` VALUES ('1889', 'Aniuma', '2802029082', '2802', '72', '42.59950', '0.80060');
+INSERT INTO `settlement` VALUES ('1890', 'Anzubsito', '2802029084', '2802', '72', '41.82200', '0.67130');
+INSERT INTO `settlement` VALUES ('1891', 'Araroba', '2802029086', '2802', '72', '41.52720', '0.72970');
+INSERT INTO `settlement` VALUES ('1892', 'Baddana', '2802029088', '2802', '72', '41.42170', '0.16790');
+INSERT INTO `settlement` VALUES ('1893', 'Barako', '2802039054', '2802', '72', '42.60606', '0.74829');
+INSERT INTO `settlement` VALUES ('1894', 'Barquuqe', '2802039022', '2802', '72', '42.43748', '0.02735');
+INSERT INTO `settlement` VALUES ('1895', 'Beled Sa Iuba', '2802029090', '2802', '72', '42.17230', '0.08070');
+INSERT INTO `settlement` VALUES ('1896', 'Bibi', '2802039044', '2802', '72', '42.22744', '0.17411');
+INSERT INTO `settlement` VALUES ('1897', 'Bilis Qooqaani', '2802039004', '2802', '72', '41.71361', '0.28189');
+INSERT INTO `settlement` VALUES ('1898', 'Bogi Bacadle', '2802029092', '2802', '72', '41.43010', '0.53110');
+INSERT INTO `settlement` VALUES ('1899', 'Booka', '2802039034', '2802', '72', '42.41005', '0.07823');
+INSERT INTO `settlement` VALUES ('1900', 'Camora Bali', '2802029094', '2802', '72', '41.31900', '0.17240');
+INSERT INTO `settlement` VALUES ('1901', 'Cangiara', '2802029096', '2802', '72', '41.67080', '0.52130');
+INSERT INTO `settlement` VALUES ('1902', 'Caw', '2802029098', '2802', '72', '41.41930', '0.55260');
+INSERT INTO `settlement` VALUES ('1903', 'Cuca', '2802029122', '2802', '72', '42.45100', '0.72790');
+INSERT INTO `settlement` VALUES ('1904', 'Cuis Dera', '2802029124', '2802', '72', '41.45290', '0.24830');
+INSERT INTO `settlement` VALUES ('1905', 'Culume Allango', '2802029126', '2802', '72', '41.59760', '0.82150');
+INSERT INTO `settlement` VALUES ('1906', 'Culume Dagaga', '2802029128', '2802', '72', '41.57750', '0.82290');
+INSERT INTO `settlement` VALUES ('1907', 'Danis Sipi', '2802029130', '2802', '72', '41.42060', '0.15170');
+INSERT INTO `settlement` VALUES ('1908', 'Dibi', '2802029132', '2802', '72', '41.12170', '0.58040');
+INSERT INTO `settlement` VALUES ('1909', 'Dicu', '2802029134', '2802', '72', '41.25270', '0.52830');
+INSERT INTO `settlement` VALUES ('1910', 'Didimess', '2802029136', '2802', '72', '41.93120', '0.48030');
+INSERT INTO `settlement` VALUES ('1911', 'Dilduch', '2802029138', '2802', '72', '42.68140', '0.49730');
+INSERT INTO `settlement` VALUES ('1912', 'El Fangal', '2802029142', '2802', '72', '41.90010', '0.77230');
+INSERT INTO `settlement` VALUES ('1913', 'Elalan', '2802029140', '2802', '72', '41.28250', '0.07810');
+INSERT INTO `settlement` VALUES ('1914', 'Fafdo', '2802029144', '2802', '72', '41.10280', '0.77860');
+INSERT INTO `settlement` VALUES ('1915', 'Fal Raxmo', '2802039048', '2802', '72', '41.94996', '0.89201');
+INSERT INTO `settlement` VALUES ('1916', 'Fur Fursa', '2802029146', '2802', '72', '41.91810', '0.67210');
+INSERT INTO `settlement` VALUES ('1917', 'Galabuala', '2802029158', '2802', '72', '41.89990', '0.09900');
+INSERT INTO `settlement` VALUES ('1918', 'Gale Bussi', '2802029160', '2802', '72', '41.43000', '0.22960');
+INSERT INTO `settlement` VALUES ('1919', 'Galgaso', '2802029162', '2802', '72', '41.62760', '0.18100');
+INSERT INTO `settlement` VALUES ('1920', 'Gheldezza', '2802029164', '2802', '72', '41.29720', '0.29970');
+INSERT INTO `settlement` VALUES ('1921', 'Ghelghel Bur Foli', '2802029166', '2802', '72', '41.01730', '1.03230');
+INSERT INTO `settlement` VALUES ('1922', 'Giara El', '2802029168', '2802', '72', '41.37190', '0.62020');
+INSERT INTO `settlement` VALUES ('1923', 'Girma', '2802029170', '2802', '72', '41.42850', '0.77130');
+INSERT INTO `settlement` VALUES ('1924', 'Girma Diacatti', '2802029172', '2802', '72', '41.65290', '0.32090');
+INSERT INTO `settlement` VALUES ('1925', 'Golel', '2802039050', '2802', '72', '41.97184', '0.88672');
+INSERT INTO `settlement` VALUES ('1926', 'Golja', '2802039026', '2802', '72', '42.45759', '0.03476');
+INSERT INTO `settlement` VALUES ('1927', 'Guba Geeriya', '2802029174', '2802', '72', '41.36780', '-0.05030');
+INSERT INTO `settlement` VALUES ('1928', 'Gul Cali', '2802039042', '2802', '72', '42.31305', '0.09147');
+INSERT INTO `settlement` VALUES ('1929', 'Gura Arba', '2802029176', '2802', '72', '41.19750', '0.85050');
+INSERT INTO `settlement` VALUES ('1930', 'Hagar Uagio', '2802029178', '2802', '72', '41.97060', '0.83230');
+INSERT INTO `settlement` VALUES ('1931', 'Han Daraaf', '2802039040', '2802', '72', '42.31870', '0.03625');
+INSERT INTO `settlement` VALUES ('1932', 'Hararoba', '2802029180', '2802', '72', '41.72790', '0.38190');
+INSERT INTO `settlement` VALUES ('1933', 'Hilashiid', '2802039018', '2802', '72', '42.41636', '0.00928');
+INSERT INTO `settlement` VALUES ('1934', 'Iach Monis', '2802029182', '2802', '72', '41.47200', '0.57890');
+INSERT INTO `settlement` VALUES ('1935', 'Jabataa', '2802039028', '2802', '72', '42.42972', '0.04879');
+INSERT INTO `settlement` VALUES ('1936', 'Jana Cabdalle', '2802039038', '2802', '72', '42.28702', '0.02819');
+INSERT INTO `settlement` VALUES ('1937', 'Jilabdo', '2802029184', '2802', '72', '41.89750', '0.50250');
+INSERT INTO `settlement` VALUES ('1938', 'Kudkudaale', '2802029064', '2802', '72', '42.12840', '0.44780');
+INSERT INTO `settlement` VALUES ('1939', 'Kurkurmaysa', '2802039032', '2802', '72', '42.39316', '0.05443');
+INSERT INTO `settlement` VALUES ('1940', 'Lababaar', '2802039020', '2802', '72', '42.41460', '0.02726');
+INSERT INTO `settlement` VALUES ('1941', 'Mada Uarsisa', '2802029066', '2802', '72', '41.40290', '0.81770');
+INSERT INTO `settlement` VALUES ('1942', 'Magado', '2802029068', '2802', '72', '41.77980', '0.33170');
+INSERT INTO `settlement` VALUES ('1943', 'Magar', '2802039058', '2802', '72', '41.83107', '0.66564');
+INSERT INTO `settlement` VALUES ('1944', 'Maro Daltu', '2802029070', '2802', '72', '41.29740', '-0.03080');
+INSERT INTO `settlement` VALUES ('1945', 'Meschetti', '2802029072', '2802', '72', '41.27270', '0.80280');
+INSERT INTO `settlement` VALUES ('1946', 'Midey', '2802039052', '2802', '72', '41.98223', '0.82645');
+INSERT INTO `settlement` VALUES ('1947', 'Miido', '2802039046', '2802', '72', '42.15008', '0.30864');
+INSERT INTO `settlement` VALUES ('1948', 'Mola Gersey', '2802029074', '2802', '72', '41.35110', '-0.13030');
+INSERT INTO `settlement` VALUES ('1949', 'Oonley', '2802039016', '2802', '72', '42.52051', '0.00210');
+INSERT INTO `settlement` VALUES ('1950', 'Qalawiley', '2802039008', '2802', '72', '42.09803', '0.79505');
+INSERT INTO `settlement` VALUES ('1951', 'Qalley', '2802039006', '2802', '72', '42.01205', '0.73144');
+INSERT INTO `settlement` VALUES ('1952', 'Qulcaaley', '2802039030', '2802', '72', '42.37838', '0.06371');
+INSERT INTO `settlement` VALUES ('1953', 'Rama Guda', '2802029148', '2802', '72', '40.99880', '0.17290');
+INSERT INTO `settlement` VALUES ('1954', 'Riqala', '2802039012', '2802', '72', '42.64623', '0.32241');
+INSERT INTO `settlement` VALUES ('1955', 'Ruqruqa', '2802039024', '2802', '72', '42.45453', '0.02670');
+INSERT INTO `settlement` VALUES ('1956', 'Saato', '2802039036', '2802', '72', '42.33390', '0.07525');
+INSERT INTO `settlement` VALUES ('1957', 'Sencar Aveggio', '2802029150', '2802', '72', '41.62950', '0.55240');
+INSERT INTO `settlement` VALUES ('1958', 'Sencor Gherbic', '2802029152', '2802', '72', '41.49780', '0.53190');
+INSERT INTO `settlement` VALUES ('1959', 'Sencor Melbe', '2802029154', '2802', '72', '41.54890', '0.55000');
+INSERT INTO `settlement` VALUES ('1960', 'Solola', '2802029100', '2802', '72', '41.51720', '0.11730');
+INSERT INTO `settlement` VALUES ('1961', 'Sooyaac', '2802029102', '2802', '72', '42.28020', '0.04780');
+INSERT INTO `settlement` VALUES ('1962', 'Tarri', '2802029104', '2802', '72', '41.63200', '0.70160');
+INSERT INTO `settlement` VALUES ('1963', 'Tinguduud', '2802039014', '2802', '72', '42.52855', '0.02773');
+INSERT INTO `settlement` VALUES ('1964', 'Uar Corah Irai', '2802029106', '2802', '72', '41.52920', '0.95230');
+INSERT INTO `settlement` VALUES ('1965', 'Uar Dalado', '2802029108', '2802', '72', '41.18140', '0.91760');
+INSERT INTO `settlement` VALUES ('1966', 'Uar Gallo', '2802029110', '2802', '72', '41.14740', '1.12860');
+INSERT INTO `settlement` VALUES ('1967', 'Uel Gori', '2802029112', '2802', '72', '41.82950', '0.82050');
+INSERT INTO `settlement` VALUES ('1968', 'Uel Merer', '2802029114', '2802', '72', '41.95270', '1.28050');
+INSERT INTO `settlement` VALUES ('1969', 'Uel Mur', '2802029116', '2802', '72', '41.29950', '-0.05290');
+INSERT INTO `settlement` VALUES ('1970', 'Uruai', '2802029118', '2802', '72', '42.57210', '0.87190');
+INSERT INTO `settlement` VALUES ('1971', 'Urungo', '2802039056', '2802', '72', '41.53620', '0.08960');
+INSERT INTO `settlement` VALUES ('1972', 'Urungu', '2802039062', '2802', '72', '41.79181', '0.69182');
+INSERT INTO `settlement` VALUES ('1973', 'Weel Mereed', '2802029156', '2802', '72', '41.13170', '0.92080');
+INSERT INTO `settlement` VALUES ('1974', 'Xagar Geel', '2802039010', '2802', '72', '42.01277', '0.90320');
+INSERT INTO `settlement` VALUES ('1975', 'Xaliima Caddey', '2802029120', '2802', '72', '41.73170', '0.67130');
+INSERT INTO `settlement` VALUES ('1976', 'Xayo', '2802039060', '2802', '72', '41.81446', '0.43428');
+INSERT INTO `settlement` VALUES ('1977', 'Allanga Gurrow', '2803029040', '2803', '73', '41.04890', '-0.32040');
+INSERT INTO `settlement` VALUES ('1978', 'Baabo', '2803029042', '2803', '73', '41.60290', '-1.45270');
+INSERT INTO `settlement` VALUES ('1979', 'Billada', '2803029044', '2803', '73', '41.53170', '-1.52090');
+INSERT INTO `settlement` VALUES ('1980', 'Bora', '2803029046', '2803', '73', '41.19930', '-0.98050');
+INSERT INTO `settlement` VALUES ('1981', 'Buscbusc', '2803029048', '2803', '73', '41.69800', '-1.21930');
+INSERT INTO `settlement` VALUES ('1982', 'Buur Gaabo', '2803039016', '2803', '73', '41.83689', '-1.21781');
+INSERT INTO `settlement` VALUES ('1983', 'Cala', '2803029050', '2803', '73', '41.49960', '-1.49940');
+INSERT INTO `settlement` VALUES ('1984', 'Camor Gila', '2803029052', '2803', '73', '41.18270', '-0.21850');
+INSERT INTO `settlement` VALUES ('1985', 'Cascia Debin', '2803029054', '2803', '73', '40.99820', '-0.70170');
+INSERT INTO `settlement` VALUES ('1986', 'Cauitti', '2803029056', '2803', '73', '41.02780', '-0.58290');
+INSERT INTO `settlement` VALUES ('1987', 'Comauala', '2803029068', '2803', '73', '41.54790', '-1.54700');
+INSERT INTO `settlement` VALUES ('1988', 'Corbes', '2803029070', '2803', '73', '41.37050', '-0.73220');
+INSERT INTO `settlement` VALUES ('1989', 'Corio', '2803029072', '2803', '73', '41.02150', '-0.57940');
+INSERT INTO `settlement` VALUES ('1990', 'Cormale', '2803029074', '2803', '73', '41.07940', '-0.30270');
+INSERT INTO `settlement` VALUES ('1991', 'Cororo', '2803029124', '2803', '73', '41.44350', '-1.40530');
+INSERT INTO `settlement` VALUES ('1992', 'Dad Gumbi', '2803029076', '2803', '73', '41.24920', '-0.17800');
+INSERT INTO `settlement` VALUES ('1993', 'Dhunfa', '2803029078', '2803', '73', '41.33270', '-1.08060');
+INSERT INTO `settlement` VALUES ('1994', 'Dib Ul Chena', '2803029080', '2803', '73', '41.11940', '-0.23190');
+INSERT INTO `settlement` VALUES ('1995', 'Didir Lafcad', '2803029082', '2803', '73', '41.43080', '-1.38120');
+INSERT INTO `settlement` VALUES ('1996', 'Dirdir Muso', '2803029084', '2803', '73', '41.57870', '-1.47980');
+INSERT INTO `settlement` VALUES ('1997', 'Doola', '2803029086', '2803', '73', '41.14800', '-1.01880');
+INSERT INTO `settlement` VALUES ('1998', 'Dubri', '2803029088', '2803', '73', '41.21770', '-0.32220');
+INSERT INTO `settlement` VALUES ('1999', 'El Habla', '2803029090', '2803', '73', '41.65280', '-1.38120');
+INSERT INTO `settlement` VALUES ('2000', 'Fiila', '2803029092', '2803', '73', '41.27750', '-1.16970');
+INSERT INTO `settlement` VALUES ('2001', 'Gansagur', '2803029106', '2803', '73', '41.28190', '-0.42290');
+INSERT INTO `settlement` VALUES ('2002', 'Garsay Kuusa', '2803029108', '2803', '73', '41.62040', '-0.70160');
+INSERT INTO `settlement` VALUES ('2003', 'Giu', '2803029110', '2803', '73', '41.53070', '-1.13110');
+INSERT INTO `settlement` VALUES ('2004', 'Goba', '2803039006', '2803', '73', '41.71465', '-0.74276');
+INSERT INTO `settlement` VALUES ('2005', 'Golo Giacaro', '2803029112', '2803', '73', '41.12040', '-0.42990');
+INSERT INTO `settlement` VALUES ('2006', 'Guba Madaro', '2803029114', '2803', '73', '41.40170', '-0.88290');
+INSERT INTO `settlement` VALUES ('2007', 'Guraru', '2803029116', '2803', '73', '40.99850', '-0.62810');
+INSERT INTO `settlement` VALUES ('2008', 'Habo Gulo', '2803029126', '2803', '73', '41.48400', '-1.45300');
+INSERT INTO `settlement` VALUES ('2009', 'Hida Haro Mare', '2803029118', '2803', '73', '41.07840', '-0.89950');
+INSERT INTO `settlement` VALUES ('2010', 'Hoja Wajeer', '2803029120', '2803', '73', '41.52910', '-1.23110');
+INSERT INTO `settlement` VALUES ('2011', 'Hoosingo', '2803039002', '2803', '73', '41.27012', '-0.17382');
+INSERT INTO `settlement` VALUES ('2012', 'Iach Ari', '2803029128', '2803', '73', '41.36830', '-1.17110');
+INSERT INTO `settlement` VALUES ('2013', 'Iscora', '2803029122', '2803', '73', '41.13000', '-0.43060');
+INSERT INTO `settlement` VALUES ('2014', 'Kaambooni', '2803039010', '2803', '73', '41.58771', '-1.63754');
+INSERT INTO `settlement` VALUES ('2015', 'Kidi Faani', '2803029022', '2803', '73', '41.75130', '-1.15130');
+INSERT INTO `settlement` VALUES ('2016', 'Koday', '2803039018', '2803', '73', '41.97387', '-1.03294');
+INSERT INTO `settlement` VALUES ('2017', 'Kolbiyow', '2803039008', '2803', '73', '41.22177', '-1.13270');
+INSERT INTO `settlement` VALUES ('2018', 'Lalofto', '2803029024', '2803', '73', '41.26970', '-1.09890');
+INSERT INTO `settlement` VALUES ('2019', 'Madero', '2803029026', '2803', '73', '41.67190', '-1.36760');
+INSERT INTO `settlement` VALUES ('2020', 'Mado', '2803029028', '2803', '73', '41.56910', '-1.60050');
+INSERT INTO `settlement` VALUES ('2021', 'Manaaraani', '2803039014', '2803', '73', '41.71349', '-1.43415');
+INSERT INTO `settlement` VALUES ('2022', 'Meesa', '2803029030', '2803', '73', '41.71910', '-1.32080');
+INSERT INTO `settlement` VALUES ('2023', 'Meida', '2803029032', '2803', '73', '41.03050', '-0.59990');
+INSERT INTO `settlement` VALUES ('2024', 'Navava', '2803029034', '2803', '73', '41.31800', '-1.16850');
+INSERT INTO `settlement` VALUES ('2025', 'Nebso', '2803029036', '2803', '73', '41.42190', '-1.35100');
+INSERT INTO `settlement` VALUES ('2026', 'Obbe', '2803029038', '2803', '73', '41.55080', '-0.85290');
+INSERT INTO `settlement` VALUES ('2027', 'Qoddo', '2803039012', '2803', '73', '41.62005', '-1.58059');
+INSERT INTO `settlement` VALUES ('2028', 'Ramate', '2803029094', '2803', '73', '41.11960', '-0.34970');
+INSERT INTO `settlement` VALUES ('2029', 'Sara', '2803029096', '2803', '73', '41.02170', '-0.81960');
+INSERT INTO `settlement` VALUES ('2030', 'Sariirle', '2803029098', '2803', '73', '41.42170', '-1.30070');
+INSERT INTO `settlement` VALUES ('2031', 'Sciam Cu', '2803029100', '2803', '73', '41.72750', '-1.37110');
+INSERT INTO `settlement` VALUES ('2032', 'Scidlei', '2803029102', '2803', '73', '41.87760', '-1.12820');
+INSERT INTO `settlement` VALUES ('2033', 'Sheeka Lassay', '2803029104', '2803', '73', '41.77960', '-1.32800');
+INSERT INTO `settlement` VALUES ('2034', 'Tita', '2803029058', '2803', '73', '41.07000', '-0.87150');
+INSERT INTO `settlement` VALUES ('2035', 'Tulic Naghessariga', '2803029060', '2803', '73', '41.25070', '-1.05130');
+INSERT INTO `settlement` VALUES ('2036', 'Tuweer Dama', '2803029062', '2803', '73', '41.62150', '-1.31830');
+INSERT INTO `settlement` VALUES ('2037', 'Uangheolle', '2803029064', '2803', '73', '41.44970', '-0.84760');
+INSERT INTO `settlement` VALUES ('2038', 'Ulaaul', '2803029066', '2803', '73', '41.13140', '-0.93210');
+INSERT INTO `settlement` VALUES ('2039', 'Wadajir', '2803039004', '2803', '73', '41.66500', '-0.73197');
+INSERT INTO `settlement` VALUES ('2040', 'Wajeer', '2803039020', '2803', '73', '41.53989', '-1.24102');
+INSERT INTO `settlement` VALUES ('2041', 'Abdi Arbo', '2804029246', '2804', '74', '42.59990', '-0.02770');
+INSERT INTO `settlement` VALUES ('2042', 'Aboro', '2804039162', '2804', '74', '42.72587', '0.07169');
+INSERT INTO `settlement` VALUES ('2043', 'Ambago', '2804039072', '2804', '74', '42.74642', '0.30987');
+INSERT INTO `settlement` VALUES ('2044', 'Araara', '2804029248', '2804', '74', '42.68210', '0.02890');
+INSERT INTO `settlement` VALUES ('2045', 'Arar Yarey', '2804039188', '2804', '74', '42.66460', '0.01317');
+INSERT INTO `settlement` VALUES ('2046', 'Axmed Kamatiirey', '2804039068', '2804', '74', '42.74847', '0.30226');
+INSERT INTO `settlement` VALUES ('2047', 'Baardheere', '2804039074', '2804', '74', '42.74185', '0.29069');
+INSERT INTO `settlement` VALUES ('2048', 'Baasaay', '2804039080', '2804', '74', '42.74216', '0.25749');
+INSERT INTO `settlement` VALUES ('2049', 'Bacaad', '2804039214', '2804', '74', '42.81463', '0.02435');
+INSERT INTO `settlement` VALUES ('2050', 'Balad Raxman', '2804039156', '2804', '74', '42.71225', '0.07806');
+INSERT INTO `settlement` VALUES ('2051', 'Bambila', '2804039168', '2804', '74', '42.72745', '0.05881');
+INSERT INTO `settlement` VALUES ('2052', 'Banaaney', '2804039230', '2804', '74', '42.87822', '0.10608');
+INSERT INTO `settlement` VALUES ('2053', 'Bandar Jediid', '2804039032', '2804', '74', '42.60922', '-0.01289');
+INSERT INTO `settlement` VALUES ('2054', 'Bangeeni', '2804039170', '2804', '74', '42.72636', '0.03911');
+INSERT INTO `settlement` VALUES ('2055', 'Baqdaad', '2804039040', '2804', '74', '42.65447', '-0.04184');
+INSERT INTO `settlement` VALUES ('2056', 'Bar', '2804039050', '2804', '74', '42.63862', '-0.00713');
+INSERT INTO `settlement` VALUES ('2057', 'Barwaaqo Weyn', '2804039166', '2804', '74', '42.73602', '0.06046');
+INSERT INTO `settlement` VALUES ('2058', 'Bashiir Mataambow', '2804039070', '2804', '74', '42.73682', '0.30614');
+INSERT INTO `settlement` VALUES ('2059', 'Beey', '2804039006', '2804', '74', '42.72079', '-0.06314');
+INSERT INTO `settlement` VALUES ('2060', 'Beled Amiin', '2804039116', '2804', '74', '42.77055', '0.19529');
+INSERT INTO `settlement` VALUES ('2061', 'Billaq', '2804039212', '2804', '74', '42.80060', '0.02475');
+INSERT INTO `settlement` VALUES ('2062', 'Booda', '2804039064', '2804', '74', '42.67054', '-0.11343');
+INSERT INTO `settlement` VALUES ('2063', 'Booriin', '2804039140', '2804', '74', '42.71630', '0.13019');
+INSERT INTO `settlement` VALUES ('2064', 'Bugeey', '2804039160', '2804', '74', '42.72446', '0.07493');
+INSERT INTO `settlement` VALUES ('2065', 'Burgaan', '2804039200', '2804', '74', '42.83490', '0.25357');
+INSERT INTO `settlement` VALUES ('2066', 'Buulle', '2804039202', '2804', '74', '42.79973', '0.20320');
+INSERT INTO `settlement` VALUES ('2067', 'Buur Koy', '2804039028', '2804', '74', '42.59948', '-0.02989');
+INSERT INTO `settlement` VALUES ('2068', 'Cadaad Geri', '2804039018', '2804', '74', '42.77047', '-0.00175');
+INSERT INTO `settlement` VALUES ('2069', 'Catmaarrey', '2804039198', '2804', '74', '42.85970', '0.29731');
+INSERT INTO `settlement` VALUES ('2070', 'Cusmaan Moto', '2804039164', '2804', '74', '42.71729', '0.06370');
+INSERT INTO `settlement` VALUES ('2071', 'Dema', '2804039010', '2804', '74', '42.76579', '-0.01946');
+INSERT INTO `settlement` VALUES ('2072', 'Dhaay Garas', '2804039234', '2804', '74', '42.72222', '0.03105');
+INSERT INTO `settlement` VALUES ('2073', 'Dhayo', '2804039094', '2804', '74', '42.77467', '0.23899');
+INSERT INTO `settlement` VALUES ('2074', 'Dhimbii', '2804039096', '2804', '74', '49.59940', '7.32750');
+INSERT INTO `settlement` VALUES ('2075', 'El Ghescud', '2804029254', '2804', '74', '43.15590', '0.29130');
+INSERT INTO `settlement` VALUES ('2076', 'Faarax', '2804039132', '2804', '74', '42.73066', '0.15707');
+INSERT INTO `settlement` VALUES ('2077', 'Fagan', '2804039146', '2804', '74', '42.70054', '0.11682');
+INSERT INTO `settlement` VALUES ('2078', 'Far Janne', '2804039048', '2804', '74', '42.62587', '-0.00262');
+INSERT INTO `settlement` VALUES ('2079', 'Far Waamo', '2804029250', '2804', '74', '42.57800', '-0.04840');
+INSERT INTO `settlement` VALUES ('2080', 'Fikiro', '2804039144', '2804', '74', '42.71097', '0.12185');
+INSERT INTO `settlement` VALUES ('2081', 'Gaabaha', '2804039012', '2804', '74', '42.77254', '-0.03362');
+INSERT INTO `settlement` VALUES ('2082', 'Gaal', '2804039206', '2804', '74', '42.80934', '0.09175');
+INSERT INTO `settlement` VALUES ('2083', 'Galad Ley', '2804039004', '2804', '74', '42.74123', '-0.04327');
+INSERT INTO `settlement` VALUES ('2084', 'Gamaanya', '2804039130', '2804', '74', '42.74269', '0.15311');
+INSERT INTO `settlement` VALUES ('2085', 'Gamdolayo', '2804039134', '2804', '74', '42.71931', '0.16429');
+INSERT INTO `settlement` VALUES ('2086', 'Garas', '2804039060', '2804', '74', '42.54028', '-0.02573');
+INSERT INTO `settlement` VALUES ('2087', 'Garas', '2804039158', '2804', '74', '42.70232', '0.06745');
+INSERT INTO `settlement` VALUES ('2088', 'Gobanimo', '2804039038', '2804', '74', '42.63977', '-0.03503');
+INSERT INTO `settlement` VALUES ('2089', 'Gomeeni', '2804039066', '2804', '74', '42.75753', '0.30530');
+INSERT INTO `settlement` VALUES ('2090', 'Haf', '2804029252', '2804', '74', '42.66990', '-0.04770');
+INSERT INTO `settlement` VALUES ('2091', 'Howlwadaag', '2804039172', '2804', '74', '42.70342', '0.04414');
+INSERT INTO `settlement` VALUES ('2092', 'Isaao', '2804039102', '2804', '74', '42.75601', '0.22612');
+INSERT INTO `settlement` VALUES ('2093', 'Jamaale', '2804039044', '2804', '74', '42.67643', '-0.02440');
+INSERT INTO `settlement` VALUES ('2094', 'Jambarow', '2804039046', '2804', '74', '42.66528', '-0.02165');
+INSERT INTO `settlement` VALUES ('2095', 'Jibey', '2804039052', '2804', '74', '42.65155', '-0.01014');
+INSERT INTO `settlement` VALUES ('2096', 'Jiinis', '2804039142', '2804', '74', '42.73016', '0.13203');
+INSERT INTO `settlement` VALUES ('2097', 'Jimaboota', '2804039088', '2804', '74', '42.76979', '0.25947');
+INSERT INTO `settlement` VALUES ('2098', 'Jittalliimo', '2804039124', '2804', '74', '42.73089', '0.17412');
+INSERT INTO `settlement` VALUES ('2099', 'Juwaaley', '2804039026', '2804', '74', '42.61161', '-0.03520');
+INSERT INTO `settlement` VALUES ('2100', 'Kaabsiini', '2804039186', '2804', '74', '42.68533', '0.01145');
+INSERT INTO `settlement` VALUES ('2101', 'Kabxanley', '2804039208', '2804', '74', '42.81991', '0.07045');
+INSERT INTO `settlement` VALUES ('2102', 'Kamsuuma', '2804039090', '2804', '74', '42.77512', '0.24935');
+INSERT INTO `settlement` VALUES ('2103', 'Kobon', '2804039174', '2804', '74', '42.70452', '0.03586');
+INSERT INTO `settlement` VALUES ('2104', 'Kor Kaamar', '2804039176', '2804', '74', '42.67625', '0.04212');
+INSERT INTO `settlement` VALUES ('2105', 'Kuddud', '2804039058', '2804', '74', '42.54377', '-0.01236');
+INSERT INTO `settlement` VALUES ('2106', 'Laba Carish', '2804039194', '2804', '74', '42.66196', '0.00667');
+INSERT INTO `settlement` VALUES ('2107', 'Maama', '2804039120', '2804', '74', '42.75594', '0.15958');
+INSERT INTO `settlement` VALUES ('2108', 'Maama Sundha', '2804039150', '2804', '74', '42.69974', '0.10179');
+INSERT INTO `settlement` VALUES ('2109', 'Maamboy', '2804039110', '2804', '74', '42.75297', '0.20755');
+INSERT INTO `settlement` VALUES ('2110', 'Madhaamey', '2804039152', '2804', '74', '42.70508', '0.09811');
+INSERT INTO `settlement` VALUES ('2111', 'Majiir', '2804039056', '2804', '74', '42.53582', '-0.00493');
+INSERT INTO `settlement` VALUES ('2112', 'Makalaago', '2804039084', '2804', '74', '42.75822', '0.25429');
+INSERT INTO `settlement` VALUES ('2113', 'Malayle', '2804039054', '2804', '74', '42.66156', '-0.00182');
+INSERT INTO `settlement` VALUES ('2114', 'Mana Moofi', '2804039154', '2804', '74', '42.70827', '0.08542');
+INSERT INTO `settlement` VALUES ('2115', 'Manyiika', '2804039076', '2804', '74', '42.75548', '0.28117');
+INSERT INTO `settlement` VALUES ('2116', 'Mareer', '2804039192', '2804', '74', '42.65074', '0.01225');
+INSERT INTO `settlement` VALUES ('2117', 'Masaagiro', '2804039122', '2804', '74', '42.75365', '0.17192');
+INSERT INTO `settlement` VALUES ('2118', 'Mashaaga', '2804039112', '2804', '74', '42.74764', '0.19575');
+INSERT INTO `settlement` VALUES ('2119', 'Mcheruale', '2804029238', '2804', '74', '42.78130', '0.24910');
+INSERT INTO `settlement` VALUES ('2120', 'Meama', '2804029240', '2804', '74', '42.76760', '0.27180');
+INSERT INTO `settlement` VALUES ('2121', 'Meser', '2804039092', '2804', '74', '42.77489', '0.24211');
+INSERT INTO `settlement` VALUES ('2122', 'Miigwa', '2804039104', '2804', '74', '42.76012', '0.22178');
+INSERT INTO `settlement` VALUES ('2123', 'Mogaambo', '2804039136', '2804', '74', '42.71765', '0.15619');
+INSERT INTO `settlement` VALUES ('2124', 'Mombaasa', '2804039108', '2804', '74', '42.76195', '0.21151');
+INSERT INTO `settlement` VALUES ('2125', 'Moofa', '2804039118', '2804', '74', '42.75129', '0.16415');
+INSERT INTO `settlement` VALUES ('2126', 'Mraara', '2804039178', '2804', '74', '42.68318', '0.02727');
+INSERT INTO `settlement` VALUES ('2127', 'Mukoy Gaamila', '2804039126', '2804', '74', '42.74718', '0.15509');
+INSERT INTO `settlement` VALUES ('2128', 'Mukyoow', '2804039034', '2804', '74', '42.62622', '-0.04211');
+INSERT INTO `settlement` VALUES ('2129', 'Munghia', '2804029242', '2804', '74', '42.78140', '0.23220');
+INSERT INTO `settlement` VALUES ('2130', 'Murjaan', '2804029244', '2804', '74', '42.72780', '0.24790');
+INSERT INTO `settlement` VALUES ('2131', 'Muryoole', '2804039236', '2804', '74', '42.76752', '-0.03655');
+INSERT INTO `settlement` VALUES ('2132', 'Muudey Qalaf', '2804039180', '2804', '74', '42.67595', '0.02421');
+INSERT INTO `settlement` VALUES ('2133', 'Muusa Makuba', '2804039100', '2804', '74', '42.76568', '0.23024');
+INSERT INTO `settlement` VALUES ('2134', 'Muusa Xaaji', '2804039182', '2804', '74', '42.66509', '0.01777');
+INSERT INTO `settlement` VALUES ('2135', 'Nattaa Quur', '2804039008', '2804', '74', '42.75004', '-0.02687');
+INSERT INTO `settlement` VALUES ('2136', 'Niirey', '2804039042', '2804', '74', '42.67581', '-0.05017');
+INSERT INTO `settlement` VALUES ('2137', 'Oondheere', '2804039228', '2804', '74', '42.88902', '0.12279');
+INSERT INTO `settlement` VALUES ('2138', 'Oraxley', '2804039222', '2804', '74', '42.86526', '0.05601');
+INSERT INTO `settlement` VALUES ('2139', 'Qumtiirrey', '2804039078', '2804', '74', '42.73614', '0.26214');
+INSERT INTO `settlement` VALUES ('2140', 'Quuley', '2804039016', '2804', '74', '42.79475', '-0.01440');
+INSERT INTO `settlement` VALUES ('2141', 'Raaxole', '2804039148', '2804', '74', '42.71563', '0.10418');
+INSERT INTO `settlement` VALUES ('2142', 'Raaxoole', '2804039024', '2804', '74', '42.60311', '-0.04707');
+INSERT INTO `settlement` VALUES ('2143', 'Rakafiida', '2804039036', '2804', '74', '42.62746', '-0.03751');
+INSERT INTO `settlement` VALUES ('2144', 'Saagga', '2804039106', '2804', '74', '42.76987', '0.22384');
+INSERT INTO `settlement` VALUES ('2145', 'Sabatuuni', '2804039098', '2804', '74', '42.77542', '0.22323');
+INSERT INTO `settlement` VALUES ('2146', 'Sararrow', '2804039014', '2804', '74', '42.78228', '-0.03596');
+INSERT INTO `settlement` VALUES ('2147', 'Shabeelley', '2804039218', '2804', '74', '42.83420', '0.00296');
+INSERT INTO `settlement` VALUES ('2148', 'Shami Mubad', '2804039128', '2804', '74', '42.74931', '0.15083');
+INSERT INTO `settlement` VALUES ('2149', 'Shiikh', '2804039216', '2804', '74', '42.82733', '0.02278');
+INSERT INTO `settlement` VALUES ('2150', 'Shungul Mafuula', '2804039086', '2804', '74', '42.76606', '0.24904');
+INSERT INTO `settlement` VALUES ('2151', 'Sinjibaar', '2804039184', '2804', '74', '42.69680', '0.01164');
+INSERT INTO `settlement` VALUES ('2152', 'Sunguuni', '2804039190', '2804', '74', '42.65559', '0.00501');
+INSERT INTO `settlement` VALUES ('2153', 'Taka Wuungu', '2804039138', '2804', '74', '42.71434', '0.14662');
+INSERT INTO `settlement` VALUES ('2154', 'Toro', '2804039082', '2804', '74', '42.74870', '0.25422');
+INSERT INTO `settlement` VALUES ('2155', 'Towfuq', '2804039022', '2804', '74', '42.58451', '-0.04379');
+INSERT INTO `settlement` VALUES ('2156', 'Turdho', '2804039002', '2804', '74', '42.72099', '-0.07945');
+INSERT INTO `settlement` VALUES ('2157', 'Tuunni', '2804039204', '2804', '74', '42.79189', '0.18608');
+INSERT INTO `settlement` VALUES ('2158', 'Waado', '2804039224', '2804', '74', '42.87589', '0.09338');
+INSERT INTO `settlement` VALUES ('2159', 'Waamo', '2804039020', '2804', '74', '42.58354', '-0.04822');
+INSERT INTO `settlement` VALUES ('2160', 'Walwale', '2804039030', '2804', '74', '42.59142', '-0.01342');
+INSERT INTO `settlement` VALUES ('2161', 'Washaaq', '2804039114', '2804', '74', '42.77649', '0.20884');
+INSERT INTO `settlement` VALUES ('2162', 'Weeltuweer', '2804039062', '2804', '74', '42.55916', '-0.02092');
+INSERT INTO `settlement` VALUES ('2163', 'Xalimolibaax', '2804039220', '2804', '74', '42.84305', '0.06518');
+INSERT INTO `settlement` VALUES ('2164', 'Xididaale', '2804039226', '2804', '74', '42.88558', '0.07325');
+INSERT INTO `settlement` VALUES ('2165', 'Xongorre', '2804039210', '2804', '74', '42.79458', '0.01239');
+INSERT INTO `settlement` VALUES ('2166', 'Yaaq', '2804039232', '2804', '74', '42.75303', '0.20448');
+INSERT INTO `settlement` VALUES ('2167', 'Agodi', '2801029088', '2801', '71', '41.96920', '-0.13010');
+INSERT INTO `settlement` VALUES ('2168', 'Anole', '2801029090', '2801', '71', '41.91830', '-0.87090');
+INSERT INTO `settlement` VALUES ('2169', 'Baalgudde', '2801039058', '2801', '71', '42.19532', '-0.49188');
+INSERT INTO `settlement` VALUES ('2170', 'Beermaasi', '2801039068', '2801', '71', '42.12383', '-0.67362');
+INSERT INTO `settlement` VALUES ('2171', 'Biyo Yare', '2801039022', '2801', '71', '42.61875', '-0.22640');
+INSERT INTO `settlement` VALUES ('2172', 'Boia', '2801029092', '2801', '71', '42.29920', '-0.52070');
+INSERT INTO `settlement` VALUES ('2173', 'Buulo Xaaji', '2801039006', '2801', '71', '41.98414', '-0.63201');
+INSERT INTO `settlement` VALUES ('2174', 'Caba', '2801029094', '2801', '71', '41.95240', '-0.23240');
+INSERT INTO `settlement` VALUES ('2175', 'Canjeel', '2801039014', '2801', '71', '42.39941', '-0.14934');
+INSERT INTO `settlement` VALUES ('2176', 'Ceel Sai', '2801029104', '2801', '71', '41.79990', '-0.10100');
+INSERT INTO `settlement` VALUES ('2177', 'Dalxiiska', '2801029096', '2801', '71', '42.56880', '-0.32970');
+INSERT INTO `settlement` VALUES ('2178', 'Dharkaynley', '2801039004', '2801', '71', '41.98191', '-0.60216');
+INSERT INTO `settlement` VALUES ('2179', 'Ditta Sara', '2801029098', '2801', '71', '41.42190', '-0.32020');
+INSERT INTO `settlement` VALUES ('2180', 'Dol Ierei', '2801029100', '2801', '71', '42.40050', '-0.34740');
+INSERT INTO `settlement` VALUES ('2181', 'Eil Ad', '2801029102', '2801', '71', '42.32880', '-0.28290');
+INSERT INTO `settlement` VALUES ('2182', 'Fuuma', '2801039052', '2801', '71', '42.37791', '-0.53862');
+INSERT INTO `settlement` VALUES ('2183', 'Gacaan Maroodi', '2801039072', '2801', '71', '42.03685', '-0.80478');
+INSERT INTO `settlement` VALUES ('2184', 'Gaduud', '2801039042', '2801', '71', '42.57061', '-0.07204');
+INSERT INTO `settlement` VALUES ('2185', 'Gobo Kibir', '2801039012', '2801', '71', '42.36773', '-0.09800');
+INSERT INTO `settlement` VALUES ('2186', 'Godeia', '2801029116', '2801', '71', '42.30030', '-0.57130');
+INSERT INTO `settlement` VALUES ('2187', 'Gol Bah', '2801029118', '2801', '71', '41.56880', '-0.27080');
+INSERT INTO `settlement` VALUES ('2188', 'Golosha Matrooba', '2801029120', '2801', '71', '41.64800', '-0.55050');
+INSERT INTO `settlement` VALUES ('2189', 'Goob Weyn', '2801039018', '2801', '71', '42.60119', '-0.24808');
+INSERT INTO `settlement` VALUES ('2190', 'Haafko', '2801039034', '2801', '71', '42.58000', '-0.14899');
+INSERT INTO `settlement` VALUES ('2191', 'Iach Bulle', '2801029122', '2801', '71', '42.38160', '-0.39800');
+INSERT INTO `settlement` VALUES ('2192', 'Istanboul', '2801039066', '2801', '71', '42.09561', '-0.84238');
+INSERT INTO `settlement` VALUES ('2193', 'Jiroole', '2801039050', '2801', '71', '42.31155', '-0.62996');
+INSERT INTO `settlement` VALUES ('2194', 'Jumba', '2801039020', '2801', '71', '42.62299', '-0.24606');
+INSERT INTO `settlement` VALUES ('2195', 'Juula', '2801039078', '2801', '71', '42.03930', '-1.00083');
+INSERT INTO `settlement` VALUES ('2196', 'Kaadweyn', '2801039062', '2801', '71', '42.30133', '-0.36987');
+INSERT INTO `settlement` VALUES ('2197', 'Koyaama', '2801039056', '2801', '71', '42.33894', '-0.63230');
+INSERT INTO `settlement` VALUES ('2198', 'Kuusow', '2801039048', '2801', '71', '42.54701', '-0.04050');
+INSERT INTO `settlement` VALUES ('2199', 'Laheley', '2801039064', '2801', '71', '42.34821', '-0.33737');
+INSERT INTO `settlement` VALUES ('2200', 'Licchitore', '2801029082', '2801', '71', '42.25150', '-0.60180');
+INSERT INTO `settlement` VALUES ('2201', 'Luglaaw', '2801039026', '2801', '71', '42.60290', '-0.20284');
+INSERT INTO `settlement` VALUES ('2202', 'Mad Caraale', '2801039046', '2801', '71', '42.56982', '-0.05654');
+INSERT INTO `settlement` VALUES ('2203', 'Mangab', '2801029084', '2801', '71', '42.05160', '-0.47100');
+INSERT INTO `settlement` VALUES ('2204', 'Mareer', '2801039044', '2801', '71', '42.60843', '-0.09905');
+INSERT INTO `settlement` VALUES ('2205', 'Mudawa', '2801039076', '2801', '71', '42.03077', '-1.01538');
+INSERT INTO `settlement` VALUES ('2206', 'Mukamaani', '2801039030', '2801', '71', '42.59877', '-0.16954');
+INSERT INTO `settlement` VALUES ('2207', 'Osboda', '2801039070', '2801', '71', '42.08759', '-0.75320');
+INSERT INTO `settlement` VALUES ('2208', 'Qalaangalley', '2801029086', '2801', '71', '42.09760', '-0.44820');
+INSERT INTO `settlement` VALUES ('2209', 'Qandal', '2801039054', '2801', '71', '42.48455', '-0.44825');
+INSERT INTO `settlement` VALUES ('2210', 'Qod-Qod', '2801039060', '2801', '71', '42.22395', '-0.46663');
+INSERT INTO `settlement` VALUES ('2211', 'Rassini', '2801029106', '2801', '71', '42.01950', '-0.97090');
+INSERT INTO `settlement` VALUES ('2212', 'Saamogia', '2801029108', '2801', '71', '42.53250', '-0.35110');
+INSERT INTO `settlement` VALUES ('2213', 'Saydey', '2801039002', '2801', '71', '41.95723', '-0.53151');
+INSERT INTO `settlement` VALUES ('2214', 'Scimberrei', '2801029110', '2801', '71', '41.87160', '-0.22850');
+INSERT INTO `settlement` VALUES ('2215', 'Seira', '2801029112', '2801', '71', '42.12840', '-0.10280');
+INSERT INTO `settlement` VALUES ('2216', 'Sheek Xuseen', '2801039038', '2801', '71', '42.56611', '-0.12341');
+INSERT INTO `settlement` VALUES ('2217', 'Xaaji Cali', '2801039032', '2801', '71', '42.60001', '-0.16290');
+INSERT INTO `settlement` VALUES ('2218', 'Xaar-Xaar', '2801039010', '2801', '71', '42.36280', '-0.29048');
+INSERT INTO `settlement` VALUES ('2219', 'Xerada Karaashka', '2801039024', '2801', '71', '42.58761', '-0.20815');
+INSERT INTO `settlement` VALUES ('2220', 'Yaaq Bulle', '2801039008', '2801', '71', '42.41052', '-0.31459');
+INSERT INTO `settlement` VALUES ('2221', 'Yaaq Shiniile', '2801039016', '2801', '71', '42.17121', '-0.20080');
+INSERT INTO `settlement` VALUES ('2222', 'Yaman', '2801039074', '2801', '71', '42.04479', '-0.80020');
+INSERT INTO `settlement` VALUES ('2223', 'Yedi', '2801039080', '2801', '71', '41.69786', '-0.65898');
+INSERT INTO `settlement` VALUES ('2224', 'Yoondoy', '2801039036', '2801', '71', '42.57219', '-0.12935');
+INSERT INTO `settlement` VALUES ('2225', 'Yoontoy', '2801039040', '2801', '71', '42.56344', '-0.11703');
+INSERT INTO `settlement` VALUES ('2226', 'Yoontoy Yarey', '2801029114', '2801', '71', '42.56750', '-0.12030');
+INSERT INTO `settlement` VALUES ('2227', 'Abbannaale', '2302039098', '2302', '47', '45.14001', '2.20745');
+INSERT INTO `settlement` VALUES ('2228', 'Adale', '2302029256', '2302', '47', '45.22160', '2.48040');
+INSERT INTO `settlement` VALUES ('2229', 'Alifow', '2302039124', '2302', '47', '45.18926', '2.27807');
+INSERT INTO `settlement` VALUES ('2230', 'Aqal Saar', '2302039032', '2302', '47', '45.30650', '2.44937');
+INSERT INTO `settlement` VALUES ('2231', 'Arrinmoog', '2302039084', '2302', '47', '45.20259', '2.20597');
+INSERT INTO `settlement` VALUES ('2232', 'Aual Nagot', '2302029258', '2302', '47', '45.16840', '2.05100');
+INSERT INTO `settlement` VALUES ('2233', 'Aw Gooye', '2302039088', '2302', '47', '45.19172', '2.19476');
+INSERT INTO `settlement` VALUES ('2234', 'Aw Sacad Aawow', '2302039230', '2302', '47', '45.20476', '2.17550');
+INSERT INTO `settlement` VALUES ('2235', 'Bacaw', '2302039164', '2302', '47', '44.91299', '2.06948');
+INSERT INTO `settlement` VALUES ('2236', 'Balad Aamin', '2302039158', '2302', '47', '44.97972', '2.12039');
+INSERT INTO `settlement` VALUES ('2237', 'Ballow', '2302039096', '2302', '47', '45.15785', '2.19270');
+INSERT INTO `settlement` VALUES ('2238', 'Balow', '2302049292', '2302', '47', '45.29694', '2.32361');
+INSERT INTO `settlement` VALUES ('2239', 'Banaadir', '2302039210', '2302', '47', '44.70448', '2.24354');
+INSERT INTO `settlement` VALUES ('2240', 'Banaaney', '2302039060', '2302', '47', '45.00286', '2.38592');
+INSERT INTO `settlement` VALUES ('2241', 'Bandar Salama', '2302049282', '2302', '47', '45.28056', '2.25833');
+INSERT INTO `settlement` VALUES ('2242', 'Bandege', '2302039214', '2302', '47', '44.69110', '2.23321');
+INSERT INTO `settlement` VALUES ('2243', 'Bannaaney', '2302039240', '2302', '47', '45.02685', '2.01064');
+INSERT INTO `settlement` VALUES ('2244', 'Banyaale', '2302039048', '2302', '47', '45.14180', '2.45431');
+INSERT INTO `settlement` VALUES ('2245', 'Baqdaad', '2302039076', '2302', '47', '45.22364', '2.27038');
+INSERT INTO `settlement` VALUES ('2246', 'Bariire', '2302039166', '2302', '47', '44.89766', '2.04842');
+INSERT INTO `settlement` VALUES ('2247', 'Basra', '2302039074', '2302', '47', '45.26379', '2.29761');
+INSERT INTO `settlement` VALUES ('2248', 'Baxarka', '2302039194', '2302', '47', '44.82956', '2.24321');
+INSERT INTO `settlement` VALUES ('2249', 'Beedle', '2302039200', '2302', '47', '44.79694', '2.20159');
+INSERT INTO `settlement` VALUES ('2250', 'Beerta Bisikrin', '2302039110', '2302', '47', '45.07238', '2.12930');
+INSERT INTO `settlement` VALUES ('2251', 'Beerta Xasan Qaaid', '2302039112', '2302', '47', '45.03870', '2.12174');
+INSERT INTO `settlement` VALUES ('2252', 'Belet Kariin', '2302049298', '2302', '47', '45.25000', '2.29000');
+INSERT INTO `settlement` VALUES ('2253', 'Betu Raxma', '2302049284', '2302', '47', '45.26556', '2.29806');
+INSERT INTO `settlement` VALUES ('2254', 'Beylallariim', '2302039078', '2302', '47', '45.23279', '2.26763');
+INSERT INTO `settlement` VALUES ('2255', 'Bisiqley', '2302049306', '2302', '47', '45.16278', '2.11694');
+INSERT INTO `settlement` VALUES ('2256', 'Bukurar', '2302049290', '2302', '47', '45.31917', '2.49917');
+INSERT INTO `settlement` VALUES ('2257', 'Bulo Galole', '2302029260', '2302', '47', '44.81940', '2.04860');
+INSERT INTO `settlement` VALUES ('2258', 'Bulo Iach Dolet', '2302029262', '2302', '47', '44.81870', '2.09950');
+INSERT INTO `settlement` VALUES ('2259', 'Busley', '2302039018', '2302', '47', '45.32845', '2.64015');
+INSERT INTO `settlement` VALUES ('2260', 'Buslow', '2302039236', '2302', '47', '45.10539', '2.09428');
+INSERT INTO `settlement` VALUES ('2261', 'Buulallow', '2302039146', '2302', '47', '45.09838', '2.22020');
+INSERT INTO `settlement` VALUES ('2262', 'Buulo Karas', '2302039092', '2302', '47', '45.17055', '2.16169');
+INSERT INTO `settlement` VALUES ('2263', 'Buulo Rasqi', '2302039102', '2302', '47', '45.18284', '2.14763');
+INSERT INTO `settlement` VALUES ('2264', 'Caano', '2302039246', '2302', '47', '45.29122', '2.66907');
+INSERT INTO `settlement` VALUES ('2265', 'Caanoole', '2302039176', '2302', '47', '44.82446', '2.05919');
+INSERT INTO `settlement` VALUES ('2266', 'Cabdiile', '2302039186', '2302', '47', '44.85037', '2.30120');
+INSERT INTO `settlement` VALUES ('2267', 'Cadaley', '2302039040', '2302', '47', '45.25655', '2.40067');
+INSERT INTO `settlement` VALUES ('2268', 'Cadayley', '2302039150', '2302', '47', '45.07724', '2.23085');
+INSERT INTO `settlement` VALUES ('2269', 'Calasow', '2302039014', '2302', '47', '45.31032', '2.65123');
+INSERT INTO `settlement` VALUES ('2270', 'Carbis', '2302029264', '2302', '47', '45.16900', '2.12200');
+INSERT INTO `settlement` VALUES ('2271', 'Casirmaal', '2302039010', '2302', '47', '45.33815', '2.69498');
+INSERT INTO `settlement` VALUES ('2272', 'Cumar Beerre', '2302039148', '2302', '47', '45.05548', '2.19789');
+INSERT INTO `settlement` VALUES ('2273', 'Dabab', '2302029268', '2302', '47', '44.97040', '1.95250');
+INSERT INTO `settlement` VALUES ('2274', 'Dabandoob', '2302039234', '2302', '47', '45.35734', '2.13682');
+INSERT INTO `settlement` VALUES ('2275', 'Dai Saffi', '2302029270', '2302', '47', '45.07990', '2.11990');
+INSERT INTO `settlement` VALUES ('2276', 'Dameerale', '2302039132', '2302', '47', '45.13120', '2.25019');
+INSERT INTO `settlement` VALUES ('2277', 'Degmuduush', '2302039196', '2302', '47', '44.82488', '2.22351');
+INSERT INTO `settlement` VALUES ('2278', 'Dhajalokh', '2302039094', '2302', '47', '45.15488', '2.17988');
+INSERT INTO `settlement` VALUES ('2279', 'Dharuurada', '2302039184', '2302', '47', '44.81943', '2.30065');
+INSERT INTO `settlement` VALUES ('2280', 'Digbiti', '2302039182', '2302', '47', '44.87708', '2.33204');
+INSERT INTO `settlement` VALUES ('2281', 'Digbooday', '2302039062', '2302', '47', '45.07022', '2.40749');
+INSERT INTO `settlement` VALUES ('2282', 'Diidow', '2302039044', '2302', '47', '45.13718', '2.55238');
+INSERT INTO `settlement` VALUES ('2283', 'Doodheere', '2302039024', '2302', '47', '45.32407', '2.60524');
+INSERT INTO `settlement` VALUES ('2284', 'Doomcadale', '2302039030', '2302', '47', '45.28634', '2.44482');
+INSERT INTO `settlement` VALUES ('2285', 'Doon Aw Suurre', '2302039140', '2302', '47', '45.12231', '2.20140');
+INSERT INTO `settlement` VALUES ('2286', 'Doon Weyne', '2302039128', '2302', '47', '45.11080', '2.25155');
+INSERT INTO `settlement` VALUES ('2287', 'Doon Yare', '2302039154', '2302', '47', '45.10363', '2.26372');
+INSERT INTO `settlement` VALUES ('2288', 'Dooncadayga', '2302039006', '2302', '47', '45.33897', '2.71838');
+INSERT INTO `settlement` VALUES ('2289', 'Doonka', '2302039090', '2302', '47', '45.19012', '2.16535');
+INSERT INTO `settlement` VALUES ('2290', 'Duduble', '2302039218', '2302', '47', '44.94808', '2.34460');
+INSERT INTO `settlement` VALUES ('2291', 'Fulaaley', '2302039216', '2302', '47', '44.99335', '2.37841');
+INSERT INTO `settlement` VALUES ('2292', 'Furuqley', '2302039180', '2302', '47', '44.92587', '2.25097');
+INSERT INTO `settlement` VALUES ('2293', 'Gaal Dheere', '2302039202', '2302', '47', '44.79796', '2.29656');
+INSERT INTO `settlement` VALUES ('2294', 'Gabaanis', '2302039028', '2302', '47', '45.27284', '2.63247');
+INSERT INTO `settlement` VALUES ('2295', 'Galaangale', '2302039068', '2302', '47', '45.06160', '2.44189');
+INSERT INTO `settlement` VALUES ('2296', 'Galgube', '2302039122', '2302', '47', '45.19529', '2.29099');
+INSERT INTO `settlement` VALUES ('2297', 'Galhareeri', '2302029276', '2302', '47', '45.07760', '2.17080');
+INSERT INTO `settlement` VALUES ('2298', 'Garas Balley', '2302039228', '2302', '47', '45.26983', '2.06930');
+INSERT INTO `settlement` VALUES ('2299', 'Garas Bandiiro', '2302039052', '2302', '47', '45.03202', '2.35902');
+INSERT INTO `settlement` VALUES ('2300', 'Garas Buulle', '2302039220', '2302', '47', '44.90573', '2.34768');
+INSERT INTO `settlement` VALUES ('2301', 'Garas Qalooc', '2302039064', '2302', '47', '45.04373', '2.40821');
+INSERT INTO `settlement` VALUES ('2302', 'Garas Shaara', '2302039190', '2302', '47', '44.78503', '2.25601');
+INSERT INTO `settlement` VALUES ('2303', 'Garas Weyne', '2302049294', '2302', '47', '45.24889', '2.33778');
+INSERT INTO `settlement` VALUES ('2304', 'Garasley', '2302039038', '2302', '47', '45.24847', '2.42005');
+INSERT INTO `settlement` VALUES ('2305', 'Garbis', '2302039106', '2302', '47', '45.15599', '2.12315');
+INSERT INTO `settlement` VALUES ('2306', 'Gawanuz', '2302049308', '2302', '47', '45.28944', '2.66250');
+INSERT INTO `settlement` VALUES ('2307', 'Geedfaqay', '2302039072', '2302', '47', '45.30075', '2.25985');
+INSERT INTO `settlement` VALUES ('2308', 'Geeshaan', '2302049286', '2302', '47', '45.27250', '2.29583');
+INSERT INTO `settlement` VALUES ('2309', 'Giali', '2302029278', '2302', '47', '45.22260', '2.19930');
+INSERT INTO `settlement` VALUES ('2310', 'Gololley', '2302039008', '2302', '47', '45.30902', '2.70196');
+INSERT INTO `settlement` VALUES ('2311', 'Gumarrey', '2302039156', '2302', '47', '45.13503', '2.24536');
+INSERT INTO `settlement` VALUES ('2312', 'Gurdaan', '2302039054', '2302', '47', '45.02206', '2.38120');
+INSERT INTO `settlement` VALUES ('2313', 'Hantiwadaaq', '2302039138', '2302', '47', '45.02726', '2.04281');
+INSERT INTO `settlement` VALUES ('2314', 'Harajeeran', '2302039020', '2302', '47', '45.32854', '2.63631');
+INSERT INTO `settlement` VALUES ('2315', 'Iidow', '2302039208', '2302', '47', '44.71310', '2.23576');
+INSERT INTO `settlement` VALUES ('2316', 'Iidow Liibaan', '2302039152', '2302', '47', '45.05964', '2.25154');
+INSERT INTO `settlement` VALUES ('2317', 'Iidow Qudoow', '2302039204', '2302', '47', '44.74856', '2.26952');
+INSERT INTO `settlement` VALUES ('2318', 'Is-gaad', '2302049310', '2302', '47', '45.29111', '2.66389');
+INSERT INTO `settlement` VALUES ('2319', 'Isqaad', '2302039012', '2302', '47', '45.29273', '2.63676');
+INSERT INTO `settlement` VALUES ('2320', 'Istanbuul', '2302039042', '2302', '47', '45.24791', '2.33862');
+INSERT INTO `settlement` VALUES ('2321', 'Iumbis Garre', '2302029280', '2302', '47', '44.92870', '2.11740');
+INSERT INTO `settlement` VALUES ('2322', 'Jambaluu', '2302039232', '2302', '47', '45.15255', '2.18491');
+INSERT INTO `settlement` VALUES ('2323', 'Jaslou', '2302039226', '2302', '47', '45.18044', '1.95500');
+INSERT INTO `settlement` VALUES ('2324', 'Jeeran', '2302039104', '2302', '47', '45.16506', '2.13941');
+INSERT INTO `settlement` VALUES ('2325', 'Kaxarrow', '2302039130', '2302', '47', '45.15203', '2.24441');
+INSERT INTO `settlement` VALUES ('2326', 'Kaysaney', '2302039022', '2302', '47', '45.32247', '2.62417');
+INSERT INTO `settlement` VALUES ('2327', 'Kaysaney', '2302039172', '2302', '47', '44.83120', '2.02068');
+INSERT INTO `settlement` VALUES ('2328', 'Kombareere', '2302039248', '2302', '47', '44.88819', '2.01419');
+INSERT INTO `settlement` VALUES ('2329', 'Kulanto', '2302049296', '2302', '47', '45.24889', '2.32222');
+INSERT INTO `settlement` VALUES ('2330', 'Kuunyo Gaydhay', '2302039066', '2302', '47', '45.01590', '2.41971');
+INSERT INTO `settlement` VALUES ('2331', 'Laantabuur', '2302039238', '2302', '47', '45.05478', '2.05368');
+INSERT INTO `settlement` VALUES ('2332', 'Lafagaal', '2302039144', '2302', '47', '45.07631', '2.22347');
+INSERT INTO `settlement` VALUES ('2333', 'Lafoole', '2302029250', '2302', '47', '45.17180', '2.07870');
+INSERT INTO `settlement` VALUES ('2334', 'Lambar Konton', '2302039222', '2302', '47', '44.98540', '1.98570');
+INSERT INTO `settlement` VALUES ('2335', 'Lug Sangudle', '2302029252', '2302', '47', '45.28140', '2.23270');
+INSERT INTO `settlement` VALUES ('2336', 'Maddiina', '2302039082', '2302', '47', '45.21506', '2.22462');
+INSERT INTO `settlement` VALUES ('2337', 'Magla', '2302039134', '2302', '47', '45.13979', '2.23761');
+INSERT INTO `settlement` VALUES ('2338', 'Maguurto', '2302039136', '2302', '47', '45.12610', '2.22256');
+INSERT INTO `settlement` VALUES ('2339', 'Maguurto Baalguri', '2302039142', '2302', '47', '45.08090', '2.20219');
+INSERT INTO `settlement` VALUES ('2340', 'Malakaroor', '2302039016', '2302', '47', '45.30827', '2.66239');
+INSERT INTO `settlement` VALUES ('2341', 'Mareerrey', '2302039034', '2302', '47', '45.26415', '2.41694');
+INSERT INTO `settlement` VALUES ('2342', 'Marerrey', '2302039108', '2302', '47', '45.05893', '2.13574');
+INSERT INTO `settlement` VALUES ('2343', 'Moordiinle', '2302039116', '2302', '47', '45.03036', '2.12541');
+INSERT INTO `settlement` VALUES ('2344', 'Moordiinle', '2302039120', '2302', '47', '45.01225', '2.10584');
+INSERT INTO `settlement` VALUES ('2345', 'Moro Mararey', '2302049304', '2302', '47', '45.26417', '2.41556');
+INSERT INTO `settlement` VALUES ('2346', 'Nimoow', '2302039224', '2302', '47', '45.19937', '1.96153');
+INSERT INTO `settlement` VALUES ('2347', 'Nun Garre', '2302029254', '2302', '47', '44.89860', '2.08030');
+INSERT INTO `settlement` VALUES ('2348', 'Nuunnaay', '2302039162', '2302', '47', '44.91272', '2.08045');
+INSERT INTO `settlement` VALUES ('2349', 'Ohuumey', '2302039192', '2302', '47', '44.83022', '2.26214');
+INSERT INTO `settlement` VALUES ('2350', 'Oktoobar Afgooye', '2302039100', '2302', '47', '45.13995', '2.13374');
+INSERT INTO `settlement` VALUES ('2351', 'Qoljiid', '2302049300', '2302', '47', '45.22500', '2.25250');
+INSERT INTO `settlement` VALUES ('2352', 'Raaxoole', '2302039168', '2302', '47', '44.90079', '2.04562');
+INSERT INTO `settlement` VALUES ('2353', 'Raimog', '2302039086', '2302', '47', '45.19664', '2.20883');
+INSERT INTO `settlement` VALUES ('2354', 'Raqayle', '2302039118', '2302', '47', '45.02737', '2.11863');
+INSERT INTO `settlement` VALUES ('2355', 'Raqayle', '2302039178', '2302', '47', '44.85288', '2.05190');
+INSERT INTO `settlement` VALUES ('2356', 'Reydab', '2302039170', '2302', '47', '44.87319', '2.05142');
+INSERT INTO `settlement` VALUES ('2357', 'Saabid', '2302039114', '2302', '47', '45.03726', '2.13152');
+INSERT INTO `settlement` VALUES ('2358', 'Saarsaaray', '2302039026', '2302', '47', '45.32613', '2.59729');
+INSERT INTO `settlement` VALUES ('2359', 'Sabbiyo', '2302039080', '2302', '47', '45.22421', '2.23400');
+INSERT INTO `settlement` VALUES ('2360', 'Sabuun', '2302029272', '2302', '47', '45.08050', '2.25100');
+INSERT INTO `settlement` VALUES ('2361', 'Sagalad', '2302029274', '2302', '47', '45.09730', '2.13280');
+INSERT INTO `settlement` VALUES ('2362', 'Shaan', '2302039174', '2302', '47', '44.85970', '2.02981');
+INSERT INTO `settlement` VALUES ('2363', 'Shongole', '2302049312', '2302', '47', '45.21722', '2.54972');
+INSERT INTO `settlement` VALUES ('2364', 'Soohinreeb', '2302039244', '2302', '47', '45.32194', '2.61999');
+INSERT INTO `settlement` VALUES ('2365', 'Tawakal', '2302039160', '2302', '47', '44.90849', '2.08148');
+INSERT INTO `settlement` VALUES ('2366', 'Tobanka Buundo', '2302039242', '2302', '47', '45.03529', '2.35153');
+INSERT INTO `settlement` VALUES ('2367', 'Tortoroow', '2302039212', '2302', '47', '44.69117', '2.25376');
+INSERT INTO `settlement` VALUES ('2368', 'Uar Galangal', '2302029266', '2302', '47', '45.02800', '2.20190');
+INSERT INTO `settlement` VALUES ('2369', 'Waayeel Diinle', '2302039056', '2302', '47', '45.03295', '2.39260');
+INSERT INTO `settlement` VALUES ('2370', 'Walamooy', '2302039070', '2302', '47', '45.32500', '2.30413');
+INSERT INTO `settlement` VALUES ('2371', 'War Caanno', '2302039046', '2302', '47', '45.12209', '2.49898');
+INSERT INTO `settlement` VALUES ('2372', 'War Maxan', '2302039058', '2302', '47', '45.02001', '2.39979');
+INSERT INTO `settlement` VALUES ('2373', 'Waraabo', '2302039198', '2302', '47', '44.80496', '2.20337');
+INSERT INTO `settlement` VALUES ('2374', 'Xaaji Mad', '2302039206', '2302', '47', '44.68063', '2.22362');
+INSERT INTO `settlement` VALUES ('2375', 'Xaaji Xasan', '2302039050', '2302', '47', '45.12804', '2.45370');
+INSERT INTO `settlement` VALUES ('2376', 'Xaanshooley', '2302049302', '2302', '47', '45.29000', '2.50333');
+INSERT INTO `settlement` VALUES ('2377', 'Xarare', '2302049288', '2302', '47', '45.27250', '2.28750');
+INSERT INTO `settlement` VALUES ('2378', 'Xawaal Barrey', '2302039036', '2302', '47', '45.28652', '2.41987');
+INSERT INTO `settlement` VALUES ('2379', 'Yarey', '2302039126', '2302', '47', '45.16954', '2.28351');
+INSERT INTO `settlement` VALUES ('2380', 'Abaq Mudule', '2303039046', '2303', '48', '44.20584', '1.35055');
+INSERT INTO `settlement` VALUES ('2381', 'Abuu Sheegow', '2303039050', '2303', '48', '44.28980', '1.40730');
+INSERT INTO `settlement` VALUES ('2382', 'Al Medou', '2303029068', '2303', '48', '43.64760', '0.86860');
+INSERT INTO `settlement` VALUES ('2383', 'Aladhajo', '2303039034', '2303', '48', '44.14164', '1.30082');
+INSERT INTO `settlement` VALUES ('2384', 'Alio Eddao', '2303029066', '2303', '48', '43.88140', '1.27270');
+INSERT INTO `settlement` VALUES ('2385', 'Ancherrou', '2303029070', '2303', '48', '44.11900', '1.24790');
+INSERT INTO `settlement` VALUES ('2386', 'Avai', '2303029072', '2303', '48', '43.71870', '1.16720');
+INSERT INTO `settlement` VALUES ('2387', 'Avarboda', '2303029074', '2303', '48', '43.86970', '1.12840');
+INSERT INTO `settlement` VALUES ('2388', 'Awlasid', '2303039012', '2303', '48', '43.99710', '1.17540');
+INSERT INTO `settlement` VALUES ('2389', 'Aysoora', '2303039018', '2303', '48', '43.84453', '1.05171');
+INSERT INTO `settlement` VALUES ('2390', 'Beled Muddey', '2303039028', '2303', '48', '44.02039', '1.19657');
+INSERT INTO `settlement` VALUES ('2391', 'Biliq Roboow', '2303039022', '2303', '48', '43.68731', '1.09968');
+INSERT INTO `settlement` VALUES ('2392', 'Bimal', '2303029076', '2303', '48', '43.73170', '1.17940');
+INSERT INTO `settlement` VALUES ('2393', 'Buq', '2303039060', '2303', '48', '44.44158', '1.48035');
+INSERT INTO `settlement` VALUES ('2394', 'Casciddo', '2303029078', '2303', '48', '43.71750', '1.15290');
+INSERT INTO `settlement` VALUES ('2395', 'Ceel Andalle', '2303029080', '2303', '48', '43.62150', '0.76830');
+INSERT INTO `settlement` VALUES ('2396', 'Ceel Borduel', '2303029094', '2303', '48', '43.86870', '0.97150');
+INSERT INTO `settlement` VALUES ('2397', 'Ceel Shiikh', '2303039058', '2303', '48', '44.47110', '1.49493');
+INSERT INTO `settlement` VALUES ('2398', 'Cusman Jeelle', '2303039026', '2303', '48', '43.68141', '1.10168');
+INSERT INTO `settlement` VALUES ('2399', 'Deg Hiray', '2303039040', '2303', '48', '43.44994', '0.85787');
+INSERT INTO `settlement` VALUES ('2400', 'Dhukbeero', '2303039030', '2303', '48', '44.01675', '1.18824');
+INSERT INTO `settlement` VALUES ('2401', 'Doygaab', '2303029086', '2303', '48', '43.53170', '0.97860');
+INSERT INTO `settlement` VALUES ('2402', 'Ducan Udda', '2303029088', '2303', '48', '44.27190', '1.38290');
+INSERT INTO `settlement` VALUES ('2403', 'Dudduumo', '2303029090', '2303', '48', '43.85280', '1.07050');
+INSERT INTO `settlement` VALUES ('2404', 'Eeriile', '2303039036', '2303', '48', '44.16201', '1.31859');
+INSERT INTO `settlement` VALUES ('2405', 'El Cardale', '2303029096', '2303', '48', '43.97020', '1.07070');
+INSERT INTO `settlement` VALUES ('2406', 'El Hore', '2303029098', '2303', '48', '44.00030', '1.08110');
+INSERT INTO `settlement` VALUES ('2407', 'Elai', '2303029092', '2303', '48', '43.68070', '1.10300');
+INSERT INTO `settlement` VALUES ('2408', 'Fardera', '2303029100', '2303', '48', '43.94810', '1.17240');
+INSERT INTO `settlement` VALUES ('2409', 'Garas Herei', '2303029104', '2303', '48', '43.82810', '1.22110');
+INSERT INTO `settlement` VALUES ('2410', 'Garas Weyne', '2303039044', '2303', '48', '43.69601', '0.96912');
+INSERT INTO `settlement` VALUES ('2411', 'Haaji Maxaad', '2303039042', '2303', '48', '43.51765', '0.87177');
+INSERT INTO `settlement` VALUES ('2412', 'Jameeco', '2303039032', '2303', '48', '44.11359', '1.28131');
+INSERT INTO `settlement` VALUES ('2413', 'Kaban Weyn', '2303039004', '2303', '48', '43.87202', '1.24595');
+INSERT INTO `settlement` VALUES ('2414', 'Kaskaare', '2303039014', '2303', '48', '43.91681', '1.10682');
+INSERT INTO `settlement` VALUES ('2415', 'Kunyaaw Guure', '2303039056', '2303', '48', '44.39704', '1.49027');
+INSERT INTO `settlement` VALUES ('2416', 'Lugnale', '2303029062', '2303', '48', '43.87180', '1.22160');
+INSERT INTO `settlement` VALUES ('2417', 'Mafoqi', '2303029064', '2303', '48', '44.01740', '1.10010');
+INSERT INTO `settlement` VALUES ('2418', 'Malayleey', '2303039008', '2303', '48', '43.96849', '1.16315');
+INSERT INTO `settlement` VALUES ('2419', 'Malmalle', '2303039024', '2303', '48', '43.66605', '1.09595');
+INSERT INTO `settlement` VALUES ('2420', 'Mojemereer', '2303039038', '2303', '48', '44.20771', '1.32368');
+INSERT INTO `settlement` VALUES ('2421', 'Mudun', '2303039010', '2303', '48', '43.99245', '1.16243');
+INSERT INTO `settlement` VALUES ('2422', 'Savaro', '2303029102', '2303', '48', '43.61870', '0.93250');
+INSERT INTO `settlement` VALUES ('2423', 'Shelombol', '2303039054', '2303', '48', '44.31511', '1.42490');
+INSERT INTO `settlement` VALUES ('2424', 'Tassin', '2303029082', '2303', '48', '43.92970', '1.15210');
+INSERT INTO `settlement` VALUES ('2425', 'Tiiroow', '2303039006', '2303', '48', '43.98864', '1.20312');
+INSERT INTO `settlement` VALUES ('2426', 'Uacavo Bilal', '2303029084', '2303', '48', '43.74780', '0.94740');
+INSERT INTO `settlement` VALUES ('2427', 'Warermaleh', '2303039048', '2303', '48', '44.24502', '1.38736');
+INSERT INTO `settlement` VALUES ('2428', 'Yaad Jile', '2303039016', '2303', '48', '43.93746', '1.13714');
+INSERT INTO `settlement` VALUES ('2429', 'Yaaq Kunto', '2303039052', '2303', '48', '44.31469', '1.40824');
+INSERT INTO `settlement` VALUES ('2430', 'Yataan', '2303039020', '2303', '48', '43.70734', '1.12744');
+INSERT INTO `settlement` VALUES ('2431', 'Ababscia', '2304029060', '2304', '49', '44.27020', '1.62870');
+INSERT INTO `settlement` VALUES ('2432', 'Afgooye Yare', '2304039016', '2304', '49', '44.40932', '1.66860');
+INSERT INTO `settlement` VALUES ('2433', 'Alafuutow', '2304029062', '2304', '49', '44.02240', '1.56710');
+INSERT INTO `settlement` VALUES ('2434', 'Arees Eber', '2304039048', '2304', '49', '44.38928', '1.61389');
+INSERT INTO `settlement` VALUES ('2435', 'Baarow', '2304039042', '2304', '49', '44.30790', '1.63559');
+INSERT INTO `settlement` VALUES ('2436', 'Bambaaso Kulud', '2304039012', '2304', '49', '44.41655', '1.68871');
+INSERT INTO `settlement` VALUES ('2437', 'Bambaaso Mahdi', '2304039008', '2304', '49', '44.42965', '1.69495');
+INSERT INTO `settlement` VALUES ('2438', 'Brawa Yare', '2304039030', '2304', '49', '44.08459', '1.49745');
+INSERT INTO `settlement` VALUES ('2439', 'Bulo Alio', '2304029064', '2304', '49', '44.32960', '1.70230');
+INSERT INTO `settlement` VALUES ('2440', 'Bulo Caitet', '2304029066', '2304', '49', '44.29770', '1.51880');
+INSERT INTO `settlement` VALUES ('2441', 'Bulo Messer', '2304029068', '2304', '49', '44.21940', '1.59850');
+INSERT INTO `settlement` VALUES ('2442', 'Buulo Warebo', '2304039038', '2304', '49', '44.16677', '1.58713');
+INSERT INTO `settlement` VALUES ('2443', 'Canbar', '2304039028', '2304', '49', '44.06011', '1.49206');
+INSERT INTO `settlement` VALUES ('2444', 'Doylale', '2304039024', '2304', '49', '44.09046', '1.56420');
+INSERT INTO `settlement` VALUES ('2445', 'Garowl', '2304039040', '2304', '49', '44.29649', '1.65008');
+INSERT INTO `settlement` VALUES ('2446', 'Gees', '2304039034', '2304', '49', '44.16835', '1.55501');
+INSERT INTO `settlement` VALUES ('2447', 'Habaabshe', '2304039044', '2304', '49', '44.35294', '1.65851');
+INSERT INTO `settlement` VALUES ('2448', 'Kamad', '2304039010', '2304', '49', '44.42226', '1.68634');
+INSERT INTO `settlement` VALUES ('2449', 'Keeroy', '2304039020', '2304', '49', '44.06807', '1.56253');
+INSERT INTO `settlement` VALUES ('2450', 'Labaajo', '2304039036', '2304', '49', '44.13846', '1.57877');
+INSERT INTO `settlement` VALUES ('2451', 'Lamalamaale', '2304039026', '2304', '49', '44.13132', '1.56426');
+INSERT INTO `settlement` VALUES ('2452', 'Malootow', '2304039022', '2304', '49', '44.10490', '1.57315');
+INSERT INTO `settlement` VALUES ('2453', 'Moccoidumis', '2304029056', '2304', '49', '44.43000', '1.59850');
+INSERT INTO `settlement` VALUES ('2454', 'Mukiyow', '2304039014', '2304', '49', '44.41785', '1.67835');
+INSERT INTO `settlement` VALUES ('2455', 'Muruqow', '2304029058', '2304', '49', '44.46720', '1.68080');
+INSERT INTO `settlement` VALUES ('2456', 'Noriya', '2304039018', '2304', '49', '44.50800', '1.66990');
+INSERT INTO `settlement` VALUES ('2457', 'Qorowle', '2304039032', '2304', '49', '44.12604', '1.51594');
+INSERT INTO `settlement` VALUES ('2458', 'Riinow', '2304039050', '2304', '49', '44.40350', '1.60912');
+INSERT INTO `settlement` VALUES ('2459', 'Shiikh Adan', '2304039052', '2304', '49', '44.42411', '1.60584');
+INSERT INTO `settlement` VALUES ('2460', 'Shimbirole', '2304039046', '2304', '49', '44.34608', '1.62430');
+INSERT INTO `settlement` VALUES ('2461', 'Uro Urow', '2304039054', '2304', '49', '44.38760', '1.66483');
+INSERT INTO `settlement` VALUES ('2462', 'Abikarow', '2301039068', '2301', '46', '44.65133', '1.72514');
+INSERT INTO `settlement` VALUES ('2463', 'Adaliyow', '2301039058', '2301', '46', '44.63812', '1.75000');
+INSERT INTO `settlement` VALUES ('2464', 'Alweyn', '2301039198', '2301', '46', '44.52245', '1.53439');
+INSERT INTO `settlement` VALUES ('2465', 'Ariradle', '2301029246', '2301', '46', '44.88150', '1.80120');
+INSERT INTO `settlement` VALUES ('2466', 'Aw Xalow', '2301039180', '2301', '46', '45.00134', '1.86468');
+INSERT INTO `settlement` VALUES ('2467', 'Baadino Fittoriy', '2301039062', '2301', '46', '44.64025', '1.76073');
+INSERT INTO `settlement` VALUES ('2468', 'Baasani', '2301039076', '2301', '46', '44.64082', '1.74657');
+INSERT INTO `settlement` VALUES ('2469', 'Baasani Oreste', '2301039096', '2301', '46', '44.67201', '1.77938');
+INSERT INTO `settlement` VALUES ('2470', 'Baasi', '2301039088', '2301', '46', '44.67192', '1.76599');
+INSERT INTO `settlement` VALUES ('2471', 'Baasi', '2301039202', '2301', '46', '44.54906', '1.64459');
+INSERT INTO `settlement` VALUES ('2472', 'Bajiino Jannaay', '2301039042', '2301', '46', '44.59815', '1.67888');
+INSERT INTO `settlement` VALUES ('2473', 'Baraale', '2301039080', '2301', '46', '44.68316', '1.74387');
+INSERT INTO `settlement` VALUES ('2474', 'Barde Saalax', '2301039022', '2301', '46', '44.57782', '1.71307');
+INSERT INTO `settlement` VALUES ('2475', 'Barrow', '2301039126', '2301', '46', '44.76574', '1.86132');
+INSERT INTO `settlement` VALUES ('2476', 'Barsame', '2301039164', '2301', '46', '44.73432', '1.76274');
+INSERT INTO `settlement` VALUES ('2477', 'Beer Bari', '2301039094', '2301', '46', '44.68190', '1.77615');
+INSERT INTO `settlement` VALUES ('2478', 'Beled Amiin', '2301039232', '2301', '46', '44.62049', '1.72788');
+INSERT INTO `settlement` VALUES ('2479', 'Beled Amin', '2301039172', '2301', '46', '44.98887', '1.84804');
+INSERT INTO `settlement` VALUES ('2480', 'Benday Cadde', '2301039034', '2301', '46', '44.61155', '1.70051');
+INSERT INTO `settlement` VALUES ('2481', 'Beynax Barre', '2301039194', '2301', '46', '44.51436', '1.60855');
+INSERT INTO `settlement` VALUES ('2482', 'Budho Cabdi', '2301039168', '2301', '46', '44.86037', '1.81802');
+INSERT INTO `settlement` VALUES ('2483', 'Bulo Gian', '2301029248', '2301', '46', '44.80020', '1.76960');
+INSERT INTO `settlement` VALUES ('2484', 'Bulo Gof Adde', '2301029250', '2301', '46', '44.97950', '1.86770');
+INSERT INTO `settlement` VALUES ('2485', 'Bulo Saile', '2301029252', '2301', '46', '44.92030', '1.82970');
+INSERT INTO `settlement` VALUES ('2486', 'Buufow', '2301039162', '2301', '46', '44.74451', '1.75070');
+INSERT INTO `settlement` VALUES ('2487', 'Buur Foule', '2301039112', '2301', '46', '44.70752', '1.77741');
+INSERT INTO `settlement` VALUES ('2488', 'Buuto Canada', '2301039018', '2301', '46', '44.59411', '1.72815');
+INSERT INTO `settlement` VALUES ('2489', 'Cabdi Xasan', '2301039206', '2301', '46', '44.56491', '1.64702');
+INSERT INTO `settlement` VALUES ('2490', 'Cagaaran', '2301039228', '2301', '46', '44.74473', '1.69407');
+INSERT INTO `settlement` VALUES ('2491', 'Cambanaani', '2301039118', '2301', '46', '44.74663', '1.80501');
+INSERT INTO `settlement` VALUES ('2492', 'Cambarey', '2301039184', '2301', '46', '44.43062', '1.52064');
+INSERT INTO `settlement` VALUES ('2493', 'Ceel Caddow', '2301039154', '2301', '46', '44.70495', '1.67266');
+INSERT INTO `settlement` VALUES ('2494', 'Ceel Jaalle', '2301039226', '2301', '46', '44.72472', '1.68327');
+INSERT INTO `settlement` VALUES ('2495', 'Ceel Wareegow', '2301039142', '2301', '46', '44.79951', '1.80731');
+INSERT INTO `settlement` VALUES ('2496', 'Ceel Xaaji', '2301039160', '2301', '46', '44.78893', '1.73060');
+INSERT INTO `settlement` VALUES ('2497', 'Cusmaan Quule', '2301039152', '2301', '46', '44.75794', '1.75282');
+INSERT INTO `settlement` VALUES ('2498', 'Cusmaan Xasan', '2301039178', '2301', '46', '44.83916', '1.84555');
+INSERT INTO `settlement` VALUES ('2499', 'Daanti', '2301039100', '2301', '46', '44.66293', '1.78307');
+INSERT INTO `settlement` VALUES ('2500', 'Dabiyaango', '2301039056', '2301', '46', '44.61794', '1.74337');
+INSERT INTO `settlement` VALUES ('2501', 'Dalaroobare', '2301039016', '2301', '46', '44.60485', '1.73020');
+INSERT INTO `settlement` VALUES ('2502', 'Daloolyo', '2301039122', '2301', '46', '44.71705', '1.82460');
+INSERT INTO `settlement` VALUES ('2503', 'Daydoog', '2301039200', '2301', '46', '44.54111', '1.58175');
+INSERT INTO `settlement` VALUES ('2504', 'Deegaanta', '2301039084', '2301', '46', '44.65502', '1.75529');
+INSERT INTO `settlement` VALUES ('2505', 'Deg Jannaay', '2301039030', '2301', '46', '44.60728', '1.70705');
+INSERT INTO `settlement` VALUES ('2506', 'Dhahaane', '2301039182', '2301', '46', '45.02425', '1.87629');
+INSERT INTO `settlement` VALUES ('2507', 'Dhamme Yaasiin', '2301039054', '2301', '46', '44.62754', '1.74086');
+INSERT INTO `settlement` VALUES ('2508', 'Dhamme Yaaslin', '2301039048', '2301', '46', '44.63523', '1.71429');
+INSERT INTO `settlement` VALUES ('2509', 'Dharooy', '2301039224', '2301', '46', '45.02068', '1.86629');
+INSERT INTO `settlement` VALUES ('2510', 'Dhuroow', '2301039114', '2301', '46', '44.72128', '1.77057');
+INSERT INTO `settlement` VALUES ('2511', 'Diblaay', '2301039188', '2301', '46', '44.46014', '1.52331');
+INSERT INTO `settlement` VALUES ('2512', 'Diinle Maxaad', '2301039130', '2301', '46', '44.79753', '1.86170');
+INSERT INTO `settlement` VALUES ('2513', 'Dongab', '2301029254', '2301', '46', '44.90020', '1.90110');
+INSERT INTO `settlement` VALUES ('2514', 'Doobis', '2301039104', '2301', '46', '44.70231', '1.80006');
+INSERT INTO `settlement` VALUES ('2515', 'Doon Dheere', '2301039108', '2301', '46', '44.71283', '1.78820');
+INSERT INTO `settlement` VALUES ('2516', 'Doonka Daafeedow', '2301039098', '2301', '46', '44.65097', '1.76923');
+INSERT INTO `settlement` VALUES ('2517', 'El L Mugne', '2301029256', '2301', '46', '44.73020', '1.68250');
+INSERT INTO `settlement` VALUES ('2518', 'Faari Baasi', '2301039044', '2301', '46', '44.59556', '1.67652');
+INSERT INTO `settlement` VALUES ('2519', 'Fed Guduud', '2301039144', '2301', '46', '44.81027', '1.80936');
+INSERT INTO `settlement` VALUES ('2520', 'Fiilley', '2301039138', '2301', '46', '44.79184', '1.85130');
+INSERT INTO `settlement` VALUES ('2521', 'Fillabey', '2301039150', '2301', '46', '44.77254', '1.77138');
+INSERT INTO `settlement` VALUES ('2522', 'Gandaabey', '2301039156', '2301', '46', '44.70564', '1.72359');
+INSERT INTO `settlement` VALUES ('2523', 'Gandarshe', '2301039170', '2301', '46', '44.96745', '1.83493');
+INSERT INTO `settlement` VALUES ('2524', 'Garasraadi', '2301039196', '2301', '46', '44.51428', '1.55874');
+INSERT INTO `settlement` VALUES ('2525', 'Garshiin', '2301039110', '2301', '46', '44.72577', '1.77849');
+INSERT INTO `settlement` VALUES ('2526', 'Geelle', '2301039140', '2301', '46', '44.78088', '1.80835');
+INSERT INTO `settlement` VALUES ('2527', 'Harraa', '2301039220', '2301', '46', '44.69523', '1.66303');
+INSERT INTO `settlement` VALUES ('2528', 'Horseed', '2301039060', '2301', '46', '44.62792', '1.75076');
+INSERT INTO `settlement` VALUES ('2529', 'Hunlaa', '2301039052', '2301', '46', '44.63173', '1.73523');
+INSERT INTO `settlement` VALUES ('2530', 'Inkaar', '2301039038', '2301', '46', '44.61254', '1.68901');
+INSERT INTO `settlement` VALUES ('2531', 'Istaduuto', '2301039158', '2301', '46', '44.78346', '1.72661');
+INSERT INTO `settlement` VALUES ('2532', 'Jaakumow', '2301039082', '2301', '46', '44.69305', '1.74234');
+INSERT INTO `settlement` VALUES ('2533', 'Jaanjow', '2301039032', '2301', '46', '44.61840', '1.70333');
+INSERT INTO `settlement` VALUES ('2534', 'Jadiid', '2301039124', '2301', '46', '44.81865', '1.89666');
+INSERT INTO `settlement` VALUES ('2535', 'Jadiid', '2301039236', '2301', '46', '44.81289', '1.88397');
+INSERT INTO `settlement` VALUES ('2536', 'Jannaay', '2301039014', '2301', '46', '44.60599', '1.73530');
+INSERT INTO `settlement` VALUES ('2537', 'Jeer Baasoole', '2301039204', '2301', '46', '44.56135', '1.65383');
+INSERT INTO `settlement` VALUES ('2538', 'Jilib', '2301029238', '2301', '46', '44.91623', '1.80037');
+INSERT INTO `settlement` VALUES ('2539', 'Jimeesi', '2301039086', '2301', '46', '44.68514', '1.75385');
+INSERT INTO `settlement` VALUES ('2540', 'Jino', '2301039166', '2301', '46', '44.90685', '1.79888');
+INSERT INTO `settlement` VALUES ('2541', 'Kamiiro', '2301039092', '2301', '46', '44.68981', '1.77417');
+INSERT INTO `settlement` VALUES ('2542', 'Kayloy', '2301039102', '2301', '46', '44.67408', '1.78999');
+INSERT INTO `settlement` VALUES ('2543', 'Kibiile', '2301039078', '2301', '46', '44.66644', '1.75161');
+INSERT INTO `settlement` VALUES ('2544', 'Laabaas', '2301039136', '2301', '46', '44.74483', '1.84400');
+INSERT INTO `settlement` VALUES ('2545', 'Laba Garas', '2301039090', '2301', '46', '44.69413', '1.76707');
+INSERT INTO `settlement` VALUES ('2546', 'Limaan', '2301039026', '2301', '46', '44.60698', '1.71992');
+INSERT INTO `settlement` VALUES ('2547', 'Limaan (Raamo)', '2301039230', '2301', '46', '44.62461', '1.71982');
+INSERT INTO `settlement` VALUES ('2548', 'Lixmooro', '2301039218', '2301', '46', '44.66474', '1.64677');
+INSERT INTO `settlement` VALUES ('2549', 'Luusi', '2301039070', '2301', '46', '44.66835', '1.73682');
+INSERT INTO `settlement` VALUES ('2550', 'Madiina', '2301039028', '2301', '46', '44.61040', '1.71140');
+INSERT INTO `settlement` VALUES ('2551', 'Maduulow', '2301039012', '2301', '46', '44.55947', '1.70431');
+INSERT INTO `settlement` VALUES ('2552', 'Marsaan', '2301039120', '2301', '46', '44.72991', '1.81732');
+INSERT INTO `settlement` VALUES ('2553', 'Marsaano', '2301029240', '2301', '46', '44.68270', '1.69810');
+INSERT INTO `settlement` VALUES ('2554', 'Matirikow', '2301039074', '2301', '46', '44.66116', '1.72571');
+INSERT INTO `settlement` VALUES ('2555', 'Melled', '2301039222', '2301', '46', '44.67987', '1.65344');
+INSERT INTO `settlement` VALUES ('2556', 'Mirimiri', '2301039066', '2301', '46', '44.65439', '1.71552');
+INSERT INTO `settlement` VALUES ('2557', 'Moxamed Nurow', '2301039146', '2301', '46', '44.76907', '1.77744');
+INSERT INTO `settlement` VALUES ('2558', 'Moyle', '2301039216', '2301', '46', '44.60377', '1.65598');
+INSERT INTO `settlement` VALUES ('2559', 'Munggiya', '2301039212', '2301', '46', '44.62074', '1.60907');
+INSERT INTO `settlement` VALUES ('2560', 'Musa Cilmi', '2301029242', '2301', '46', '44.56810', '1.68290');
+INSERT INTO `settlement` VALUES ('2561', 'Muuto', '2301039210', '2301', '46', '44.58978', '1.66379');
+INSERT INTO `settlement` VALUES ('2562', 'Naanini', '2301039208', '2301', '46', '44.56851', '1.66495');
+INSERT INTO `settlement` VALUES ('2563', 'Nagaadweyne', '2301039132', '2301', '46', '44.80198', '1.87023');
+INSERT INTO `settlement` VALUES ('2564', 'Oriale', '2301029244', '2301', '46', '44.97790', '1.83280');
+INSERT INTO `settlement` VALUES ('2565', 'Raaxoole', '2301039046', '2301', '46', '44.56822', '1.69046');
+INSERT INTO `settlement` VALUES ('2566', 'Raxmo', '2301039116', '2301', '46', '44.73153', '1.77660');
+INSERT INTO `settlement` VALUES ('2567', 'Sagaaroole', '2301039134', '2301', '46', '44.77600', '1.84103');
+INSERT INTO `settlement` VALUES ('2568', 'Shaangaani', '2301039186', '2301', '46', '44.49529', '1.61315');
+INSERT INTO `settlement` VALUES ('2569', 'Shariif Jeeylaani', '2301039020', '2301', '46', '44.57112', '1.71581');
+INSERT INTO `settlement` VALUES ('2570', 'Sidow Cumar', '2301039192', '2301', '46', '44.53382', '1.65828');
+INSERT INTO `settlement` VALUES ('2571', 'Siiba', '2301039024', '2301', '46', '44.57972', '1.69952');
+INSERT INTO `settlement` VALUES ('2572', 'Siidow', '2301039128', '2301', '46', '44.78070', '1.86244');
+INSERT INTO `settlement` VALUES ('2573', 'Siyoweyne', '2301039214', '2301', '46', '44.63659', '1.62414');
+INSERT INTO `settlement` VALUES ('2574', 'Steefal', '2301039036', '2301', '46', '44.60348', '1.69624');
+INSERT INTO `settlement` VALUES ('2575', 'Sunaay', '2301039064', '2301', '46', '44.66451', '1.68013');
+INSERT INTO `settlement` VALUES ('2576', 'Surriyo', '2301039050', '2301', '46', '44.61315', '1.73675');
+INSERT INTO `settlement` VALUES ('2577', 'Taxliil', '2301039190', '2301', '46', '44.51748', '1.66333');
+INSERT INTO `settlement` VALUES ('2578', 'Teesiyow', '2301039040', '2301', '46', '44.59883', '1.68376');
+INSERT INTO `settlement` VALUES ('2579', 'Tisinaar', '2301039072', '2301', '46', '44.67099', '1.73995');
+INSERT INTO `settlement` VALUES ('2580', 'Xamaali', '2301039148', '2301', '46', '44.76078', '1.77064');
+INSERT INTO `settlement` VALUES ('2581', 'Xanlaay', '2301039234', '2301', '46', '44.81645', '1.89185');
+INSERT INTO `settlement` VALUES ('2582', 'Xinka Oomamne', '2301039174', '2301', '46', '44.93790', '1.86411');
+INSERT INTO `settlement` VALUES ('2583', 'Xumaan Diid', '2301039106', '2301', '46', '44.72155', '1.79736');
+INSERT INTO `settlement` VALUES ('2584', 'Aadao Nuur', '2305039214', '2305', '50', '44.63896', '1.83147');
+INSERT INTO `settlement` VALUES ('2585', 'Abliko', '2305039282', '2305', '50', '44.73467', '1.88115');
+INSERT INTO `settlement` VALUES ('2586', 'Aboow Cali', '2305039164', '2305', '50', '44.56929', '1.75365');
+INSERT INTO `settlement` VALUES ('2587', 'Aesow', '2305039174', '2305', '50', '44.60523', '1.75251');
+INSERT INTO `settlement` VALUES ('2588', 'Ajeeri', '2305039138', '2305', '50', '44.54211', '1.78228');
+INSERT INTO `settlement` VALUES ('2589', 'Alambuur', '2305039132', '2305', '50', '44.51173', '1.78373');
+INSERT INTO `settlement` VALUES ('2590', 'Alundi', '2305039252', '2305', '50', '44.70528', '1.83225');
+INSERT INTO `settlement` VALUES ('2591', 'Arbow', '2305039034', '2305', '50', '44.54486', '2.15026');
+INSERT INTO `settlement` VALUES ('2592', 'Axmed Gaas', '2305039068', '2305', '50', '44.48751', '1.73789');
+INSERT INTO `settlement` VALUES ('2593', 'Axmed Guure', '2305039172', '2305', '50', '44.57904', '1.74284');
+INSERT INTO `settlement` VALUES ('2594', 'Baanyaale', '2305039210', '2305', '50', '44.61018', '1.84319');
+INSERT INTO `settlement` VALUES ('2595', 'Baanyaale', '2305039212', '2305', '50', '44.63104', '1.84883');
+INSERT INTO `settlement` VALUES ('2596', 'Baanyaale', '2305039216', '2305', '50', '44.62685', '1.82454');
+INSERT INTO `settlement` VALUES ('2597', 'Babaay', '2305029346', '2305', '50', '44.69930', '1.81760');
+INSERT INTO `settlement` VALUES ('2598', 'Bakooro', '2305039054', '2305', '50', '44.48988', '1.75373');
+INSERT INTO `settlement` VALUES ('2599', 'Balley', '2305039124', '2305', '50', '44.51972', '1.76264');
+INSERT INTO `settlement` VALUES ('2600', 'Balow', '2305039086', '2305', '50', '44.42714', '1.72426');
+INSERT INTO `settlement` VALUES ('2601', 'Banaar Jadiid', '2305039092', '2305', '50', '44.44145', '1.70888');
+INSERT INTO `settlement` VALUES ('2602', 'Baqdaad', '2305039066', '2305', '50', '44.48858', '1.74535');
+INSERT INTO `settlement` VALUES ('2603', 'Bardiid', '2305039274', '2305', '50', '44.72757', '1.86641');
+INSERT INTO `settlement` VALUES ('2604', 'Barila', '2305039322', '2305', '50', '44.80068', '1.92056');
+INSERT INTO `settlement` VALUES ('2605', 'Basaqley', '2305039030', '2305', '50', '44.68867', '2.19446');
+INSERT INTO `settlement` VALUES ('2606', 'Bashir', '2305039296', '2305', '50', '44.68982', '1.88677');
+INSERT INTO `settlement` VALUES ('2607', 'Biiji', '2305039250', '2305', '50', '44.70312', '1.82910');
+INSERT INTO `settlement` VALUES ('2608', 'Bijollino', '2305039258', '2305', '50', '44.71076', '1.84663');
+INSERT INTO `settlement` VALUES ('2609', 'Bulo Elaile', '2305029348', '2305', '50', '44.50060', '1.90180');
+INSERT INTO `settlement` VALUES ('2610', 'Bulukey', '2305039156', '2305', '50', '44.59700', '1.80162');
+INSERT INTO `settlement` VALUES ('2611', 'Buraale', '2305039112', '2305', '50', '44.51363', '1.73995');
+INSERT INTO `settlement` VALUES ('2612', 'Busley', '2305039130', '2305', '50', '44.52977', '1.76934');
+INSERT INTO `settlement` VALUES ('2613', 'Busley', '2305039270', '2305', '50', '44.74438', '1.85373');
+INSERT INTO `settlement` VALUES ('2614', 'Busley', '2305039336', '2305', '50', '44.49338', '1.79651');
+INSERT INTO `settlement` VALUES ('2615', 'Buullow', '2305039126', '2305', '50', '44.52315', '1.75967');
+INSERT INTO `settlement` VALUES ('2616', 'Caanoole', '2305039088', '2305', '50', '44.44609', '1.71901');
+INSERT INTO `settlement` VALUES ('2617', 'Caanooley', '2305039070', '2305', '50', '44.49482', '1.73629');
+INSERT INTO `settlement` VALUES ('2618', 'Cabdalle', '2305039288', '2305', '50', '44.72946', '1.89086');
+INSERT INTO `settlement` VALUES ('2619', 'Cabdi', '2305039060', '2305', '50', '44.48455', '1.74901');
+INSERT INTO `settlement` VALUES ('2620', 'Cabdi Abuukar', '2305039090', '2305', '50', '44.44107', '1.71589');
+INSERT INTO `settlement` VALUES ('2621', 'Cabdi Dashir', '2305039218', '2305', '50', '44.63234', '1.82195');
+INSERT INTO `settlement` VALUES ('2622', 'Cabdi Udaabi', '2305039100', '2305', '50', '44.49840', '1.68383');
+INSERT INTO `settlement` VALUES ('2623', 'Cabdillahi Caddow', '2305039220', '2305', '50', '44.63507', '1.82705');
+INSERT INTO `settlement` VALUES ('2624', 'Cabdillahi Mudey', '2305039294', '2305', '50', '44.68137', '1.89226');
+INSERT INTO `settlement` VALUES ('2625', 'Caddiimoole', '2305039230', '2305', '50', '44.65853', '1.80357');
+INSERT INTO `settlement` VALUES ('2626', 'Cali Daahir', '2305039308', '2305', '50', '44.75574', '1.89984');
+INSERT INTO `settlement` VALUES ('2627', 'Cali Goble', '2305039338', '2305', '50', '44.62316', '2.18486');
+INSERT INTO `settlement` VALUES ('2628', 'Cali Xaaji', '2305039318', '2305', '50', '44.80472', '1.91388');
+INSERT INTO `settlement` VALUES ('2629', 'Cali Xirsi', '2305039222', '2305', '50', '44.64809', '1.82203');
+INSERT INTO `settlement` VALUES ('2630', 'Cambarow', '2305039032', '2305', '50', '44.67338', '2.19604');
+INSERT INTO `settlement` VALUES ('2631', 'Canalow', '2305039098', '2305', '50', '44.48310', '1.69084');
+INSERT INTO `settlement` VALUES ('2632', 'Cannoole', '2305039304', '2305', '50', '44.72981', '1.91843');
+INSERT INTO `settlement` VALUES ('2633', 'Carfaale', '2305039176', '2305', '50', '44.60469', '1.74749');
+INSERT INTO `settlement` VALUES ('2634', 'Cariiley', '2305039236', '2305', '50', '44.66653', '1.81777');
+INSERT INTO `settlement` VALUES ('2635', 'Carmooy', '2305039080', '2305', '50', '44.44350', '1.74574');
+INSERT INTO `settlement` VALUES ('2636', 'Cawjab', '2305039096', '2305', '50', '44.38861', '1.72213');
+INSERT INTO `settlement` VALUES ('2637', 'Ceel Wareegow', '2305039062', '2305', '50', '44.46444', '1.77178');
+INSERT INTO `settlement` VALUES ('2638', 'Cilmi Nuux', '2305039280', '2305', '50', '44.70609', '1.88439');
+INSERT INTO `settlement` VALUES ('2639', 'Cumar Maxamoud', '2305039104', '2305', '50', '44.51477', '1.69381');
+INSERT INTO `settlement` VALUES ('2640', 'Cusboole', '2305039180', '2305', '50', '44.59069', '1.74200');
+INSERT INTO `settlement` VALUES ('2641', 'Cusman Khamisow', '2305039264', '2305', '50', '44.68909', '1.83782');
+INSERT INTO `settlement` VALUES ('2642', 'Daasani Anjalo', '2305039194', '2305', '50', '44.63751', '1.77886');
+INSERT INTO `settlement` VALUES ('2643', 'Dabiil', '2305039186', '2305', '50', '44.60035', '1.77018');
+INSERT INTO `settlement` VALUES ('2644', 'Dagay Beerre', '2305039134', '2305', '50', '44.53122', '1.77832');
+INSERT INTO `settlement` VALUES ('2645', 'Dhalimaanyoley', '2305039082', '2305', '50', '44.43726', '1.73903');
+INSERT INTO `settlement` VALUES ('2646', 'Dharkaynley', '2305039048', '2305', '50', '44.49749', '1.77908');
+INSERT INTO `settlement` VALUES ('2647', 'Dhegari', '2305029350', '2305', '50', '44.12870', '1.86920');
+INSERT INTO `settlement` VALUES ('2648', 'Dhiigooley', '2305039072', '2305', '50', '44.45417', '1.74429');
+INSERT INTO `settlement` VALUES ('2649', 'Dhooblow', '2305039224', '2305', '50', '44.62822', '1.85682');
+INSERT INTO `settlement` VALUES ('2650', 'Dhukey', '2305039158', '2305', '50', '44.59206', '1.76743');
+INSERT INTO `settlement` VALUES ('2651', 'Dhukow', '2305029352', '2305', '50', '44.57830', '1.77180');
+INSERT INTO `settlement` VALUES ('2652', 'Dirrye', '2305039050', '2305', '50', '44.49216', '1.76073');
+INSERT INTO `settlement` VALUES ('2653', 'Doon Bilow', '2305039056', '2305', '50', '44.45584', '1.76446');
+INSERT INTO `settlement` VALUES ('2654', 'Doon Buraale', '2305039084', '2305', '50', '44.44183', '1.72678');
+INSERT INTO `settlement` VALUES ('2655', 'Doon Loow', '2305039094', '2305', '50', '44.44031', '1.69990');
+INSERT INTO `settlement` VALUES ('2656', 'Dunaati', '2305039106', '2305', '50', '44.53404', '1.69046');
+INSERT INTO `settlement` VALUES ('2657', 'Duurey', '2305039200', '2305', '50', '44.63195', '1.81053');
+INSERT INTO `settlement` VALUES ('2658', 'Eribley', '2305039128', '2305', '50', '44.51835', '1.77040');
+INSERT INTO `settlement` VALUES ('2659', 'Faarax Jiijiile', '2305039120', '2305', '50', '44.50343', '1.76066');
+INSERT INTO `settlement` VALUES ('2660', 'Faqayow', '2305039146', '2305', '50', '44.55528', '1.77642');
+INSERT INTO `settlement` VALUES ('2661', 'Faranga Mashiim', '2305039244', '2305', '50', '44.71903', '1.83162');
+INSERT INTO `settlement` VALUES ('2662', 'Farange Muunge', '2305039242', '2305', '50', '44.67143', '1.81979');
+INSERT INTO `settlement` VALUES ('2663', 'Farkeerow', '2305039052', '2305', '50', '44.48051', '1.75883');
+INSERT INTO `settlement` VALUES ('2664', 'Farsooley', '2305039040', '2305', '50', '44.54550', '2.08531');
+INSERT INTO `settlement` VALUES ('2665', 'Foosi', '2305039168', '2305', '50', '44.57782', '1.74520');
+INSERT INTO `settlement` VALUES ('2666', 'Gaanooley', '2305039064', '2305', '50', '44.49642', '1.75091');
+INSERT INTO `settlement` VALUES ('2667', 'Gabaay', '2305039240', '2305', '50', '44.68756', '1.81481');
+INSERT INTO `settlement` VALUES ('2668', 'Gaiadde', '2305029354', '2305', '50', '44.52720', '1.89830');
+INSERT INTO `settlement` VALUES ('2669', 'Galjaw', '2305039058', '2305', '50', '44.46209', '1.75632');
+INSERT INTO `settlement` VALUES ('2670', 'Garab Giise', '2305039284', '2305', '50', '44.72802', '1.88475');
+INSERT INTO `settlement` VALUES ('2671', 'Garas Jeereed', '2305039154', '2305', '50', '44.58718', '1.82256');
+INSERT INTO `settlement` VALUES ('2672', 'Garasweynow', '2305039302', '2305', '50', '44.71934', '1.90368');
+INSERT INTO `settlement` VALUES ('2673', 'Gariiley', '2305039238', '2305', '50', '44.67867', '1.80914');
+INSERT INTO `settlement` VALUES ('2674', 'Gegsinta', '2305039038', '2305', '50', '44.57542', '2.13237');
+INSERT INTO `settlement` VALUES ('2675', 'Gorgaal', '2305039074', '2305', '50', '44.45386', '1.75152');
+INSERT INTO `settlement` VALUES ('2676', 'Haduuman', '2305039160', '2305', '50', '44.56404', '1.76446');
+INSERT INTO `settlement` VALUES ('2677', 'Hantiwadaag', '2305039326', '2305', '50', '44.81832', '1.91796');
+INSERT INTO `settlement` VALUES ('2678', 'Hanuwadaag', '2305039228', '2305', '50', '44.64472', '1.88791');
+INSERT INTO `settlement` VALUES ('2679', 'Hilow Gurbaanle', '2305039028', '2305', '50', '44.69724', '2.15324');
+INSERT INTO `settlement` VALUES ('2680', 'Iniineeri', '2305039136', '2305', '50', '44.54652', '1.77444');
+INSERT INTO `settlement` VALUES ('2681', 'Islaaw', '2305039184', '2305', '50', '44.61726', '1.75815');
+INSERT INTO `settlement` VALUES ('2682', 'Ismaaciil', '2305039316', '2305', '50', '44.77696', '1.88759');
+INSERT INTO `settlement` VALUES ('2683', 'Isomareey', '2305039310', '2305', '50', '44.74247', '1.94374');
+INSERT INTO `settlement` VALUES ('2684', 'Jameecada Aabow', '2305039150', '2305', '50', '44.54881', '1.82233');
+INSERT INTO `settlement` VALUES ('2685', 'Jameeco', '2305039044', '2305', '50', '44.45965', '1.77657');
+INSERT INTO `settlement` VALUES ('2686', 'Jameeco', '2305039078', '2305', '50', '44.42744', '1.75107');
+INSERT INTO `settlement` VALUES ('2687', 'Jameeco', '2305039260', '2305', '50', '44.70465', '1.84366');
+INSERT INTO `settlement` VALUES ('2688', 'Jasiira', '2305039140', '2305', '50', '44.54827', '1.78396');
+INSERT INTO `settlement` VALUES ('2689', 'Jawhar', '2305039328', '2305', '50', '44.83117', '1.93326');
+INSERT INTO `settlement` VALUES ('2690', 'Jiani', '2305039330', '2305', '50', '44.76524', '1.86615');
+INSERT INTO `settlement` VALUES ('2691', 'Jiddo', '2305039248', '2305', '50', '44.68892', '1.82407');
+INSERT INTO `settlement` VALUES ('2692', 'Jorje', '2305039102', '2305', '50', '44.50434', '1.68383');
+INSERT INTO `settlement` VALUES ('2693', 'Khaliid', '2305039286', '2305', '50', '44.73863', '1.88718');
+INSERT INTO `settlement` VALUES ('2694', 'Khaliif', '2305039190', '2305', '50', '44.62685', '1.76652');
+INSERT INTO `settlement` VALUES ('2695', 'Kulaas', '2305039234', '2305', '50', '44.66914', '1.80608');
+INSERT INTO `settlement` VALUES ('2696', 'Lamma Dad', '2305029340', '2305', '50', '44.55040', '1.78260');
+INSERT INTO `settlement` VALUES ('2697', 'Maaero', '2305039332', '2305', '50', '44.69758', '1.83674');
+INSERT INTO `settlement` VALUES ('2698', 'Maajiyow', '2305039226', '2305', '50', '44.64254', '1.86314');
+INSERT INTO `settlement` VALUES ('2699', 'Maanjoor', '2305039204', '2305', '50', '44.64536', '1.79743');
+INSERT INTO `settlement` VALUES ('2700', 'Macalin Idle', '2305039042', '2305', '50', '44.48186', '2.05300');
+INSERT INTO `settlement` VALUES ('2701', 'Madow', '2305039166', '2305', '50', '44.56404', '1.74391');
+INSERT INTO `settlement` VALUES ('2702', 'Madulow', '2305039306', '2305', '50', '44.72868', '1.89678');
+INSERT INTO `settlement` VALUES ('2703', 'Mafarolini', '2305039232', '2305', '50', '44.65925', '1.80887');
+INSERT INTO `settlement` VALUES ('2704', 'Magna Gab', '2305029342', '2305', '50', '44.46850', '1.73220');
+INSERT INTO `settlement` VALUES ('2705', 'Majabto', '2305039192', '2305', '50', '44.63279', '1.78251');
+INSERT INTO `settlement` VALUES ('2706', 'Malable', '2305039254', '2305', '50', '44.70600', '1.84052');
+INSERT INTO `settlement` VALUES ('2707', 'Mareerre', '2305039314', '2305', '50', '44.77730', '1.92045');
+INSERT INTO `settlement` VALUES ('2708', 'Mashalaay', '2305039178', '2305', '50', '44.59860', '1.74185');
+INSERT INTO `settlement` VALUES ('2709', 'Meeyd', '2305039036', '2305', '50', '44.55753', '2.14014');
+INSERT INTO `settlement` VALUES ('2710', 'Moxamed Cumar', '2305039290', '2305', '50', '44.75104', '1.89257');
+INSERT INTO `settlement` VALUES ('2711', 'Mukiyo', '2305039278', '2305', '50', '44.71768', '1.88376');
+INSERT INTO `settlement` VALUES ('2712', 'Muuno', '2305039324', '2305', '50', '44.80938', '1.91819');
+INSERT INTO `settlement` VALUES ('2713', 'Muuse', '2305039198', '2305', '50', '44.62137', '1.80581');
+INSERT INTO `settlement` VALUES ('2714', 'Nuria', '2305029344', '2305', '50', '44.57920', '1.75190');
+INSERT INTO `settlement` VALUES ('2715', 'Qabadka', '2305039266', '2305', '50', '44.68415', '1.84951');
+INSERT INTO `settlement` VALUES ('2716', 'Raydabley', '2305039292', '2305', '50', '44.67022', '1.89268');
+INSERT INTO `settlement` VALUES ('2717', 'Saalixiya', '2305039276', '2305', '50', '44.73153', '1.87756');
+INSERT INTO `settlement` VALUES ('2718', 'Sadiiq', '2305039312', '2305', '50', '44.76484', '1.90481');
+INSERT INTO `settlement` VALUES ('2719', 'Sarcade', '2305039246', '2305', '50', '44.70518', '1.82685');
+INSERT INTO `settlement` VALUES ('2720', 'Shalleeday', '2305039268', '2305', '50', '44.66437', '1.85158');
+INSERT INTO `settlement` VALUES ('2721', 'Shaman', '2305039152', '2305', '50', '44.55954', '1.80931');
+INSERT INTO `settlement` VALUES ('2722', 'Shiikh', '2305039122', '2305', '50', '44.51157', '1.75990');
+INSERT INTO `settlement` VALUES ('2723', 'Shiikh', '2305039162', '2305', '50', '44.55970', '1.75091');
+INSERT INTO `settlement` VALUES ('2724', 'Shiikh Siidow', '2305039320', '2305', '50', '44.81355', '1.91467');
+INSERT INTO `settlement` VALUES ('2725', 'Shuffeeri', '2305039272', '2305', '50', '44.72101', '1.86362');
+INSERT INTO `settlement` VALUES ('2726', 'Siimow', '2305039118', '2305', '50', '44.52749', '1.75617');
+INSERT INTO `settlement` VALUES ('2727', 'Siimow', '2305039170', '2305', '50', '44.59289', '1.75190');
+INSERT INTO `settlement` VALUES ('2728', 'Siimow', '2305039202', '2305', '50', '44.63972', '1.79385');
+INSERT INTO `settlement` VALUES ('2729', 'Siiqaale', '2305039358', '2305', '50', '44.70618', '1.85643');
+INSERT INTO `settlement` VALUES ('2730', 'Siisab', '2305039110', '2305', '50', '44.53670', '1.70340');
+INSERT INTO `settlement` VALUES ('2731', 'Siqaale', '2305039262', '2305', '50', '44.70168', '1.85131');
+INSERT INTO `settlement` VALUES ('2732', 'Sooni', '2305039256', '2305', '50', '44.71247', '1.84052');
+INSERT INTO `settlement` VALUES ('2733', 'Suleymaan', '2305039298', '2305', '50', '44.69539', '1.89243');
+INSERT INTO `settlement` VALUES ('2734', 'Suleyman', '2305039300', '2305', '50', '44.70966', '1.89767');
+INSERT INTO `settlement` VALUES ('2735', 'Talcox', '2305039144', '2305', '50', '44.55909', '1.76789');
+INSERT INTO `settlement` VALUES ('2736', 'Tawakal', '2305039196', '2305', '50', '44.62099', '1.79698');
+INSERT INTO `settlement` VALUES ('2737', 'Tugaarrey', '2305039148', '2305', '50', '44.54493', '1.81358');
+INSERT INTO `settlement` VALUES ('2738', 'Tugaarrey', '2305039334', '2305', '50', '44.75990', '1.89484');
+INSERT INTO `settlement` VALUES ('2739', 'Ureenow', '2305039142', '2305', '50', '44.55627', '1.77147');
+INSERT INTO `settlement` VALUES ('2740', 'Wadajir', '2305039076', '2305', '50', '44.45264', '1.72464');
+INSERT INTO `settlement` VALUES ('2741', 'Wehel', '2305039046', '2305', '50', '44.48721', '1.79172');
+INSERT INTO `settlement` VALUES ('2742', 'Xaaji Abuukar', '2305039114', '2305', '50', '44.50975', '1.74459');
+INSERT INTO `settlement` VALUES ('2743', 'Xaaji Faarax', '2305039108', '2305', '50', '44.53906', '1.70827');
+INSERT INTO `settlement` VALUES ('2744', 'Xaaji Rooble', '2305039188', '2305', '50', '44.61581', '1.76675');
+INSERT INTO `settlement` VALUES ('2745', 'Xaaji Xasan', '2305039208', '2305', '50', '44.60606', '1.82682');
+INSERT INTO `settlement` VALUES ('2746', 'Xirsi', '2305039116', '2305', '50', '44.50761', '1.75076');
+INSERT INTO `settlement` VALUES ('2747', 'Xumey Samey', '2305039206', '2305', '50', '44.65327', '1.80406');
+INSERT INTO `settlement` VALUES ('2748', 'Xuseyn Cawaale', '2305039182', '2305', '50', '44.55962', '1.73386');
+INSERT INTO `settlement` VALUES ('2749', 'Aadan Harmey', '2306039048', '2306', '51', '43.92398', '1.43737');
+INSERT INTO `settlement` VALUES ('2750', 'Abrarow', '2306039004', '2306', '51', '43.83242', '1.32875');
+INSERT INTO `settlement` VALUES ('2751', 'Alanshile', '2306039032', '2306', '51', '43.95097', '1.41913');
+INSERT INTO `settlement` VALUES ('2752', 'Ali Assan', '2306029082', '2306', '51', '43.42170', '1.07090');
+INSERT INTO `settlement` VALUES ('2753', 'Awal Buley', '2306039016', '2306', '51', '43.78480', '1.22614');
+INSERT INTO `settlement` VALUES ('2754', 'Baad Faadan', '2306039046', '2306', '51', '43.98058', '1.48328');
+INSERT INTO `settlement` VALUES ('2755', 'Baad Fadumo', '2306039064', '2306', '51', '43.89922', '1.37651');
+INSERT INTO `settlement` VALUES ('2756', 'Balbale', '2306039044', '2306', '51', '43.93791', '1.46210');
+INSERT INTO `settlement` VALUES ('2757', 'Beer Akmadow', '2306039068', '2306', '51', '43.88641', '1.34140');
+INSERT INTO `settlement` VALUES ('2758', 'Biyoley', '2306039050', '2306', '51', '43.91095', '1.41948');
+INSERT INTO `settlement` VALUES ('2759', 'Bulo Uaiama', '2306029084', '2306', '51', '43.98290', '1.49710');
+INSERT INTO `settlement` VALUES ('2760', 'Caab Kaban', '2306039010', '2306', '51', '43.82314', '1.28087');
+INSERT INTO `settlement` VALUES ('2761', 'Caddey Barre', '2306039070', '2306', '51', '44.00547', '1.48576');
+INSERT INTO `settlement` VALUES ('2762', 'Cadey Bare', '2306039058', '2306', '51', '43.89695', '1.39574');
+INSERT INTO `settlement` VALUES ('2763', 'Dhayo', '2306039022', '2306', '51', '43.71610', '1.18078');
+INSERT INTO `settlement` VALUES ('2764', 'Dhungoye', '2306039034', '2306', '51', '43.93222', '1.42851');
+INSERT INTO `settlement` VALUES ('2765', 'Donca', '2306029086', '2306', '51', '43.75150', '1.46940');
+INSERT INTO `settlement` VALUES ('2766', 'Ganbar', '2306039042', '2306', '51', '43.99312', '1.45964');
+INSERT INTO `settlement` VALUES ('2767', 'Gubi Coude', '2306029090', '2306', '51', '43.55170', '1.54810');
+INSERT INTO `settlement` VALUES ('2768', 'Gumarta', '2306039026', '2306', '51', '43.93462', '1.34880');
+INSERT INTO `settlement` VALUES ('2769', 'Gumarta', '2306039074', '2306', '51', '44.04203', '1.41008');
+INSERT INTO `settlement` VALUES ('2770', 'Gumur', '2306039072', '2306', '51', '44.03788', '1.47346');
+INSERT INTO `settlement` VALUES ('2771', 'Haarray', '2306039020', '2306', '51', '43.71237', '1.17037');
+INSERT INTO `settlement` VALUES ('2772', 'Holoqtiirag', '2306039056', '2306', '51', '43.91163', '1.39697');
+INSERT INTO `settlement` VALUES ('2773', 'Ibrahim Haafo', '2306039036', '2306', '51', '43.95920', '1.44275');
+INSERT INTO `settlement` VALUES ('2774', 'Kansane', '2306039024', '2306', '51', '43.53656', '1.11867');
+INSERT INTO `settlement` VALUES ('2775', 'Kawaaloow', '2306039008', '2306', '51', '43.80379', '1.26370');
+INSERT INTO `settlement` VALUES ('2776', 'Laab Mardha', '2306039060', '2306', '51', '43.89922', '1.38604');
+INSERT INTO `settlement` VALUES ('2777', 'Labeleey', '2306039076', '2306', '51', '44.08852', '1.41922');
+INSERT INTO `settlement` VALUES ('2778', 'Lawblanga', '2306039030', '2306', '51', '43.93246', '1.41666');
+INSERT INTO `settlement` VALUES ('2779', 'Mahad Caadow', '2306039052', '2306', '51', '43.92133', '1.40991');
+INSERT INTO `settlement` VALUES ('2780', 'Mardhabaan', '2306039014', '2306', '51', '43.80683', '1.25425');
+INSERT INTO `settlement` VALUES ('2781', 'Mattan', '2306039006', '2306', '51', '43.84890', '1.29831');
+INSERT INTO `settlement` VALUES ('2782', 'Merefle Gumer', '2306029078', '2306', '51', '43.19970', '1.41760');
+INSERT INTO `settlement` VALUES ('2783', 'Qummayo', '2306029080', '2306', '51', '43.47810', '1.09910');
+INSERT INTO `settlement` VALUES ('2784', 'Reeboy', '2306039040', '2306', '51', '43.93297', '1.44319');
+INSERT INTO `settlement` VALUES ('2785', 'Reeboy', '2306039054', '2306', '51', '43.90678', '1.40410');
+INSERT INTO `settlement` VALUES ('2786', 'Saarey', '2306039002', '2306', '51', '43.37998', '1.00361');
+INSERT INTO `settlement` VALUES ('2787', 'Shiikh Cabdi', '2306039018', '2306', '51', '43.75991', '1.21001');
+INSERT INTO `settlement` VALUES ('2788', 'Sojilow', '2306039038', '2306', '51', '43.93934', '1.44463');
+INSERT INTO `settlement` VALUES ('2789', 'Waab Arye', '2306039028', '2306', '51', '43.99230', '1.39671');
+INSERT INTO `settlement` VALUES ('2790', 'Wanamog', '2306039012', '2306', '51', '43.79781', '1.25459');
+INSERT INTO `settlement` VALUES ('2791', 'Wayore', '2306029088', '2306', '51', '43.90080', '1.37070');
+INSERT INTO `settlement` VALUES ('2792', 'Webi Nuurow', '2306039066', '2306', '51', '43.90049', '1.37122');
+INSERT INTO `settlement` VALUES ('2793', 'Xalag', '2306039062', '2306', '51', '43.90850', '1.38389');
+INSERT INTO `settlement` VALUES ('2794', 'Abaayow', '2307039082', '2307', '52', '45.08442', '2.67429');
+INSERT INTO `settlement` VALUES ('2795', 'Abbaayow', '2307039060', '2307', '52', '45.06983', '2.69877');
+INSERT INTO `settlement` VALUES ('2796', 'Abeesaale', '2307039032', '2307', '52', '45.14398', '2.77229');
+INSERT INTO `settlement` VALUES ('2797', 'Afar Daar', '2307039376', '2307', '52', '44.81151', '3.16663');
+INSERT INTO `settlement` VALUES ('2798', 'Arbi', '2307039212', '2307', '52', '44.80263', '2.56328');
+INSERT INTO `settlement` VALUES ('2799', 'Arieegle', '2307039172', '2307', '52', '44.92920', '2.51106');
+INSERT INTO `settlement` VALUES ('2800', 'Aw Aamow Rooble', '2307039330', '2307', '52', '44.89394', '2.71092');
+INSERT INTO `settlement` VALUES ('2801', 'Aw Axmad', '2307039252', '2307', '52', '44.79433', '2.49652');
+INSERT INTO `settlement` VALUES ('2802', 'Aw Biti', '2307039182', '2307', '52', '44.91956', '2.57205');
+INSERT INTO `settlement` VALUES ('2803', 'Aw Bitte', '2307039266', '2307', '52', '44.82499', '2.40717');
+INSERT INTO `settlement` VALUES ('2804', 'Aw Cariif', '2307039236', '2307', '52', '44.84995', '2.50031');
+INSERT INTO `settlement` VALUES ('2805', 'Aw Guurow', '2307039188', '2307', '52', '44.88053', '2.65650');
+INSERT INTO `settlement` VALUES ('2806', 'Aw Kuulamuudey', '2307029340', '2307', '52', '44.82120', '2.43040');
+INSERT INTO `settlement` VALUES ('2807', 'Aw Liibaan', '2307039292', '2307', '52', '44.76076', '2.44303');
+INSERT INTO `settlement` VALUES ('2808', 'Aw Mayow', '2307039310', '2307', '52', '44.93629', '2.71666');
+INSERT INTO `settlement` VALUES ('2809', 'Aw Raansow', '2307039258', '2307', '52', '44.83495', '2.42392');
+INSERT INTO `settlement` VALUES ('2810', 'Aw Sagaare', '2307039220', '2307', '52', '44.86346', '2.54203');
+INSERT INTO `settlement` VALUES ('2811', 'Ay Buulleey', '2307039150', '2307', '52', '44.96898', '2.64192');
+INSERT INTO `settlement` VALUES ('2812', 'Ay Buuraaley', '2307039102', '2307', '52', '45.03182', '2.55156');
+INSERT INTO `settlement` VALUES ('2813', 'Baabaah', '2307039250', '2307', '52', '44.78612', '2.46847');
+INSERT INTO `settlement` VALUES ('2814', 'Baalley', '2307039022', '2307', '52', '45.17038', '2.80985');
+INSERT INTO `settlement` VALUES ('2815', 'Balcad', '2307039132', '2307', '52', '45.04979', '2.64911');
+INSERT INTO `settlement` VALUES ('2816', 'Balli Doogle', '2307039202', '2307', '52', '44.78454', '2.66093');
+INSERT INTO `settlement` VALUES ('2817', 'Balow', '2307039198', '2307', '52', '44.82554', '2.64505');
+INSERT INTO `settlement` VALUES ('2818', 'Banaanag', '2307039136', '2307', '52', '45.02248', '2.66565');
+INSERT INTO `settlement` VALUES ('2819', 'Bannaaney', '2307039068', '2307', '52', '45.01960', '2.69679');
+INSERT INTO `settlement` VALUES ('2820', 'Bawanle', '2307039178', '2307', '52', '44.88108', '2.54503');
+INSERT INTO `settlement` VALUES ('2821', 'Beled Amiin', '2307039054', '2307', '52', '45.09256', '2.79825');
+INSERT INTO `settlement` VALUES ('2822', 'Beled Amiin', '2307039208', '2307', '52', '44.80579', '2.58327');
+INSERT INTO `settlement` VALUES ('2823', 'Belhan Humei', '2307029342', '2307', '52', '44.87210', '3.16940');
+INSERT INTO `settlement` VALUES ('2824', 'Bi Bidhooy', '2307039230', '2307', '52', '44.82752', '2.50300');
+INSERT INTO `settlement` VALUES ('2825', 'Bisiqley', '2307039034', '2307', '52', '45.15862', '2.78327');
+INSERT INTO `settlement` VALUES ('2826', 'Booraan', '2307039318', '2307', '52', '44.89174', '2.67275');
+INSERT INTO `settlement` VALUES ('2827', 'Bulo Auculom', '2307029344', '2307', '52', '44.90090', '2.73130');
+INSERT INTO `settlement` VALUES ('2828', 'Bulo Garangaro', '2307029346', '2307', '52', '45.15230', '2.82840');
+INSERT INTO `settlement` VALUES ('2829', 'Bulo Nefle', '2307029348', '2307', '52', '44.84760', '2.48240');
+INSERT INTO `settlement` VALUES ('2830', 'Bulo Sigalei', '2307029350', '2307', '52', '45.09830', '2.79880');
+INSERT INTO `settlement` VALUES ('2831', 'Busley', '2307039074', '2307', '52', '45.05651', '2.67573');
+INSERT INTO `settlement` VALUES ('2832', 'Buulcaas', '2307039078', '2307', '52', '45.02779', '2.66853');
+INSERT INTO `settlement` VALUES ('2833', 'Buulo Aas', '2307039268', '2307', '52', '44.82254', '2.39785');
+INSERT INTO `settlement` VALUES ('2834', 'Buur Dheere', '2307039176', '2307', '52', '44.87049', '2.50134');
+INSERT INTO `settlement` VALUES ('2835', 'Buurfuule', '2307049378', '2307', '52', '45.17805', '2.66806');
+INSERT INTO `settlement` VALUES ('2836', 'Buusleey', '2307039234', '2307', '52', '44.83692', '2.49549');
+INSERT INTO `settlement` VALUES ('2837', 'Buuzow', '2307039170', '2307', '52', '44.88005', '2.34989');
+INSERT INTO `settlement` VALUES ('2838', 'Cabdi Kariim', '2307039272', '2307', '52', '44.83558', '2.37896');
+INSERT INTO `settlement` VALUES ('2839', 'Cadaley', '2307039014', '2307', '52', '45.14249', '2.81953');
+INSERT INTO `settlement` VALUES ('2840', 'Cadaydheere', '2307039124', '2307', '52', '45.05421', '2.62036');
+INSERT INTO `settlement` VALUES ('2841', 'Cadey Barwaaqo', '2307039076', '2307', '52', '45.04931', '2.66889');
+INSERT INTO `settlement` VALUES ('2842', 'Caisene', '2307029352', '2307', '52', '45.21750', '2.87860');
+INSERT INTO `settlement` VALUES ('2843', 'Cajuusa', '2307039242', '2307', '52', '44.85556', '2.46911');
+INSERT INTO `settlement` VALUES ('2844', 'Caras Buule', '2307039332', '2307', '52', '45.05316', '2.60962');
+INSERT INTO `settlement` VALUES ('2845', 'Ceel Adde', '2307029354', '2307', '52', '44.77090', '3.23070');
+INSERT INTO `settlement` VALUES ('2846', 'Ceel Qaraare', '2307039222', '2307', '52', '44.86702', '2.53429');
+INSERT INTO `settlement` VALUES ('2847', 'Ceeshoy', '2307039006', '2307', '52', '45.31041', '2.72011');
+INSERT INTO `settlement` VALUES ('2848', 'Ciisaay', '2307039314', '2307', '52', '44.91124', '2.72492');
+INSERT INTO `settlement` VALUES ('2849', 'Cilley', '2307039200', '2307', '52', '44.81306', '2.63714');
+INSERT INTO `settlement` VALUES ('2850', 'Cumaroow Ibrahim', '2307039254', '2307', '52', '44.80737', '2.43656');
+INSERT INTO `settlement` VALUES ('2851', 'Cusmaan', '2307039186', '2307', '52', '44.92532', '2.65642');
+INSERT INTO `settlement` VALUES ('2852', 'Daba Galay', '2307039126', '2307', '52', '45.06263', '2.62632');
+INSERT INTO `settlement` VALUES ('2853', 'Dabool Yarey', '2307039026', '2307', '52', '45.13204', '2.80375');
+INSERT INTO `settlement` VALUES ('2854', 'Dan Wadaag', '2307029362', '2307', '52', '44.97160', '2.48010');
+INSERT INTO `settlement` VALUES ('2855', 'Danakuus', '2307039134', '2307', '52', '45.06889', '2.64994');
+INSERT INTO `settlement` VALUES ('2856', 'Dani', '2307039334', '2307', '52', '45.11025', '2.79580');
+INSERT INTO `settlement` VALUES ('2857', 'Deb Arar', '2307029364', '2307', '52', '44.90070', '3.07830');
+INSERT INTO `settlement` VALUES ('2858', 'Deb Scinnele', '2307029366', '2307', '52', '44.91710', '3.02780');
+INSERT INTO `settlement` VALUES ('2859', 'Deelaawe', '2307039160', '2307', '52', '44.97241', '2.57955');
+INSERT INTO `settlement` VALUES ('2860', 'Deg Bili', '2307039140', '2307', '52', '45.05358', '2.65384');
+INSERT INTO `settlement` VALUES ('2861', 'Degeelow', '2307039086', '2307', '52', '45.07925', '2.64484');
+INSERT INTO `settlement` VALUES ('2862', 'Den Wadaag', '2307039164', '2307', '52', '44.96309', '2.49336');
+INSERT INTO `settlement` VALUES ('2863', 'Dha Dhacle', '2307039286', '2307', '52', '44.73382', '2.36925');
+INSERT INTO `settlement` VALUES ('2864', 'Dharaamey', '2307039246', '2307', '52', '44.83723', '2.45101');
+INSERT INTO `settlement` VALUES ('2865', 'Dharabo', '2307039278', '2307', '52', '44.81440', '2.33796');
+INSERT INTO `settlement` VALUES ('2866', 'Dhaxanley', '2307039038', '2307', '52', '45.14572', '2.75756');
+INSERT INTO `settlement` VALUES ('2867', 'Dhaysiyo', '2307039110', '2307', '52', '45.02361', '2.58986');
+INSERT INTO `settlement` VALUES ('2868', 'Dhiiktaare', '2307039154', '2307', '52', '44.98469', '2.59967');
+INSERT INTO `settlement` VALUES ('2869', 'Dhumay Uusle', '2307039104', '2307', '52', '45.01857', '2.56183');
+INSERT INTO `settlement` VALUES ('2870', 'Dhumayle', '2307039090', '2307', '52', '45.09539', '2.61235');
+INSERT INTO `settlement` VALUES ('2871', 'Don Merer', '2307029368', '2307', '52', '45.19850', '2.88040');
+INSERT INTO `settlement` VALUES ('2872', 'Dood', '2307039050', '2307', '52', '45.16002', '2.75305');
+INSERT INTO `settlement` VALUES ('2873', 'Doonka', '2307039192', '2307', '52', '44.86354', '2.64837');
+INSERT INTO `settlement` VALUES ('2874', 'Doonwaalle', '2307039324', '2307', '52', '44.87418', '2.69535');
+INSERT INTO `settlement` VALUES ('2875', 'Duddun Dheer', '2307039046', '2307', '52', '45.20493', '2.81651');
+INSERT INTO `settlement` VALUES ('2876', 'Dudufodlei', '2307029370', '2307', '52', '44.77840', '3.17070');
+INSERT INTO `settlement` VALUES ('2877', 'Dudumaay', '2307039206', '2307', '52', '44.79734', '2.57813');
+INSERT INTO `settlement` VALUES ('2878', 'Dugsulow', '2307039308', '2307', '52', '44.90372', '2.67370');
+INSERT INTO `settlement` VALUES ('2879', 'Duhur Boob', '2307039080', '2307', '52', '45.06605', '2.67060');
+INSERT INTO `settlement` VALUES ('2880', 'Duhurboode', '2307039062', '2307', '52', '45.05606', '2.69229');
+INSERT INTO `settlement` VALUES ('2881', 'Eeloole', '2307039210', '2307', '52', '44.82570', '2.59196');
+INSERT INTO `settlement` VALUES ('2882', 'Eenow Mideey', '2307039216', '2307', '52', '44.86844', '2.56747');
+INSERT INTO `settlement` VALUES ('2883', 'Erilay', '2307039100', '2307', '52', '45.05010', '2.54797');
+INSERT INTO `settlement` VALUES ('2884', 'Faarax', '2307039146', '2307', '52', '44.70405', '2.27963');
+INSERT INTO `settlement` VALUES ('2885', 'Fantafido', '2307029372', '2307', '52', '45.15180', '2.77940');
+INSERT INTO `settlement` VALUES ('2886', 'Fulaydheer', '2307039106', '2307', '52', '45.04342', '2.57610');
+INSERT INTO `settlement` VALUES ('2887', 'Fulayley', '2307039122', '2307', '52', '45.02391', '2.62200');
+INSERT INTO `settlement` VALUES ('2888', 'Fullaay', '2307039204', '2307', '52', '44.79876', '2.58635');
+INSERT INTO `settlement` VALUES ('2889', 'Gaay Dhiigaale', '2307039282', '2307', '52', '44.79173', '2.37035');
+INSERT INTO `settlement` VALUES ('2890', 'Galbooy', '2307039240', '2307', '52', '44.83313', '2.47132');
+INSERT INTO `settlement` VALUES ('2891', 'Galool Dheere', '2307039238', '2307', '52', '44.81338', '2.47092');
+INSERT INTO `settlement` VALUES ('2892', 'Galool Guushan', '2307039284', '2307', '52', '44.75404', '2.36917');
+INSERT INTO `settlement` VALUES ('2893', 'Galooleey', '2307039194', '2307', '52', '44.85256', '2.65879');
+INSERT INTO `settlement` VALUES ('2894', 'Galoolkaa', '2307039064', '2307', '52', '45.03419', '2.67546');
+INSERT INTO `settlement` VALUES ('2895', 'Gan Janaaw', '2307029374', '2307', '52', '44.79790', '2.72740');
+INSERT INTO `settlement` VALUES ('2896', 'Garas Dhaay', '2307039244', '2307', '52', '44.83945', '2.45915');
+INSERT INTO `settlement` VALUES ('2897', 'Garas Guudle', '2307039030', '2307', '52', '45.14188', '2.78719');
+INSERT INTO `settlement` VALUES ('2898', 'Garas Moqorrey', '2307039018', '2307', '52', '45.14537', '2.79382');
+INSERT INTO `settlement` VALUES ('2899', 'Garas Shaare', '2307039092', '2307', '52', '45.14344', '2.61646');
+INSERT INTO `settlement` VALUES ('2900', 'Garas Weyne', '2307039114', '2307', '52', '45.03345', '2.60122');
+INSERT INTO `settlement` VALUES ('2901', 'Garas Weyne', '2307039190', '2307', '52', '44.87934', '2.66401');
+INSERT INTO `settlement` VALUES ('2902', 'Garascad', '2307039016', '2307', '52', '45.14136', '2.80096');
+INSERT INTO `settlement` VALUES ('2903', 'Garasley', '2307039044', '2307', '52', '45.19052', '2.77482');
+INSERT INTO `settlement` VALUES ('2904', 'Garasuuley', '2307039118', '2307', '52', '45.00512', '2.60773');
+INSERT INTO `settlement` VALUES ('2905', 'Garfaale Weyne', '2307039130', '2307', '52', '45.04414', '2.63854');
+INSERT INTO `settlement` VALUES ('2906', 'Garooreey', '2307039162', '2307', '52', '44.98687', '2.57268');
+INSERT INTO `settlement` VALUES ('2907', 'Gartaale Yarey', '2307039128', '2307', '52', '45.03839', '2.63238');
+INSERT INTO `settlement` VALUES ('2908', 'Gawaanis', '2307039008', '2307', '52', '45.16682', '2.87058');
+INSERT INTO `settlement` VALUES ('2909', 'Godobey', '2307039066', '2307', '52', '45.02240', '2.68473');
+INSERT INTO `settlement` VALUES ('2910', 'Goomare', '2307039306', '2307', '52', '44.92855', '2.69026');
+INSERT INTO `settlement` VALUES ('2911', 'Haabsooy', '2307039300', '2307', '52', '44.99272', '2.71550');
+INSERT INTO `settlement` VALUES ('2912', 'Halluuq', '2307039276', '2307', '52', '44.82649', '2.34578');
+INSERT INTO `settlement` VALUES ('2913', 'Haruuqooy', '2307039312', '2307', '52', '44.93203', '2.72919');
+INSERT INTO `settlement` VALUES ('2914', 'Heere', '2307039184', '2307', '52', '44.93015', '2.64924');
+INSERT INTO `settlement` VALUES ('2915', 'Horgooy', '2307039302', '2307', '52', '44.96662', '2.70039');
+INSERT INTO `settlement` VALUES ('2916', 'Ibrahim Mursal', '2307039280', '2307', '52', '44.78272', '2.34539');
+INSERT INTO `settlement` VALUES ('2917', 'Iidow', '2307039290', '2307', '52', '44.77427', '2.40337');
+INSERT INTO `settlement` VALUES ('2918', 'Islow Geedi', '2307039094', '2307', '52', '45.13348', '2.58730');
+INSERT INTO `settlement` VALUES ('2919', 'Jameecada Dooxa', '2307039316', '2307', '52', '44.95553', '2.73125');
+INSERT INTO `settlement` VALUES ('2920', 'Jameeco Mukhtaa', '2307039024', '2307', '52', '45.12428', '2.80506');
+INSERT INTO `settlement` VALUES ('2921', 'Janiino', '2307039264', '2307', '52', '44.81440', '2.39887');
+INSERT INTO `settlement` VALUES ('2922', 'Jimcaale Eenoy', '2307039156', '2307', '52', '44.99065', '2.58626');
+INSERT INTO `settlement` VALUES ('2923', 'Jiyaale', '2307039012', '2307', '52', '45.13787', '2.84672');
+INSERT INTO `settlement` VALUES ('2924', 'Joefley', '2307039148', '2307', '52', '44.69334', '2.28907');
+INSERT INTO `settlement` VALUES ('2925', 'Joofley', '2307039040', '2307', '52', '45.17622', '2.79878');
+INSERT INTO `settlement` VALUES ('2926', 'Koofirey', '2307039138', '2307', '52', '45.02237', '2.65938');
+INSERT INTO `settlement` VALUES ('2927', 'Kootin', '2307039270', '2307', '52', '44.81606', '2.39200');
+INSERT INTO `settlement` VALUES ('2928', 'Korkaa Maray', '2307039088', '2307', '52', '45.08643', '2.66348');
+INSERT INTO `settlement` VALUES ('2929', 'Korkaamaray', '2307039070', '2307', '52', '45.01195', '2.69886');
+INSERT INTO `settlement` VALUES ('2930', 'Kul Aamiir', '2307039174', '2307', '52', '44.91245', '2.53934');
+INSERT INTO `settlement` VALUES ('2931', 'Kulunta Shancawe', '2307039098', '2307', '52', '45.07947', '2.53492');
+INSERT INTO `settlement` VALUES ('2932', 'Kuulamuudey', '2307039256', '2307', '52', '44.82981', '2.43782');
+INSERT INTO `settlement` VALUES ('2933', 'Laangalool', '2307039116', '2307', '52', '45.05523', '2.60650');
+INSERT INTO `settlement` VALUES ('2934', 'Labagaras', '2307039328', '2307', '52', '44.90569', '2.69703');
+INSERT INTO `settlement` VALUES ('2935', 'Labamudul', '2307039028', '2307', '52', '45.13195', '2.77787');
+INSERT INTO `settlement` VALUES ('2936', 'Luggod', '2307039056', '2307', '52', '45.04148', '2.70778');
+INSERT INTO `settlement` VALUES ('2937', 'Luggod', '2307039072', '2307', '52', '45.04337', '2.67744');
+INSERT INTO `settlement` VALUES ('2938', 'Malableey', '2307039142', '2307', '52', '44.81765', '2.31990');
+INSERT INTO `settlement` VALUES ('2939', 'Maquudaale', '2307039158', '2307', '52', '44.96352', '2.58695');
+INSERT INTO `settlement` VALUES ('2940', 'Mareere', '2307039304', '2307', '52', '44.96516', '2.71481');
+INSERT INTO `settlement` VALUES ('2941', 'Mareerta', '2307039144', '2307', '52', '44.76613', '2.30614');
+INSERT INTO `settlement` VALUES ('2942', 'Mareerta', '2307039288', '2307', '52', '44.79694', '2.39216');
+INSERT INTO `settlement` VALUES ('2943', 'Masiireey', '2307039322', '2307', '52', '44.87740', '2.68812');
+INSERT INTO `settlement` VALUES ('2944', 'Moxamed Macalim', '2307039248', '2307', '52', '44.82523', '2.44217');
+INSERT INTO `settlement` VALUES ('2945', 'Mudu', '2307039002', '2307', '52', '45.24564', '2.83979');
+INSERT INTO `settlement` VALUES ('2946', 'Murugeey', '2307039196', '2307', '52', '44.83431', '2.65721');
+INSERT INTO `settlement` VALUES ('2947', 'Oddur Uein', '2307029338', '2307', '52', '44.82810', '2.58240');
+INSERT INTO `settlement` VALUES ('2948', 'Oodlay', '2307039112', '2307', '52', '45.05195', '2.59130');
+INSERT INTO `settlement` VALUES ('2949', 'Oomboole', '2307039320', '2307', '52', '44.89019', '2.68567');
+INSERT INTO `settlement` VALUES ('2950', 'Orraxley', '2307039058', '2307', '52', '45.06020', '2.72110');
+INSERT INTO `settlement` VALUES ('2951', 'Qaan Dhoole', '2307039326', '2307', '52', '44.89535', '2.69316');
+INSERT INTO `settlement` VALUES ('2952', 'Qaaramey', '2307039298', '2307', '52', '44.99776', '2.69496');
+INSERT INTO `settlement` VALUES ('2953', 'Qansaxley', '2307039108', '2307', '52', '45.00872', '2.58504');
+INSERT INTO `settlement` VALUES ('2954', 'Raama Boorto', '2307039274', '2307', '52', '44.81764', '2.37865');
+INSERT INTO `settlement` VALUES ('2955', 'Raama Shariif', '2307039096', '2307', '52', '45.11757', '2.57918');
+INSERT INTO `settlement` VALUES ('2956', 'Ragnog', '2307039120', '2307', '52', '45.00543', '2.62847');
+INSERT INTO `settlement` VALUES ('2957', 'Rii Xaanle', '2307039296', '2307', '52', '44.97232', '2.67934');
+INSERT INTO `settlement` VALUES ('2958', 'Sagaar Oole', '2307039168', '2307', '52', '44.98782', '2.47740');
+INSERT INTO `settlement` VALUES ('2959', 'Shantakulan', '2307039084', '2307', '52', '45.18599', '2.64652');
+INSERT INTO `settlement` VALUES ('2960', 'Shariifa', '2307039336', '2307', '52', '44.78027', '2.42620');
+INSERT INTO `settlement` VALUES ('2961', 'Siidow Suleeymaan', '2307039262', '2307', '52', '44.85430', '2.44082');
+INSERT INTO `settlement` VALUES ('2962', 'Soohane', '2307039036', '2307', '52', '45.16908', '2.77150');
+INSERT INTO `settlement` VALUES ('2963', 'Tabaraqle', '2307039260', '2307', '52', '44.82207', '2.41744');
+INSERT INTO `settlement` VALUES ('2964', 'Tiyeegle', '2307039010', '2307', '52', '45.16489', '2.85970');
+INSERT INTO `settlement` VALUES ('2965', 'Tulida', '2307039226', '2307', '52', '44.80634', '2.53310');
+INSERT INTO `settlement` VALUES ('2966', 'Uar Bunle', '2307029356', '2307', '52', '45.14990', '2.92200');
+INSERT INTO `settlement` VALUES ('2967', 'Uar Golol Au Ahmad', '2307029358', '2307', '52', '44.97840', '2.57020');
+INSERT INTO `settlement` VALUES ('2968', 'Ubbuli', '2307039042', '2307', '52', '45.18259', '2.78928');
+INSERT INTO `settlement` VALUES ('2969', 'Walburre', '2307039020', '2307', '52', '45.16943', '2.79591');
+INSERT INTO `settlement` VALUES ('2970', 'War Mursal', '2307039224', '2307', '52', '44.83676', '2.52710');
+INSERT INTO `settlement` VALUES ('2971', 'War Muusor', '2307039152', '2307', '52', '44.96222', '2.60902');
+INSERT INTO `settlement` VALUES ('2972', 'Waraaboole', '2307039004', '2307', '52', '45.21893', '2.83281');
+INSERT INTO `settlement` VALUES ('2973', 'Waroos Maal', '2307039232', '2307', '52', '44.83676', '2.50545');
+INSERT INTO `settlement` VALUES ('2974', 'Washaaqo', '2307039048', '2307', '52', '45.13568', '2.75521');
+INSERT INTO `settlement` VALUES ('2975', 'Xabaalo Fiile', '2307039166', '2307', '52', '44.98323', '2.49012');
+INSERT INTO `settlement` VALUES ('2976', 'Xako', '2307039214', '2307', '52', '44.85548', '2.58524');
+INSERT INTO `settlement` VALUES ('2977', 'Xarbiga', '2307039228', '2307', '52', '44.82870', '2.51453');
+INSERT INTO `settlement` VALUES ('2978', 'Xologof', '2307029360', '2307', '52', '44.83240', '2.80150');
+INSERT INTO `settlement` VALUES ('2979', 'Yaaq Bari Weyne', '2307039294', '2307', '52', '44.68943', '2.66561');
+INSERT INTO `settlement` VALUES ('2980', 'Yaaq Dhoob', '2307039180', '2307', '52', '44.91861', '2.55103');
+INSERT INTO `settlement` VALUES ('2981', 'Yarey', '2307039052', '2307', '52', '45.16957', '2.74920');
+INSERT INTO `settlement` VALUES ('2982', 'Afgooy', '2701039102', '2701', '68', '42.62252', '0.95106');
+INSERT INTO `settlement` VALUES ('2983', 'Angole Uen', '2701029136', '2701', '68', '42.54830', '1.07930');
+INSERT INTO `settlement` VALUES ('2984', 'Bandar Jidiid', '2701039040', '2701', '68', '42.58221', '1.10996');
+INSERT INTO `settlement` VALUES ('2985', 'Banta', '2701039020', '2701', '68', '42.54639', '1.18383');
+INSERT INTO `settlement` VALUES ('2986', 'Baqdaad', '2701039064', '2701', '68', '42.62747', '0.80837');
+INSERT INTO `settlement` VALUES ('2987', 'Beledeey', '2701029138', '2701', '68', '42.41710', '1.48170');
+INSERT INTO `settlement` VALUES ('2988', 'Berdaale', '2701039084', '2701', '68', '42.58900', '0.87909');
+INSERT INTO `settlement` VALUES ('2989', 'Bidi', '2701029140', '2701', '68', '42.61890', '0.97030');
+INSERT INTO `settlement` VALUES ('2990', 'Billi Weyn', '2701039094', '2701', '68', '42.58517', '0.92665');
+INSERT INTO `settlement` VALUES ('2991', 'Boxo', '2701039100', '2701', '68', '42.61409', '0.96565');
+INSERT INTO `settlement` VALUES ('2992', 'Bu Buule', '2701039024', '2701', '68', '42.55539', '1.15866');
+INSERT INTO `settlement` VALUES ('2993', 'Burfuule', '2701039028', '2701', '68', '42.57297', '1.13624');
+INSERT INTO `settlement` VALUES ('2994', 'Caanoole', '2701039042', '2701', '68', '42.58280', '1.08129');
+INSERT INTO `settlement` VALUES ('2995', 'Cadduudo', '2701029142', '2701', '68', '43.12800', '1.16800');
+INSERT INTO `settlement` VALUES ('2996', 'Cilmi', '2701039114', '2701', '68', '42.41925', '1.42751');
+INSERT INTO `settlement` VALUES ('2997', 'Cismaan Yarow', '2701039014', '2701', '68', '42.55143', '1.21643');
+INSERT INTO `settlement` VALUES ('2998', 'Dahar', '2701029144', '2701', '68', '42.59790', '0.95120');
+INSERT INTO `settlement` VALUES ('2999', 'Dhokaal', '2701039044', '2701', '68', '42.60414', '1.00714');
+INSERT INTO `settlement` VALUES ('3000', 'Diqiyo Madow', '2701039022', '2701', '68', '42.56626', '1.17805');
+INSERT INTO `settlement` VALUES ('3001', 'Duguia Iantar', '2701029146', '2701', '68', '42.58050', '1.12720');
+INSERT INTO `settlement` VALUES ('3002', 'Dujuuma', '2701039012', '2701', '68', '42.57291', '1.25406');
+INSERT INTO `settlement` VALUES ('3003', 'Duqiyo Ereey', '2701039050', '2701', '68', '42.59975', '1.16990');
+INSERT INTO `settlement` VALUES ('3004', 'Duqiyo Kuusow', '2701039026', '2701', '68', '42.56841', '1.16255');
+INSERT INTO `settlement` VALUES ('3005', 'Duqiyo Weyn', '2701039030', '2701', '68', '42.61370', '1.14624');
+INSERT INTO `settlement` VALUES ('3006', 'Farbiito', '2701039090', '2701', '68', '42.61903', '0.88772');
+INSERT INTO `settlement` VALUES ('3007', 'Gaduud', '2701039126', '2701', '68', '42.49611', '1.47829');
+INSERT INTO `settlement` VALUES ('3008', 'Geele', '2701039010', '2701', '68', '42.56181', '1.23889');
+INSERT INTO `settlement` VALUES ('3009', 'Gerarey', '2701039034', '2701', '68', '42.58334', '1.11260');
+INSERT INTO `settlement` VALUES ('3010', 'Gobate', '2701039104', '2701', '68', '42.46910', '1.34438');
+INSERT INTO `settlement` VALUES ('3011', 'Gola', '2701039108', '2701', '68', '42.47003', '1.38896');
+INSERT INTO `settlement` VALUES ('3012', 'Goljano', '2701039118', '2701', '68', '42.42035', '1.45406');
+INSERT INTO `settlement` VALUES ('3013', 'Gonaaf', '2701039132', '2701', '68', '42.48752', '1.30134');
+INSERT INTO `settlement` VALUES ('3014', 'Hangoodle', '2701039038', '2701', '68', '42.59616', '1.09697');
+INSERT INTO `settlement` VALUES ('3015', 'Iidow', '2701039078', '2701', '68', '42.60456', '0.84038');
+INSERT INTO `settlement` VALUES ('3016', 'Jabi', '2701039106', '2701', '68', '42.44672', '1.35302');
+INSERT INTO `settlement` VALUES ('3017', 'Jilaalow', '2701039072', '2701', '68', '42.59678', '0.83040');
+INSERT INTO `settlement` VALUES ('3018', 'Jirma', '2701039130', '2701', '68', '42.38290', '1.49057');
+INSERT INTO `settlement` VALUES ('3019', 'Jubba', '2701039116', '2701', '68', '42.42817', '1.44646');
+INSERT INTO `settlement` VALUES ('3020', 'Kafiinge', '2701039046', '2701', '68', '42.59013', '1.00757');
+INSERT INTO `settlement` VALUES ('3021', 'Kaskey', '2701039092', '2701', '68', '42.60011', '0.92220');
+INSERT INTO `settlement` VALUES ('3022', 'Kaytooy', '2701039054', '2701', '68', '42.66628', '0.79379');
+INSERT INTO `settlement` VALUES ('3023', 'Korisow', '2701039120', '2701', '68', '42.41270', '1.47550');
+INSERT INTO `settlement` VALUES ('3024', 'Kud', '2701029134', '2701', '68', '43.07880', '0.99910');
+INSERT INTO `settlement` VALUES ('3025', 'Kuraaw', '2701039128', '2701', '68', '42.46858', '1.50014');
+INSERT INTO `settlement` VALUES ('3026', 'Mabaarag', '2701039074', '2701', '68', '42.60434', '0.83347');
+INSERT INTO `settlement` VALUES ('3027', 'Macalim Iman', '2701039052', '2701', '68', '42.65367', '0.76879');
+INSERT INTO `settlement` VALUES ('3028', 'Macalim Weyn', '2701039088', '2701', '68', '42.60093', '0.88772');
+INSERT INTO `settlement` VALUES ('3029', 'Madiina', '2701039070', '2701', '68', '42.60050', '0.82218');
+INSERT INTO `settlement` VALUES ('3030', 'Manaane', '2701039062', '2701', '68', '42.64512', '0.84389');
+INSERT INTO `settlement` VALUES ('3031', 'Mashane', '2701039060', '2701', '68', '42.65839', '0.82887');
+INSERT INTO `settlement` VALUES ('3032', 'Mawgley', '2701039006', '2701', '68', '42.53001', '1.27203');
+INSERT INTO `settlement` VALUES ('3033', 'Moloolow', '2701039086', '2701', '68', '42.59236', '0.88957');
+INSERT INTO `settlement` VALUES ('3034', 'Munfuudhi', '2701039066', '2701', '68', '42.61859', '0.81177');
+INSERT INTO `settlement` VALUES ('3035', 'Nadariis', '2701039112', '2701', '68', '42.45351', '1.41673');
+INSERT INTO `settlement` VALUES ('3036', 'Nimcan', '2701039002', '2701', '68', '42.52692', '1.28160');
+INSERT INTO `settlement` VALUES ('3037', 'Qarareey', '2701039032', '2701', '68', '42.61519', '1.12251');
+INSERT INTO `settlement` VALUES ('3038', 'Qardhaale', '2701039036', '2701', '68', '42.59573', '1.11163');
+INSERT INTO `settlement` VALUES ('3039', 'Qoryooley', '2701039096', '2701', '68', '42.59490', '0.94729');
+INSERT INTO `settlement` VALUES ('3040', 'Radiile', '2701039048', '2701', '68', '42.58247', '1.28389');
+INSERT INTO `settlement` VALUES ('3041', 'Raxoole', '2701039080', '2701', '68', '42.59188', '0.85517');
+INSERT INTO `settlement` VALUES ('3042', 'Reebaay', '2701039008', '2701', '68', '42.55301', '1.26420');
+INSERT INTO `settlement` VALUES ('3043', 'Shangaani', '2701039076', '2701', '68', '42.60862', '0.83775');
+INSERT INTO `settlement` VALUES ('3044', 'Shoongole', '2701039056', '2701', '68', '42.67220', '0.80486');
+INSERT INTO `settlement` VALUES ('3045', 'Sojiido', '2701039018', '2701', '68', '42.55452', '1.19556');
+INSERT INTO `settlement` VALUES ('3046', 'Soojiida', '2701039016', '2701', '68', '42.55955', '1.19530');
+INSERT INTO `settlement` VALUES ('3047', 'Soomba', '2701039098', '2701', '68', '42.60703', '0.96236');
+INSERT INTO `settlement` VALUES ('3048', 'Sukeyla', '2701039124', '2701', '68', '42.45837', '1.45811');
+INSERT INTO `settlement` VALUES ('3049', 'Tarba', '2701039058', '2701', '68', '42.65805', '0.81198');
+INSERT INTO `settlement` VALUES ('3050', 'Tateey', '2701039004', '2701', '68', '42.51793', '1.27551');
+INSERT INTO `settlement` VALUES ('3051', 'Urufle', '2701039082', '2701', '68', '42.59908', '0.85900');
+INSERT INTO `settlement` VALUES ('3052', 'Wareegto', '2701039122', '2701', '68', '42.43658', '1.46066');
+INSERT INTO `settlement` VALUES ('3053', 'Wariin', '2701039110', '2701', '68', '42.44087', '1.41783');
+INSERT INTO `settlement` VALUES ('3054', 'Washaan', '2701029148', '2701', '68', '42.61860', '0.89870');
+INSERT INTO `settlement` VALUES ('3055', 'Xasow', '2701039068', '2701', '68', '42.60752', '0.81681');
+INSERT INTO `settlement` VALUES ('3056', 'Aiifelle', '2702029242', '2702', '69', '43.27900', '0.90280');
+INSERT INTO `settlement` VALUES ('3057', 'Aminow', '2702039020', '2702', '69', '42.83555', '0.37191');
+INSERT INTO `settlement` VALUES ('3058', 'Amnney', '2702039062', '2702', '69', '42.74738', '0.47306');
+INSERT INTO `settlement` VALUES ('3059', 'Anduuma', '2702039146', '2702', '69', '42.73718', '0.62791');
+INSERT INTO `settlement` VALUES ('3060', 'Ankele', '2702039226', '2702', '69', '42.72581', '0.41381');
+INSERT INTO `settlement` VALUES ('3061', 'Arbadinle', '2702039210', '2702', '69', '43.29090', '0.79233');
+INSERT INTO `settlement` VALUES ('3062', 'Arbey Cabdi', '2702039004', '2702', '69', '42.97243', '0.50979');
+INSERT INTO `settlement` VALUES ('3063', 'Arbo Abdi', '2702029244', '2702', '69', '43.06900', '0.44770');
+INSERT INTO `settlement` VALUES ('3064', 'Arenaga', '2702029246', '2702', '69', '42.92080', '0.52750');
+INSERT INTO `settlement` VALUES ('3065', 'Arghed', '2702029248', '2702', '69', '42.71870', '0.44780');
+INSERT INTO `settlement` VALUES ('3066', 'Arundoole', '2702039144', '2702', '69', '42.74416', '0.62777');
+INSERT INTO `settlement` VALUES ('3067', 'Balado Raxma', '2702039090', '2702', '69', '42.75757', '0.49547');
+INSERT INTO `settlement` VALUES ('3068', 'Baladul Kariim', '2702039098', '2702', '69', '42.73956', '0.54448');
+INSERT INTO `settlement` VALUES ('3069', 'Balley', '2702039140', '2702', '69', '42.74723', '0.60948');
+INSERT INTO `settlement` VALUES ('3070', 'Balley', '2702039218', '2702', '69', '43.09678', '0.70892');
+INSERT INTO `settlement` VALUES ('3071', 'Bandar', '2702039168', '2702', '69', '42.71287', '0.67090');
+INSERT INTO `settlement` VALUES ('3072', 'Bandar Jadiid', '2702039202', '2702', '69', '42.74566', '0.32046');
+INSERT INTO `settlement` VALUES ('3073', 'Bandar Salaam', '2702039024', '2702', '69', '42.77062', '0.36388');
+INSERT INTO `settlement` VALUES ('3074', 'Baqdaad', '2702039158', '2702', '69', '42.70612', '0.66267');
+INSERT INTO `settlement` VALUES ('3075', 'Baraka', '2702039152', '2702', '69', '42.73655', '0.63963');
+INSERT INTO `settlement` VALUES ('3076', 'Bariira', '2702039128', '2702', '69', '42.69453', '0.56396');
+INSERT INTO `settlement` VALUES ('3077', 'Barwaaqo', '2702039066', '2702', '69', '42.72874', '0.46811');
+INSERT INTO `settlement` VALUES ('3078', 'Barwaaqo', '2702039154', '2702', '69', '42.72001', '0.66309');
+INSERT INTO `settlement` VALUES ('3079', 'Biliq', '2702039220', '2702', '69', '43.06100', '0.62882');
+INSERT INTO `settlement` VALUES ('3080', 'Biliq Maro', '2702039002', '2702', '69', '42.95965', '0.54308');
+INSERT INTO `settlement` VALUES ('3081', 'Biliq Tale', '2702029250', '2702', '69', '43.07270', '0.63300');
+INSERT INTO `settlement` VALUES ('3082', 'Bilisa', '2702039224', '2702', '69', '42.67876', '0.52904');
+INSERT INTO `settlement` VALUES ('3083', 'Biloo', '2702029252', '2702', '69', '42.71880', '0.72280');
+INSERT INTO `settlement` VALUES ('3084', 'Bodboode', '2702039162', '2702', '69', '42.70709', '0.65716');
+INSERT INTO `settlement` VALUES ('3085', 'Bulo Derou', '2702029254', '2702', '69', '42.91780', '0.48300');
+INSERT INTO `settlement` VALUES ('3086', 'Bulo Muniassa', '2702029256', '2702', '69', '42.71960', '0.47200');
+INSERT INTO `settlement` VALUES ('3087', 'Burfuu', '2702039126', '2702', '69', '42.70570', '0.59782');
+INSERT INTO `settlement` VALUES ('3088', 'Buruuji', '2702039044', '2702', '69', '42.72413', '0.44542');
+INSERT INTO `settlement` VALUES ('3089', 'Cabdalle', '2702039074', '2702', '69', '42.75359', '0.52403');
+INSERT INTO `settlement` VALUES ('3090', 'Cabdi Ooli', '2702039188', '2702', '69', '42.64643', '0.74117');
+INSERT INTO `settlement` VALUES ('3091', 'Caliyo Guubow', '2702039100', '2702', '69', '42.74025', '0.55795');
+INSERT INTO `settlement` VALUES ('3092', 'Cumar Abooke', '2702039010', '2702', '69', '42.91512', '0.46808');
+INSERT INTO `settlement` VALUES ('3093', 'Cusbooley', '2702039092', '2702', '69', '42.74954', '0.53666');
+INSERT INTO `settlement` VALUES ('3094', 'Cusmaan Mooto', '2702039174', '2702', '69', '42.69456', '0.69469');
+INSERT INTO `settlement` VALUES ('3095', 'Daad Jerow', '2702039214', '2702', '69', '43.19093', '0.83730');
+INSERT INTO `settlement` VALUES ('3096', 'Dalaama', '2702039120', '2702', '69', '42.71059', '0.58029');
+INSERT INTO `settlement` VALUES ('3097', 'Dambaley', '2702039170', '2702', '69', '42.70848', '0.66991');
+INSERT INTO `settlement` VALUES ('3098', 'Dayax', '2702039014', '2702', '69', '42.88037', '0.42371');
+INSERT INTO `settlement` VALUES ('3099', 'Dhedhey', '2702039116', '2702', '69', '42.69404', '0.57569');
+INSERT INTO `settlement` VALUES ('3100', 'Dhedhey', '2702039182', '2702', '69', '42.68787', '0.71420');
+INSERT INTO `settlement` VALUES ('3101', 'Dhey Tubaako', '2702029258', '2702', '69', '42.92700', '0.47820');
+INSERT INTO `settlement` VALUES ('3102', 'El Gode', '2702029264', '2702', '69', '42.90260', '0.52070');
+INSERT INTO `settlement` VALUES ('3103', 'Ela Mahallim', '2702029262', '2702', '69', '43.23050', '1.00260');
+INSERT INTO `settlement` VALUES ('3104', 'Elahano', '2702029260', '2702', '69', '43.07100', '0.72940');
+INSERT INTO `settlement` VALUES ('3105', 'Fakya', '2702039186', '2702', '69', '42.65192', '0.73547');
+INSERT INTO `settlement` VALUES ('3106', 'Fanoole', '2702039190', '2702', '69', '42.65060', '0.75158');
+INSERT INTO `settlement` VALUES ('3107', 'Farxaan', '2702039122', '2702', '69', '42.69621', '0.59481');
+INSERT INTO `settlement` VALUES ('3108', 'Fungamuuyo', '2702039028', '2702', '69', '42.75233', '0.35194');
+INSERT INTO `settlement` VALUES ('3109', 'Gajawa', '2702039094', '2702', '69', '42.75890', '0.53973');
+INSERT INTO `settlement` VALUES ('3110', 'Galaame', '2702039118', '2702', '69', '42.69034', '0.58183');
+INSERT INTO `settlement` VALUES ('3111', 'Geedgoy', '2702039070', '2702', '69', '42.73509', '0.50322');
+INSERT INTO `settlement` VALUES ('3112', 'Goorka', '2702039008', '2702', '69', '42.92496', '0.47917');
+INSERT INTO `settlement` VALUES ('3113', 'Guudaanto', '2702039212', '2702', '69', '43.31620', '0.81531');
+INSERT INTO `settlement` VALUES ('3114', 'Hanoole', '2702039054', '2702', '69', '42.70828', '0.43976');
+INSERT INTO `settlement` VALUES ('3115', 'Hargeysa', '2702039052', '2702', '69', '42.70346', '0.44730');
+INSERT INTO `settlement` VALUES ('3116', 'Hawa Oonlow', '2702029280', '2702', '69', '43.28280', '0.93080');
+INSERT INTO `settlement` VALUES ('3117', 'Helashiid', '2702039150', '2702', '69', '42.74200', '0.64124');
+INSERT INTO `settlement` VALUES ('3118', 'Heno', '2702029282', '2702', '69', '42.69970', '0.46700');
+INSERT INTO `settlement` VALUES ('3119', 'Homboy', '2702039016', '2702', '69', '42.86668', '0.39788');
+INSERT INTO `settlement` VALUES ('3120', 'Hubaar', '2702039018', '2702', '69', '42.84120', '0.37679');
+INSERT INTO `settlement` VALUES ('3121', 'Istanbuul', '2702039160', '2702', '69', '42.70186', '0.66051');
+INSERT INTO `settlement` VALUES ('3122', 'Jiima', '2702039038', '2702', '69', '42.72176', '0.41938');
+INSERT INTO `settlement` VALUES ('3123', 'Jiirta', '2702039216', '2702', '69', '43.15971', '0.69436');
+INSERT INTO `settlement` VALUES ('3124', 'Jlija', '2702039178', '2702', '69', '42.67746', '0.70729');
+INSERT INTO `settlement` VALUES ('3125', 'Kabaandi', '2702039088', '2702', '69', '42.75421', '0.49031');
+INSERT INTO `settlement` VALUES ('3126', 'Kalikooka', '2702039032', '2702', '69', '42.74877', '0.37700');
+INSERT INTO `settlement` VALUES ('3127', 'Kumbareere', '2702039114', '2702', '69', '42.71428', '0.57806');
+INSERT INTO `settlement` VALUES ('3128', 'Kumeyda', '2702039048', '2702', '69', '42.72496', '0.45784');
+INSERT INTO `settlement` VALUES ('3129', 'Kumnamba', '2702039036', '2702', '69', '42.74046', '0.40144');
+INSERT INTO `settlement` VALUES ('3130', 'Kut Barrey', '2702029228', '2702', '69', '42.93150', '0.72110');
+INSERT INTO `settlement` VALUES ('3131', 'Kuulow', '2702039124', '2702', '69', '42.70130', '0.60089');
+INSERT INTO `settlement` VALUES ('3132', 'Labadaad', '2702029230', '2702', '69', '42.76900', '0.49960');
+INSERT INTO `settlement` VALUES ('3133', 'Libaanga', '2702039060', '2702', '69', '42.74780', '0.47823');
+INSERT INTO `settlement` VALUES ('3134', 'Libaanga', '2702039156', '2702', '69', '42.71317', '0.66253');
+INSERT INTO `settlement` VALUES ('3135', 'Limoole', '2702039076', '2702', '69', '42.75820', '0.52319');
+INSERT INTO `settlement` VALUES ('3136', 'Maanyagaabo', '2702039084', '2702', '69', '42.76448', '0.50685');
+INSERT INTO `settlement` VALUES ('3137', 'Mabuungo', '2702039200', '2702', '69', '42.74771', '0.32457');
+INSERT INTO `settlement` VALUES ('3138', 'Mada Addomat', '2702029232', '2702', '69', '43.22270', '0.79910');
+INSERT INTO `settlement` VALUES ('3139', 'Madhooka', '2702039096', '2702', '69', '42.76406', '0.54895');
+INSERT INTO `settlement` VALUES ('3140', 'Makanyaaga', '2702039068', '2702', '69', '42.72259', '0.50141');
+INSERT INTO `settlement` VALUES ('3141', 'Makuungo', '2702039102', '2702', '69', '42.75198', '0.54944');
+INSERT INTO `settlement` VALUES ('3142', 'Makuuni', '2702039056', '2702', '69', '42.71170', '0.47886');
+INSERT INTO `settlement` VALUES ('3143', 'Malenda', '2702039192', '2702', '69', '42.66902', '0.74698');
+INSERT INTO `settlement` VALUES ('3144', 'Mansoura', '2702039112', '2702', '69', '42.70772', '0.55872');
+INSERT INTO `settlement` VALUES ('3145', 'Mansuura', '2702039110', '2702', '69', '42.71428', '0.55935');
+INSERT INTO `settlement` VALUES ('3146', 'Maqdas', '2702039022', '2702', '69', '42.79792', '0.38538');
+INSERT INTO `settlement` VALUES ('3147', 'Mareer', '2702039138', '2702', '69', '42.73865', '0.60375');
+INSERT INTO `settlement` VALUES ('3148', 'Mareerey', '2702039042', '2702', '69', '42.71540', '0.42943');
+INSERT INTO `settlement` VALUES ('3149', 'Marmuus', '2702039012', '2702', '69', '42.86696', '0.43962');
+INSERT INTO `settlement` VALUES ('3150', 'Mashemba', '2702039106', '2702', '69', '42.73348', '0.56207');
+INSERT INTO `settlement` VALUES ('3151', 'Mawundo', '2702039176', '2702', '69', '42.70059', '0.69776');
+INSERT INTO `settlement` VALUES ('3152', 'Maxad', '2702039078', '2702', '69', '42.75848', '0.51202');
+INSERT INTO `settlement` VALUES ('3153', 'Miniasa', '2702029234', '2702', '69', '42.73020', '0.46910');
+INSERT INTO `settlement` VALUES ('3154', 'Miniasa', '2702039046', '2702', '69', '42.72587', '0.45400');
+INSERT INTO `settlement` VALUES ('3155', 'Misra', '2702039082', '2702', '69', '42.75882', '0.50252');
+INSERT INTO `settlement` VALUES ('3156', 'Mobileyn', '2702039072', '2702', '69', '42.73788', '0.50832');
+INSERT INTO `settlement` VALUES ('3157', 'Mobileyn', '2702039164', '2702', '69', '42.71324', '0.64941');
+INSERT INTO `settlement` VALUES ('3158', 'Moccoscidedei', '2702029236', '2702', '69', '43.27950', '0.92210');
+INSERT INTO `settlement` VALUES ('3159', 'Mubaarak', '2702039040', '2702', '69', '42.72734', '0.42552');
+INSERT INTO `settlement` VALUES ('3160', 'Muudey', '2702039194', '2702', '69', '42.64753', '0.74468');
+INSERT INTO `settlement` VALUES ('3161', 'Muuna', '2702039080', '2702', '69', '42.75931', '0.50643');
+INSERT INTO `settlement` VALUES ('3162', 'Naftaquur', '2702039026', '2702', '69', '42.74723', '0.35697');
+INSERT INTO `settlement` VALUES ('3163', 'Nasib Dheer', '2702029238', '2702', '69', '42.70050', '0.45120');
+INSERT INTO `settlement` VALUES ('3164', 'Nasiib', '2702039136', '2702', '69', '42.74088', '0.60110');
+INSERT INTO `settlement` VALUES ('3165', 'Nasiib', '2702039180', '2702', '69', '42.69040', '0.71815');
+INSERT INTO `settlement` VALUES ('3166', 'Nasiib', '2702039198', '2702', '69', '42.76149', '0.32792');
+INSERT INTO `settlement` VALUES ('3167', 'Nasiib Buundo', '2702039206', '2702', '69', '42.75251', '0.31992');
+INSERT INTO `settlement` VALUES ('3168', 'Nasiib Dheer', '2702039050', '2702', '69', '42.70472', '0.45666');
+INSERT INTO `settlement` VALUES ('3169', 'Nassib Mohallim', '2702029240', '2702', '69', '42.75260', '0.49780');
+INSERT INTO `settlement` VALUES ('3170', 'Obey Tubaako', '2702039006', '2702', '69', '42.93451', '0.48914');
+INSERT INTO `settlement` VALUES ('3171', 'Qalaaliyow', '2702039064', '2702', '69', '42.74479', '0.46378');
+INSERT INTO `settlement` VALUES ('3172', 'Qalanja', '2702039030', '2702', '69', '42.73963', '0.37135');
+INSERT INTO `settlement` VALUES ('3173', 'Qalooliyow', '2702039134', '2702', '69', '42.69522', '0.62958');
+INSERT INTO `settlement` VALUES ('3174', 'Qunyo Barrow', '2702039208', '2702', '69', '43.38599', '0.80040');
+INSERT INTO `settlement` VALUES ('3175', 'Reidab Dere', '2702029266', '2702', '69', '42.91990', '0.72080');
+INSERT INTO `settlement` VALUES ('3176', 'Sala', '2702029268', '2702', '69', '42.89890', '0.87180');
+INSERT INTO `settlement` VALUES ('3177', 'Scianlei', '2702029270', '2702', '69', '43.27940', '0.77900');
+INSERT INTO `settlement` VALUES ('3178', 'Sciavelle', '2702029272', '2702', '69', '43.17980', '0.79870');
+INSERT INTO `settlement` VALUES ('3179', 'Sciongolo Dunia', '2702029274', '2702', '69', '42.75220', '0.41910');
+INSERT INTO `settlement` VALUES ('3180', 'Seylac', '2702039104', '2702', '69', '42.74039', '0.56054');
+INSERT INTO `settlement` VALUES ('3181', 'Shangal Duniya', '2702039034', '2702', '69', '42.74060', '0.39802');
+INSERT INTO `settlement` VALUES ('3182', 'Sheegow', '2702039204', '2702', '69', '42.74170', '0.31467');
+INSERT INTO `settlement` VALUES ('3183', 'Shidaad', '2702039058', '2702', '69', '42.72120', '0.49163');
+INSERT INTO `settlement` VALUES ('3184', 'Shongool Shawawila', '2702039132', '2702', '69', '42.69194', '0.62379');
+INSERT INTO `settlement` VALUES ('3185', 'Tafanye', '2702039184', '2702', '69', '42.68623', '0.71990');
+INSERT INTO `settlement` VALUES ('3186', 'Tansaani', '2702039196', '2702', '69', '42.65170', '0.76013');
+INSERT INTO `settlement` VALUES ('3187', 'Wagadey', '2702039172', '2702', '69', '42.70706', '0.68395');
+INSERT INTO `settlement` VALUES ('3188', 'Weel Shimbir', '2702029276', '2702', '69', '43.05280', '0.62130');
+INSERT INTO `settlement` VALUES ('3189', 'Xaaji Tumaal', '2702039166', '2702', '69', '42.69683', '0.64061');
+INSERT INTO `settlement` VALUES ('3190', 'Xaraaw', '2702039130', '2702', '69', '42.70360', '0.60961');
+INSERT INTO `settlement` VALUES ('3191', 'Xaramka', '2702039142', '2702', '69', '42.74472', '0.62330');
+INSERT INTO `settlement` VALUES ('3192', 'Xaramka', '2702039222', '2702', '69', '43.17457', '0.62849');
+INSERT INTO `settlement` VALUES ('3193', 'Xatal Baraka', '2702039086', '2702', '69', '42.75806', '0.49875');
+INSERT INTO `settlement` VALUES ('3194', 'Yaagle', '2702039108', '2702', '69', '42.71966', '0.56431');
+INSERT INTO `settlement` VALUES ('3195', 'Yaaqtoole', '2702029278', '2702', '69', '43.28100', '0.82210');
+INSERT INTO `settlement` VALUES ('3196', 'Yoontoy', '2702039148', '2702', '69', '42.73425', '0.62504');
+INSERT INTO `settlement` VALUES ('3197', 'Baq Dheere', '2703039018', '2703', '70', '42.38723', '1.61355');
+INSERT INTO `settlement` VALUES ('3198', 'Bar Muumin Dhoorow', '2703039040', '2703', '70', '42.37820', '1.85023');
+INSERT INTO `settlement` VALUES ('3199', 'Barsa', '2703039052', '2703', '70', '42.34105', '1.68813');
+INSERT INTO `settlement` VALUES ('3200', 'Batuuto', '2703039032', '2703', '70', '42.40835', '1.72928');
+INSERT INTO `settlement` VALUES ('3201', 'Birbiris', '2703039026', '2703', '70', '42.42952', '1.67216');
+INSERT INTO `settlement` VALUES ('3202', 'Buur Fuul', '2703039094', '2703', '70', '42.49063', '1.60863');
+INSERT INTO `settlement` VALUES ('3203', 'Buur Gaduud', '2703039060', '2703', '70', '42.28333', '1.91617');
+INSERT INTO `settlement` VALUES ('3204', 'Buurka', '2703039046', '2703', '70', '42.35575', '1.87442');
+INSERT INTO `settlement` VALUES ('3205', 'Buurtule', '2703039004', '2703', '70', '42.42447', '1.52072');
+INSERT INTO `settlement` VALUES ('3206', 'Cadey', '2703039042', '2703', '70', '42.34166', '1.91541');
+INSERT INTO `settlement` VALUES ('3207', 'Caleyow Kerrow', '2703039024', '2703', '70', '42.45198', '1.90253');
+INSERT INTO `settlement` VALUES ('3208', 'Chenaf', '2703029102', '2703', '70', '41.52990', '1.58150');
+INSERT INTO `settlement` VALUES ('3209', 'Daanyeere', '2703039066', '2703', '70', '42.26479', '1.91978');
+INSERT INTO `settlement` VALUES ('3210', 'Daggaras', '2703039038', '2703', '70', '42.38054', '1.82785');
+INSERT INTO `settlement` VALUES ('3211', 'Dasci-Chi Tifou', '2703029104', '2703', '70', '42.30080', '1.51950');
+INSERT INTO `settlement` VALUES ('3212', 'Dhaweynta', '2703039050', '2703', '70', '42.34301', '1.74134');
+INSERT INTO `settlement` VALUES ('3213', 'Dhokay', '2703039028', '2703', '70', '42.39192', '1.67080');
+INSERT INTO `settlement` VALUES ('3214', 'Dhuqay', '2703039048', '2703', '70', '42.31603', '1.80539');
+INSERT INTO `settlement` VALUES ('3215', 'Doffe', '2703029106', '2703', '70', '42.39980', '1.68180');
+INSERT INTO `settlement` VALUES ('3216', 'Egha Roba', '2703029108', '2703', '70', '41.66990', '1.55210');
+INSERT INTO `settlement` VALUES ('3217', 'Fiika Weera', '2703039072', '2703', '70', '42.53527', '1.79253');
+INSERT INTO `settlement` VALUES ('3218', 'Gaaguura', '2703039058', '2703', '70', '42.29109', '1.86153');
+INSERT INTO `settlement` VALUES ('3219', 'Gaaguure', '2703039064', '2703', '70', '42.26924', '1.94450');
+INSERT INTO `settlement` VALUES ('3220', 'Galooley', '2703039090', '2703', '70', '42.57114', '1.82279');
+INSERT INTO `settlement` VALUES ('3221', 'Gasiile', '2703039062', '2703', '70', '42.30405', '1.93584');
+INSERT INTO `settlement` VALUES ('3222', 'Ghesso', '2703029112', '2703', '70', '41.97890', '1.67140');
+INSERT INTO `settlement` VALUES ('3223', 'Gobto', '2703039096', '2703', '70', '42.15726', '1.93466');
+INSERT INTO `settlement` VALUES ('3224', 'Gurmeyso', '2703039030', '2703', '70', '42.40564', '1.69039');
+INSERT INTO `settlement` VALUES ('3225', 'Guumarey', '2703039020', '2703', '70', '42.41716', '1.88045');
+INSERT INTO `settlement` VALUES ('3226', 'Hedeey', '2703039082', '2703', '70', '42.52309', '1.70203');
+INSERT INTO `settlement` VALUES ('3227', 'Kadaarow', '2703039014', '2703', '70', '42.44052', '1.60790');
+INSERT INTO `settlement` VALUES ('3228', 'Kuraawo', '2703039034', '2703', '70', '42.39267', '1.72476');
+INSERT INTO `settlement` VALUES ('3229', 'Labi Buul', '2703039076', '2703', '70', '42.55482', '1.78113');
+INSERT INTO `settlement` VALUES ('3230', 'Laweya', '2703039054', '2703', '70', '42.30820', '1.78715');
+INSERT INTO `settlement` VALUES ('3231', 'Libi Buul', '2703039022', '2703', '70', '42.43932', '1.89620');
+INSERT INTO `settlement` VALUES ('3232', 'Mus Duniya', '2703039016', '2703', '70', '42.42742', '1.62255');
+INSERT INTO `settlement` VALUES ('3233', 'Naweytu', '2703039036', '2703', '70', '42.38363', '1.76598');
+INSERT INTO `settlement` VALUES ('3234', 'Nebsooy', '2703039078', '2703', '70', '42.50629', '1.74871');
+INSERT INTO `settlement` VALUES ('3235', 'Ooro', '2703039084', '2703', '70', '42.54922', '1.71933');
+INSERT INTO `settlement` VALUES ('3236', 'Qaboobe', '2703039008', '2703', '70', '42.44968', '1.54715');
+INSERT INTO `settlement` VALUES ('3237', 'Qataa Qori', '2703039006', '2703', '70', '42.41531', '1.53040');
+INSERT INTO `settlement` VALUES ('3238', 'Qeed Cajuuso', '2703039080', '2703', '70', '42.55345', '1.74821');
+INSERT INTO `settlement` VALUES ('3239', 'Qeed Cajuuso', '2703039086', '2703', '70', '42.52240', '1.67924');
+INSERT INTO `settlement` VALUES ('3240', 'Qunjaale', '2703039010', '2703', '70', '42.45525', '1.57863');
+INSERT INTO `settlement` VALUES ('3241', 'Qurdhuuba', '2703039092', '2703', '70', '42.59295', '1.79155');
+INSERT INTO `settlement` VALUES ('3242', 'Sagarey', '2703029110', '2703', '70', '41.92960', '1.56930');
+INSERT INTO `settlement` VALUES ('3243', 'Salagle', '2703039056', '2703', '70', '42.29569', '1.81187');
+INSERT INTO `settlement` VALUES ('3244', 'Siyada', '2703039012', '2703', '70', '42.46980', '1.58077');
+INSERT INTO `settlement` VALUES ('3245', 'Soomow', '2703039088', '2703', '70', '42.57605', '1.79901');
+INSERT INTO `settlement` VALUES ('3246', 'Sukeyla', '2703039002', '2703', '70', '42.46011', '1.53335');
+INSERT INTO `settlement` VALUES ('3247', 'Umbave', '2703029098', '2703', '70', '42.62770', '1.71750');
+INSERT INTO `settlement` VALUES ('3248', 'Waabo', '2703039044', '2703', '70', '42.31807', '1.87570');
+INSERT INTO `settlement` VALUES ('3249', 'Waabo', '2703039070', '2703', '70', '42.22266', '1.89115');
+INSERT INTO `settlement` VALUES ('3250', 'Wakaala Weyn', '2703039074', '2703', '70', '42.55335', '1.81277');
+INSERT INTO `settlement` VALUES ('3251', 'Xa Kaka', '2703029100', '2703', '70', '42.45140', '1.55250');
+INSERT INTO `settlement` VALUES ('3252', 'Xaar', '2703039068', '2703', '70', '42.26389', '1.84262');
+INSERT INTO `settlement` VALUES ('3253', 'Aden Laheley', '2102049038', '2102', '42', '46.65778', '3.43111');
+INSERT INTO `settlement` VALUES ('3254', 'Agar Gul', '2102029026', '2102', '42', '46.79850', '3.61870');
+INSERT INTO `settlement` VALUES ('3255', 'Axmed Maxamed Cali', '2102039004', '2102', '42', '46.63570', '3.40303');
+INSERT INTO `settlement` VALUES ('3256', 'Cad Caddey', '2102039010', '2102', '42', '46.78440', '3.46915');
+INSERT INTO `settlement` VALUES ('3257', 'Cali Axmed', '2102039024', '2102', '42', '46.54911', '3.70700');
+INSERT INTO `settlement` VALUES ('3258', 'Caliweyd', '2102039006', '2102', '42', '46.74387', '3.51414');
+INSERT INTO `settlement` VALUES ('3259', 'Ceel Dhegenle', '2102039018', '2102', '42', '46.22633', '3.66502');
+INSERT INTO `settlement` VALUES ('3260', 'Ceel Mageed', '2102029028', '2102', '42', '46.80040', '3.20120');
+INSERT INTO `settlement` VALUES ('3261', 'Ceel Muluk', '2102049034', '2102', '42', '46.26167', '3.64222');
+INSERT INTO `settlement` VALUES ('3262', 'Dhabaq Lebi', '2102039020', '2102', '42', '46.21804', '3.63368');
+INSERT INTO `settlement` VALUES ('3263', 'Dumaaye', '2102039012', '2102', '42', '46.89009', '3.55333');
+INSERT INTO `settlement` VALUES ('3264', 'Eibecher', '2102029030', '2102', '42', '46.36850', '3.46750');
+INSERT INTO `settlement` VALUES ('3265', 'Gal-Haruur', '2102049036', '2102', '42', '46.37667', '3.77417');
+INSERT INTO `settlement` VALUES ('3266', 'Maxamed Saciid', '2102039016', '2102', '42', '46.60255', '3.34617');
+INSERT INTO `settlement` VALUES ('3267', 'Mirta Cali Armed', '2102039022', '2102', '42', '46.26131', '3.64789');
+INSERT INTO `settlement` VALUES ('3268', 'Nawi', '2102039014', '2102', '42', '46.45296', '3.79111');
+INSERT INTO `settlement` VALUES ('3269', 'Nuur Dugle', '2102049032', '2102', '42', '46.62500', '3.38361');
+INSERT INTO `settlement` VALUES ('3270', 'Ris', '2102039002', '2102', '42', '46.62749', '3.39055');
+INSERT INTO `settlement` VALUES ('3271', 'Runungod', '2102039008', '2102', '42', '46.77574', '3.56067');
+INSERT INTO `settlement` VALUES ('3272', 'Aual Selo', '2103029150', '2103', '43', '45.39810', '2.35200');
+INSERT INTO `settlement` VALUES ('3273', 'Bacaadley', '2103039040', '2103', '43', '45.49788', '2.65947');
+INSERT INTO `settlement` VALUES ('3274', 'Bakarole', '2103049206', '2103', '43', '45.75694', '2.40000');
+INSERT INTO `settlement` VALUES ('3275', 'Balad', '2103039090', '2103', '43', '45.50480', '2.62667');
+INSERT INTO `settlement` VALUES ('3276', 'Banaaney', '2103039062', '2103', '43', '45.47310', '2.47982');
+INSERT INTO `settlement` VALUES ('3277', 'Baqdaad', '2103039094', '2103', '43', '45.50469', '2.61400');
+INSERT INTO `settlement` VALUES ('3278', 'Bardhere', '2103049202', '2103', '43', '45.61222', '2.64111');
+INSERT INTO `settlement` VALUES ('3279', 'Biyosuur', '2103039022', '2103', '43', '45.55644', '2.67617');
+INSERT INTO `settlement` VALUES ('3280', 'Boodaal', '2103039092', '2103', '43', '45.50097', '2.64208');
+INSERT INTO `settlement` VALUES ('3281', 'Bullo Donka', '2103049200', '2103', '43', '45.45583', '2.47889');
+INSERT INTO `settlement` VALUES ('3282', 'Burow', '2103049194', '2103', '43', '45.34750', '2.32861');
+INSERT INTO `settlement` VALUES ('3283', 'Buulo Eelay', '2103029152', '2103', '43', '45.60300', '2.71730');
+INSERT INTO `settlement` VALUES ('3284', 'Buulo Noofe', '2103039014', '2103', '43', '45.58966', '2.71825');
+INSERT INTO `settlement` VALUES ('3285', 'Caamir Gacandheer', '2103039124', '2103', '43', '45.60793', '2.27852');
+INSERT INTO `settlement` VALUES ('3286', 'Cabdi Galadei', '2103049218', '2103', '43', '45.78175', '2.28988');
+INSERT INTO `settlement` VALUES ('3287', 'Caddey', '2103039080', '2103', '43', '45.34496', '2.55259');
+INSERT INTO `settlement` VALUES ('3288', 'Calol Weyn', '2103049208', '2103', '43', '45.80222', '2.44083');
+INSERT INTO `settlement` VALUES ('3289', 'Calyaalo', '2103039136', '2103', '43', '45.39853', '2.17961');
+INSERT INTO `settlement` VALUES ('3290', 'Ceallow', '2103039126', '2103', '43', '45.63870', '2.30089');
+INSERT INTO `settlement` VALUES ('3291', 'Ceel Maalin Noor', '2103049180', '2103', '43', '45.53667', '2.24028');
+INSERT INTO `settlement` VALUES ('3292', 'Ceel Macaan', '2103049178', '2103', '43', '45.69167', '2.24444');
+INSERT INTO `settlement` VALUES ('3293', 'Ceelka Cusub', '2103049182', '2103', '43', '45.70555', '2.47583');
+INSERT INTO `settlement` VALUES ('3294', 'Ceelka Nurei', '2103049186', '2103', '43', '45.55667', '2.26111');
+INSERT INTO `settlement` VALUES ('3295', 'Celbashaqley', '2103029168', '2103', '43', '46.05290', '2.48660');
+INSERT INTO `settlement` VALUES ('3296', 'Cursole', '2103029158', '2103', '43', '45.42100', '2.23040');
+INSERT INTO `settlement` VALUES ('3297', 'Dalaash', '2103039104', '2103', '43', '45.61755', '2.66454');
+INSERT INTO `settlement` VALUES ('3298', 'Damaley', '2103039054', '2103', '43', '45.48827', '2.50760');
+INSERT INTO `settlement` VALUES ('3299', 'Danbardadis', '2103049172', '2103', '43', '45.65389', '2.58083');
+INSERT INTO `settlement` VALUES ('3300', 'Daymasaar', '2103049188', '2103', '43', '45.45195', '2.21222');
+INSERT INTO `settlement` VALUES ('3301', 'Daymasame', '2103039024', '2103', '43', '45.50383', '2.67630');
+INSERT INTO `settlement` VALUES ('3302', 'Deebley', '2103039118', '2103', '43', '45.95667', '2.39539');
+INSERT INTO `settlement` VALUES ('3303', 'Deegaanley', '2103049190', '2103', '43', '45.33417', '2.26861');
+INSERT INTO `settlement` VALUES ('3304', 'Dhagaxow', '2103039050', '2103', '43', '45.48410', '2.52630');
+INSERT INTO `settlement` VALUES ('3305', 'Dohollei', '2103029160', '2103', '43', '45.35290', '2.29960');
+INSERT INTO `settlement` VALUES ('3306', 'Dudumale', '2103049196', '2103', '43', '45.36694', '2.40611');
+INSERT INTO `settlement` VALUES ('3307', 'Duggaalley', '2103029162', '2103', '43', '45.42190', '2.25130');
+INSERT INTO `settlement` VALUES ('3308', 'Durgaay', '2103039108', '2103', '43', '45.92114', '2.56107');
+INSERT INTO `settlement` VALUES ('3309', 'Eladi Mir Mau', '2103029164', '2103', '43', '45.38180', '2.32940');
+INSERT INTO `settlement` VALUES ('3310', 'Faarax Gololey', '2103039084', '2103', '43', '45.36605', '2.40928');
+INSERT INTO `settlement` VALUES ('3311', 'Fakey Moxamed', '2103039106', '2103', '43', '45.59803', '2.61758');
+INSERT INTO `settlement` VALUES ('3312', 'Farbaraki', '2103039052', '2103', '43', '45.49329', '2.51337');
+INSERT INTO `settlement` VALUES ('3313', 'Fil-dhere', '2103049210', '2103', '43', '45.70583', '2.33389');
+INSERT INTO `settlement` VALUES ('3314', 'Gaashaanle', '2103039026', '2103', '43', '45.50898', '2.67370');
+INSERT INTO `settlement` VALUES ('3315', 'Garaadeela', '2103039130', '2103', '43', '45.39133', '2.32730');
+INSERT INTO `settlement` VALUES ('3316', 'Garas Binlow', '2103039134', '2103', '43', '45.39511', '2.22068');
+INSERT INTO `settlement` VALUES ('3317', 'Garasley', '2103039018', '2103', '43', '45.55912', '2.68763');
+INSERT INTO `settlement` VALUES ('3318', 'Gargaar', '2103039034', '2103', '43', '45.46740', '2.72714');
+INSERT INTO `settlement` VALUES ('3319', 'Gariirra Caddey', '2103039128', '2103', '43', '45.49754', '2.28143');
+INSERT INTO `settlement` VALUES ('3320', 'Garsaale', '2103039074', '2103', '43', '45.37315', '2.63631');
+INSERT INTO `settlement` VALUES ('3321', 'Geed Cashir', '2103049198', '2103', '43', '45.36694', '2.40694');
+INSERT INTO `settlement` VALUES ('3322', 'Gololey', '2103039082', '2103', '43', '45.35442', '2.44913');
+INSERT INTO `settlement` VALUES ('3323', 'Gumarray', '2103039016', '2103', '43', '45.58279', '2.70916');
+INSERT INTO `settlement` VALUES ('3324', 'Hareeri Caadle', '2103039132', '2103', '43', '45.39378', '2.25567');
+INSERT INTO `settlement` VALUES ('3325', 'Hiilweyne', '2103039138', '2103', '43', '45.37360', '2.28983');
+INSERT INTO `settlement` VALUES ('3326', 'Iiduc Uein', '2103029166', '2103', '43', '45.39860', '2.67850');
+INSERT INTO `settlement` VALUES ('3327', 'Ilig Madobe', '2103049212', '2103', '43', '45.79000', '2.42333');
+INSERT INTO `settlement` VALUES ('3328', 'Jameeco', '2103039010', '2103', '43', '45.62414', '2.70569');
+INSERT INTO `settlement` VALUES ('3329', 'Jameeco', '2103039038', '2103', '43', '45.33535', '2.72646');
+INSERT INTO `settlement` VALUES ('3330', 'Jameeco Misra', '2103039046', '2103', '43', '45.48603', '2.56958');
+INSERT INTO `settlement` VALUES ('3331', 'Jeda', '2103039078', '2103', '43', '45.34992', '2.57309');
+INSERT INTO `settlement` VALUES ('3332', 'Jidoow', '2103039020', '2103', '43', '45.59328', '2.67735');
+INSERT INTO `settlement` VALUES ('3333', 'Jiilaale', '2103039042', '2103', '43', '45.49608', '2.65279');
+INSERT INTO `settlement` VALUES ('3334', 'Kaxyalo', '2103039140', '2103', '43', '45.65083', '2.30774');
+INSERT INTO `settlement` VALUES ('3335', 'Khalif', '2103049204', '2103', '43', '45.65667', '2.71611');
+INSERT INTO `settlement` VALUES ('3336', 'Khamiisey', '2103039036', '2103', '43', '45.44453', '2.71220');
+INSERT INTO `settlement` VALUES ('3337', 'Kooreeba', '2103039064', '2103', '43', '45.48111', '2.47693');
+INSERT INTO `settlement` VALUES ('3338', 'Kulaameny', '2103039142', '2103', '43', '45.49278', '2.22308');
+INSERT INTO `settlement` VALUES ('3339', 'Kullan Weyne', '2103049176', '2103', '43', '45.50000', '2.21944');
+INSERT INTO `settlement` VALUES ('3340', 'Kulmisyerow', '2103039096', '2103', '43', '45.51354', '2.61236');
+INSERT INTO `settlement` VALUES ('3341', 'Maagey', '2103039088', '2103', '43', '45.51376', '2.63400');
+INSERT INTO `settlement` VALUES ('3342', 'Maandheere', '2103039028', '2103', '43', '45.50782', '2.69228');
+INSERT INTO `settlement` VALUES ('3343', 'Madooba', '2103039114', '2103', '43', '45.78920', '2.42491');
+INSERT INTO `settlement` VALUES ('3344', 'Makaraan Muudey', '2103039006', '2103', '43', '45.60736', '2.71623');
+INSERT INTO `settlement` VALUES ('3345', 'Mallable', '2103029146', '2103', '43', '45.61800', '2.19920');
+INSERT INTO `settlement` VALUES ('3346', 'Maqdas', '2103039100', '2103', '43', '45.50447', '2.58547');
+INSERT INTO `settlement` VALUES ('3347', 'Mareerrey', '2103039072', '2103', '43', '45.42194', '2.38985');
+INSERT INTO `settlement` VALUES ('3348', 'Maxatiitow', '2103039058', '2103', '43', '45.43997', '2.50098');
+INSERT INTO `settlement` VALUES ('3349', 'Mubaarak', '2103039008', '2103', '43', '45.63357', '2.71401');
+INSERT INTO `settlement` VALUES ('3350', 'Mugtaar', '2103029148', '2103', '43', '45.63230', '2.69920');
+INSERT INTO `settlement` VALUES ('3351', 'Mukudheere', '2103039068', '2103', '43', '45.46415', '2.43547');
+INSERT INTO `settlement` VALUES ('3352', 'Mukuley', '2103039060', '2103', '43', '45.47855', '2.48142');
+INSERT INTO `settlement` VALUES ('3353', 'Muolaar', '2103039012', '2103', '43', '45.62594', '2.70111');
+INSERT INTO `settlement` VALUES ('3354', 'Muriale', '2103049192', '2103', '43', '45.33445', '2.35083');
+INSERT INTO `settlement` VALUES ('3355', 'Muukay', '2103039032', '2103', '43', '45.50692', '2.72449');
+INSERT INTO `settlement` VALUES ('3356', 'Qalimow', '2103039076', '2103', '43', '45.37009', '2.58951');
+INSERT INTO `settlement` VALUES ('3357', 'Qayle Weyne', '2103049214', '2103', '43', '45.66861', '2.35556');
+INSERT INTO `settlement` VALUES ('3358', 'Qeyoloweyne', '2103039120', '2103', '43', '45.69805', '2.35889');
+INSERT INTO `settlement` VALUES ('3359', 'Qurublow', '2103039116', '2103', '43', '45.73342', '2.35207');
+INSERT INTO `settlement` VALUES ('3360', 'Raga Ceel', '2103039004', '2103', '43', '46.00962', '2.65716');
+INSERT INTO `settlement` VALUES ('3361', 'Rahai', '2103049174', '2103', '43', '45.33778', '2.50889');
+INSERT INTO `settlement` VALUES ('3362', 'Raqayle', '2103039030', '2103', '43', '45.51765', '2.70649');
+INSERT INTO `settlement` VALUES ('3363', 'Shanlaw', '2103039048', '2103', '43', '45.48218', '2.53912');
+INSERT INTO `settlement` VALUES ('3364', 'Shiik', '2103039066', '2103', '43', '45.46562', '2.47020');
+INSERT INTO `settlement` VALUES ('3365', 'Shiikhxintir', '2103039102', '2103', '43', '45.50993', '2.55487');
+INSERT INTO `settlement` VALUES ('3366', 'Timire', '2103049216', '2103', '43', '45.77293', '2.28433');
+INSERT INTO `settlement` VALUES ('3367', 'Tuuwaarey', '2103039086', '2103', '43', '45.50141', '2.66077');
+INSERT INTO `settlement` VALUES ('3368', 'War Gaab', '2103039070', '2103', '43', '45.44078', '2.42003');
+INSERT INTO `settlement` VALUES ('3369', 'Warahiikh', '2103039122', '2103', '43', '45.79653', '2.29925');
+INSERT INTO `settlement` VALUES ('3370', 'Ware Jalle', '2103049170', '2103', '43', '45.53333', '2.41667');
+INSERT INTO `settlement` VALUES ('3371', 'Xagaay Deg', '2103039112', '2103', '43', '45.85934', '2.49115');
+INSERT INTO `settlement` VALUES ('3372', 'Xagarow', '2103039144', '2103', '43', '45.41331', '2.42117');
+INSERT INTO `settlement` VALUES ('3373', 'Xawaadley', '2103039044', '2103', '43', '45.48977', '2.58283');
+INSERT INTO `settlement` VALUES ('3374', 'Ximigaablow', '2103029156', '2103', '43', '45.47240', '2.33020');
+INSERT INTO `settlement` VALUES ('3375', 'Yaaqle', '2103039056', '2103', '43', '45.48539', '2.50899');
+INSERT INTO `settlement` VALUES ('3376', 'Bacar', '2104039006', '2104', '44', '46.36139', '3.07242');
+INSERT INTO `settlement` VALUES ('3377', 'Bos Muluk', '2104049038', '2104', '44', '46.16917', '2.86889');
+INSERT INTO `settlement` VALUES ('3378', 'Boska Gulane', '2104039018', '2104', '44', '46.23523', '3.34191');
+INSERT INTO `settlement` VALUES ('3379', 'Caddow Uul', '2104039012', '2104', '44', '46.17062', '2.87173');
+INSERT INTO `settlement` VALUES ('3380', 'Ceel Carraale', '2104029020', '2104', '44', '46.54830', '2.96700');
+INSERT INTO `settlement` VALUES ('3381', 'Ceel Dheere', '2104039014', '2104', '44', '46.06126', '3.49040');
+INSERT INTO `settlement` VALUES ('3382', 'Corair', '2104029022', '2104', '44', '46.20260', '2.97730');
+INSERT INTO `settlement` VALUES ('3383', 'Dermodo', '2104029024', '2104', '44', '46.21940', '2.66980');
+INSERT INTO `settlement` VALUES ('3384', 'El Gharum', '2104029026', '2104', '44', '46.57700', '3.19790');
+INSERT INTO `settlement` VALUES ('3385', 'Gaagaha', '2104049034', '2104', '44', '46.51250', '3.25056');
+INSERT INTO `settlement` VALUES ('3386', 'Gal Gub', '2104039008', '2104', '44', '46.28691', '2.98131');
+INSERT INTO `settlement` VALUES ('3387', 'Geedi Hair', '2104049036', '2104', '44', '46.51250', '3.25056');
+INSERT INTO `settlement` VALUES ('3388', 'Jabada Carbeed', '2104029028', '2104', '44', '45.96850', '2.79810');
+INSERT INTO `settlement` VALUES ('3389', 'Libi Saar', '2104049032', '2104', '44', '46.16861', '2.86944');
+INSERT INTO `settlement` VALUES ('3390', 'Maxamed Sagiid', '2104039016', '2104', '44', '46.48361', '3.37369');
+INSERT INTO `settlement` VALUES ('3391', 'Wargaadhi', '2104039002', '2104', '44', '46.56932', '3.20818');
+INSERT INTO `settlement` VALUES ('3392', 'Xaaji Cali', '2104039010', '2104', '44', '46.21801', '2.92141');
+INSERT INTO `settlement` VALUES ('3393', 'Xaskulle', '2104029030', '2104', '44', '46.25350', '2.69040');
+INSERT INTO `settlement` VALUES ('3394', 'Xassan Geddi', '2104049040', '2104', '44', '46.57333', '3.31167');
+INSERT INTO `settlement` VALUES ('3395', 'Adadle Ibrahim', '2101029286', '2101', '41', '45.37110', '3.20230');
+INSERT INTO `settlement` VALUES ('3396', 'Adalou', '2101029288', '2101', '41', '45.51810', '2.90260');
+INSERT INTO `settlement` VALUES ('3397', 'Aqab Doco', '2101039064', '2101', '41', '45.76329', '2.90548');
+INSERT INTO `settlement` VALUES ('3398', 'Ararchi Eggi', '2101029290', '2101', '41', '45.56770', '3.17870');
+INSERT INTO `settlement` VALUES ('3399', 'Aroos Beenaal', '2101039076', '2101', '41', '45.66196', '2.84008');
+INSERT INTO `settlement` VALUES ('3400', 'Axmed Cigoow', '2101039196', '2101', '41', '45.54897', '2.90973');
+INSERT INTO `settlement` VALUES ('3401', 'Baarrow Weyne', '2101039184', '2101', '41', '45.52665', '2.87094');
+INSERT INTO `settlement` VALUES ('3402', 'Bad Bad', '2101039120', '2101', '41', '45.66852', '2.74244');
+INSERT INTO `settlement` VALUES ('3403', 'Balguri', '2101029292', '2101', '41', '45.51900', '2.77280');
+INSERT INTO `settlement` VALUES ('3404', 'Bangoranyo', '2101049390', '2101', '41', '45.27028', '2.82500');
+INSERT INTO `settlement` VALUES ('3405', 'Bannaaan', '2101039218', '2101', '41', '45.50721', '2.99027');
+INSERT INTO `settlement` VALUES ('3406', 'Bannaan', '2101039240', '2101', '41', '45.48169', '2.89143');
+INSERT INTO `settlement` VALUES ('3407', 'Bannaan', '2101039260', '2101', '41', '45.33982', '2.83476');
+INSERT INTO `settlement` VALUES ('3408', 'Bannaaney', '2101039166', '2101', '41', '45.51123', '2.79882');
+INSERT INTO `settlement` VALUES ('3409', 'Barre Cali Xasan', '2101039206', '2101', '41', '45.58411', '2.95273');
+INSERT INTO `settlement` VALUES ('3410', 'Barrey', '2101039162', '2101', '41', '45.53441', '2.82152');
+INSERT INTO `settlement` VALUES ('3411', 'Barrey', '2101039204', '2101', '41', '45.53249', '2.94152');
+INSERT INTO `settlement` VALUES ('3412', 'Barrki', '2101039248', '2101', '41', '45.39157', '2.83472');
+INSERT INTO `settlement` VALUES ('3413', 'Bayaxaaw', '2101039152', '2101', '41', '45.50232', '2.74011');
+INSERT INTO `settlement` VALUES ('3414', 'Beera Lilaad', '2101039138', '2101', '41', '45.57922', '2.74840');
+INSERT INTO `settlement` VALUES ('3415', 'Beerta Araraad', '2101039148', '2101', '41', '45.55814', '2.74664');
+INSERT INTO `settlement` VALUES ('3416', 'Beerta Shanaad', '2101039150', '2101', '41', '45.55676', '2.72657');
+INSERT INTO `settlement` VALUES ('3417', 'Beerta Siyago', '2101039050', '2101', '41', '45.51347', '3.01792');
+INSERT INTO `settlement` VALUES ('3418', 'Biyo Cadde', '2101039056', '2101', '41', '45.79131', '2.93558');
+INSERT INTO `settlement` VALUES ('3419', 'Biyo Cadde', '2101049326', '2101', '41', '45.32778', '2.81111');
+INSERT INTO `settlement` VALUES ('3420', 'Bogon Gad', '2101029294', '2101', '41', '45.17170', '3.10000');
+INSERT INTO `settlement` VALUES ('3421', 'Bullo Bari', '2101049404', '2101', '41', '45.54000', '2.91000');
+INSERT INTO `settlement` VALUES ('3422', 'Bullo Carey', '2101049344', '2101', '41', '45.42000', '2.93000');
+INSERT INTO `settlement` VALUES ('3423', 'Bullo Caws', '2101049336', '2101', '41', '45.43056', '3.04028');
+INSERT INTO `settlement` VALUES ('3424', 'Bullo Daau', '2101049392', '2101', '41', '45.64472', '2.88333');
+INSERT INTO `settlement` VALUES ('3425', 'Bullo Geesaale', '2101049360', '2101', '41', '45.53778', '2.82306');
+INSERT INTO `settlement` VALUES ('3426', 'Bullo Gumar', '2101049380', '2101', '41', '45.64278', '2.75944');
+INSERT INTO `settlement` VALUES ('3427', 'Bulo Nur', '2101029296', '2101', '41', '45.52160', '2.92780');
+INSERT INTO `settlement` VALUES ('3428', 'Bulo Nurbadi', '2101029298', '2101', '41', '45.62010', '2.89890');
+INSERT INTO `settlement` VALUES ('3429', 'Burdhere', '2101049328', '2101', '41', '45.36945', '2.79028');
+INSERT INTO `settlement` VALUES ('3430', 'Bustoale', '2101039012', '2101', '41', '45.74153', '3.16223');
+INSERT INTO `settlement` VALUES ('3431', 'Buulo Balley', '2101039116', '2101', '41', '45.65008', '2.74688');
+INSERT INTO `settlement` VALUES ('3432', 'Buulo Dheer', '2101039090', '2101', '41', '45.68151', '2.80885');
+INSERT INTO `settlement` VALUES ('3433', 'Buulo Feermo', '2101039130', '2101', '41', '45.60749', '2.73385');
+INSERT INTO `settlement` VALUES ('3434', 'Buulo Felay', '2101039132', '2101', '41', '45.60112', '2.72733');
+INSERT INTO `settlement` VALUES ('3435', 'Buulo Gannay', '2101039094', '2101', '41', '45.63092', '2.80300');
+INSERT INTO `settlement` VALUES ('3436', 'Buulo Garas', '2101039092', '2101', '41', '45.64462', '2.78963');
+INSERT INTO `settlement` VALUES ('3437', 'Buulo Macllin', '2101039086', '2101', '41', '45.68229', '2.80074');
+INSERT INTO `settlement` VALUES ('3438', 'Buulo Madina', '2101039266', '2101', '41', '45.54745', '3.06773');
+INSERT INTO `settlement` VALUES ('3439', 'Buulo Makiino', '2101039098', '2101', '41', '45.62373', '2.78874');
+INSERT INTO `settlement` VALUES ('3440', 'Buulo Maxamuud', '2101039134', '2101', '41', '45.61590', '2.79617');
+INSERT INTO `settlement` VALUES ('3441', 'Buulo Moobleen', '2101039102', '2101', '41', '45.61917', '2.78085');
+INSERT INTO `settlement` VALUES ('3442', 'Buulo Shiik', '2101039140', '2101', '41', '45.55077', '2.79526');
+INSERT INTO `settlement` VALUES ('3443', 'Buulq Afrax', '2101039082', '2101', '41', '45.65162', '2.80230');
+INSERT INTO `settlement` VALUES ('3444', 'Buur Xaano', '2101039222', '2101', '41', '45.46578', '3.17805');
+INSERT INTO `settlement` VALUES ('3445', 'Buurane', '2101039212', '2101', '41', '45.51190', '2.96470');
+INSERT INTO `settlement` VALUES ('3446', 'Buurbishaaro', '2101039174', '2101', '41', '45.53661', '2.83598');
+INSERT INTO `settlement` VALUES ('3447', 'Buurfuule', '2101039202', '2101', '41', '45.52789', '2.93204');
+INSERT INTO `settlement` VALUES ('3448', 'Caadley', '2101039020', '2101', '41', '45.70452', '3.09324');
+INSERT INTO `settlement` VALUES ('3449', 'Cabdulle Xabad', '2101039198', '2101', '41', '45.56918', '2.92103');
+INSERT INTO `settlement` VALUES ('3450', 'Caddaan Camey', '2101039088', '2101', '41', '45.68829', '2.80663');
+INSERT INTO `settlement` VALUES ('3451', 'Cadley', '2101049400', '2101', '41', '45.59028', '2.88306');
+INSERT INTO `settlement` VALUES ('3452', 'Cali Alwaan', '2101039114', '2101', '41', '45.60902', '2.76394');
+INSERT INTO `settlement` VALUES ('3453', 'Cali Fool Dhere', '2101049402', '2101', '41', '45.65694', '2.88306');
+INSERT INTO `settlement` VALUES ('3454', 'Cali Jimcale', '2101049394', '2101', '41', '45.64139', '2.85333');
+INSERT INTO `settlement` VALUES ('3455', 'Calidheer', '2101039230', '2101', '41', '45.44807', '2.91157');
+INSERT INTO `settlement` VALUES ('3456', 'Carmoolo', '2101039268', '2101', '41', '45.36770', '2.82508');
+INSERT INTO `settlement` VALUES ('3457', 'Ceel Baraf', '2101039014', '2101', '41', '45.75977', '3.20728');
+INSERT INTO `settlement` VALUES ('3458', 'Ceel Benka', '2101049334', '2101', '41', '45.41000', '2.91000');
+INSERT INTO `settlement` VALUES ('3459', 'Ceel Cad', '2101039226', '2101', '41', '45.38548', '3.11254');
+INSERT INTO `settlement` VALUES ('3460', 'Ceel Xarar', '2101039016', '2101', '41', '45.69849', '3.18490');
+INSERT INTO `settlement` VALUES ('3461', 'Ceynte', '2101039210', '2101', '41', '45.51573', '2.95963');
+INSERT INTO `settlement` VALUES ('3462', 'Cumar Cusmaan', '2101039108', '2101', '41', '45.64629', '2.75795');
+INSERT INTO `settlement` VALUES ('3463', 'Dabeylley', '2101039234', '2101', '41', '45.42880', '2.90796');
+INSERT INTO `settlement` VALUES ('3464', 'Dacaar', '2101039032', '2101', '41', '45.65781', '3.01624');
+INSERT INTO `settlement` VALUES ('3465', 'Dacdo', '2101039244', '2101', '41', '45.39691', '2.85795');
+INSERT INTO `settlement` VALUES ('3466', 'Dhalooyinka', '2101049338', '2101', '41', '45.42000', '3.05972');
+INSERT INTO `settlement` VALUES ('3467', 'Dharkeynle', '2101049346', '2101', '41', '45.43000', '2.93000');
+INSERT INTO `settlement` VALUES ('3468', 'Dharxeenley', '2101039054', '2101', '41', '45.70113', '2.96621');
+INSERT INTO `settlement` VALUES ('3469', 'Dhiamaale', '2101039118', '2101', '41', '45.65812', '2.74134');
+INSERT INTO `settlement` VALUES ('3470', 'Dhiingaras', '2101039224', '2101', '41', '45.45856', '3.04736');
+INSERT INTO `settlement` VALUES ('3471', 'Dhurwayle', '2101039228', '2101', '41', '45.46141', '2.95897');
+INSERT INTO `settlement` VALUES ('3472', 'Dinlaabe', '2101039048', '2101', '41', '45.51653', '3.04638');
+INSERT INTO `settlement` VALUES ('3473', 'Dondere', '2101029304', '2101', '41', '45.62100', '2.82740');
+INSERT INTO `settlement` VALUES ('3474', 'Doon Shuule', '2101039122', '2101', '41', '45.66492', '2.72913');
+INSERT INTO `settlement` VALUES ('3475', 'Doon Soomaali', '2101039018', '2101', '41', '45.65522', '3.13503');
+INSERT INTO `settlement` VALUES ('3476', 'Doonjilile', '2101049370', '2101', '41', '45.41250', '3.13194');
+INSERT INTO `settlement` VALUES ('3477', 'Doonkaxarow', '2101049372', '2101', '41', '45.43444', '3.05833');
+INSERT INTO `settlement` VALUES ('3478', 'Dooyo Cadde', '2101039010', '2101', '41', '45.75838', '3.14040');
+INSERT INTO `settlement` VALUES ('3479', 'Dudunle', '2101039040', '2101', '41', '45.53339', '3.14773');
+INSERT INTO `settlement` VALUES ('3480', 'Eji', '2101039038', '2101', '41', '45.54156', '3.18344');
+INSERT INTO `settlement` VALUES ('3481', 'El Atful', '2101029306', '2101', '41', '45.13220', '3.05220');
+INSERT INTO `settlement` VALUES ('3482', 'Eyrib', '2101049352', '2101', '41', '45.33055', '2.95000');
+INSERT INTO `settlement` VALUES ('3483', 'Faylogooye', '2101039100', '2101', '41', '45.65362', '2.77607');
+INSERT INTO `settlement` VALUES ('3484', 'Fido', '2101039274', '2101', '41', '45.74268', '3.09138');
+INSERT INTO `settlement` VALUES ('3485', 'Gaabaney', '2101039264', '2101', '41', '45.33805', '2.74049');
+INSERT INTO `settlement` VALUES ('3486', 'Gaalaay', '2101039178', '2101', '41', '45.53240', '2.84489');
+INSERT INTO `settlement` VALUES ('3487', 'Gal Goof', '2101039060', '2101', '41', '45.73932', '2.87661');
+INSERT INTO `settlement` VALUES ('3488', 'Gana Weyne', '2101039036', '2101', '41', '45.66306', '3.18792');
+INSERT INTO `settlement` VALUES ('3489', 'Garaaka Ax Jeelle', '2101039112', '2101', '41', '45.68075', '2.76734');
+INSERT INTO `settlement` VALUES ('3490', 'Garaane', '2101039072', '2101', '41', '45.70182', '2.90211');
+INSERT INTO `settlement` VALUES ('3491', 'Garab Cadde', '2101039068', '2101', '41', '45.67774', '2.93177');
+INSERT INTO `settlement` VALUES ('3492', 'Garas Barqo', '2101039070', '2101', '41', '45.69952', '2.92265');
+INSERT INTO `settlement` VALUES ('3493', 'Gariirow', '2101039238', '2101', '41', '45.37945', '2.90637');
+INSERT INTO `settlement` VALUES ('3494', 'Garsaalley', '2101039242', '2101', '41', '45.40752', '2.86849');
+INSERT INTO `settlement` VALUES ('3495', 'Geedo Berkaan', '2101039160', '2101', '41', '45.53920', '2.81979');
+INSERT INTO `settlement` VALUES ('3496', 'Geyfo', '2101049324', '2101', '41', '45.93472', '2.84389');
+INSERT INTO `settlement` VALUES ('3497', 'Giir Weyee', '2101039078', '2101', '41', '45.65651', '2.81074');
+INSERT INTO `settlement` VALUES ('3498', 'Gomei', '2101029312', '2101', '41', '45.86930', '2.88070');
+INSERT INTO `settlement` VALUES ('3499', 'Gondere', '2101029314', '2101', '41', '45.89840', '2.86930');
+INSERT INTO `settlement` VALUES ('3500', 'Guane', '2101039026', '2101', '41', '45.72378', '3.06135');
+INSERT INTO `settlement` VALUES ('3501', 'Gumar Gaalo', '2101039236', '2101', '41', '45.43393', '2.88992');
+INSERT INTO `settlement` VALUES ('3502', 'Gumarrey', '2101039192', '2101', '41', '45.52943', '2.89277');
+INSERT INTO `settlement` VALUES ('3503', 'Gumarrey', '2101039254', '2101', '41', '45.37728', '2.76726');
+INSERT INTO `settlement` VALUES ('3504', 'Gumerri', '2101029316', '2101', '41', '45.80150', '2.90100');
+INSERT INTO `settlement` VALUES ('3505', 'Guumeysle', '2101039252', '2101', '41', '45.37432', '2.79128');
+INSERT INTO `settlement` VALUES ('3506', 'Haan Gale', '2101029318', '2101', '41', '45.58200', '3.22080');
+INSERT INTO `settlement` VALUES ('3507', 'Haggi Ali', '2101049322', '2101', '41', '45.21611', '2.92083');
+INSERT INTO `settlement` VALUES ('3508', 'Hareruus', '2101049330', '2101', '41', '45.34028', '2.84000');
+INSERT INTO `settlement` VALUES ('3509', 'Hilo Axmadey', '2101039214', '2101', '41', '45.52014', '2.96863');
+INSERT INTO `settlement` VALUES ('3510', 'Hoohoble', '2101039006', '2101', '41', '45.79293', '3.00648');
+INSERT INTO `settlement` VALUES ('3511', 'Hurway', '2101039042', '2101', '41', '45.54658', '3.12970');
+INSERT INTO `settlement` VALUES ('3512', 'Idaaw Madow', '2101029320', '2101', '41', '45.80160', '3.07700');
+INSERT INTO `settlement` VALUES ('3513', 'Jameco', '2101049340', '2101', '41', '45.48056', '3.05000');
+INSERT INTO `settlement` VALUES ('3514', 'Jarrey', '2101039172', '2101', '41', '45.54657', '2.84067');
+INSERT INTO `settlement` VALUES ('3515', 'Jawiil', '2101049374', '2101', '41', '45.49445', '3.07500');
+INSERT INTO `settlement` VALUES ('3516', 'Jifyaale', '2101039096', '2101', '41', '45.63117', '2.79585');
+INSERT INTO `settlement` VALUES ('3517', 'Jiif Yarey', '2101039028', '2101', '41', '45.72035', '3.08665');
+INSERT INTO `settlement` VALUES ('3518', 'Jilao', '2101049382', '2101', '41', '45.64028', '2.73889');
+INSERT INTO `settlement` VALUES ('3519', 'Jiqlie', '2101049366', '2101', '41', '45.68000', '2.80000');
+INSERT INTO `settlement` VALUES ('3520', 'Kaadheerey', '2101039104', '2101', '41', '45.66084', '2.75562');
+INSERT INTO `settlement` VALUES ('3521', 'Kaluundi', '2101039170', '2101', '41', '45.52052', '2.79432');
+INSERT INTO `settlement` VALUES ('3522', 'Kaxarey', '2101039146', '2101', '41', '45.57087', '2.78038');
+INSERT INTO `settlement` VALUES ('3523', 'Kaxarow', '2101039194', '2101', '41', '45.56142', '2.91365');
+INSERT INTO `settlement` VALUES ('3524', 'Khajafey', '2101039128', '2101', '41', '45.63745', '2.73870');
+INSERT INTO `settlement` VALUES ('3525', 'Kor Cad', '2101039084', '2101', '41', '45.67196', '2.80063');
+INSERT INTO `settlement` VALUES ('3526', 'Koriso', '2101039256', '2101', '41', '45.47960', '2.74647');
+INSERT INTO `settlement` VALUES ('3527', 'Kulmis', '2101039200', '2101', '41', '45.53364', '2.93425');
+INSERT INTO `settlement` VALUES ('3528', 'Labawaab', '2101039180', '2101', '41', '45.53373', '2.86847');
+INSERT INTO `settlement` VALUES ('3529', 'Lebi', '2101039030', '2101', '41', '45.74143', '3.05883');
+INSERT INTO `settlement` VALUES ('3530', 'Leebo Xeera', '2101039080', '2101', '41', '45.64707', '2.81052');
+INSERT INTO `settlement` VALUES ('3531', 'Levi Musse Adde', '2101029276', '2101', '41', '45.82870', '3.06730');
+INSERT INTO `settlement` VALUES ('3532', 'Libaaxle', '2101039246', '2101', '41', '45.41148', '2.85673');
+INSERT INTO `settlement` VALUES ('3533', 'Maamoow', '2101039142', '2101', '41', '45.54803', '2.79056');
+INSERT INTO `settlement` VALUES ('3534', 'Maan Gale', '2101039034', '2101', '41', '45.59031', '3.21882');
+INSERT INTO `settlement` VALUES ('3535', 'Maciye Tuurey', '2101049354', '2101', '41', '45.30972', '2.95000');
+INSERT INTO `settlement` VALUES ('3536', 'Macow Dhuldiid', '2101039008', '2101', '41', '45.75695', '3.02821');
+INSERT INTO `settlement` VALUES ('3537', 'Madax Warabe', '2101049356', '2101', '41', '45.32084', '2.92083');
+INSERT INTO `settlement` VALUES ('3538', 'Madiina Cad', '2101039124', '2101', '41', '45.62594', '2.74730');
+INSERT INTO `settlement` VALUES ('3539', 'Maguurto', '2101049406', '2101', '41', '45.55528', '2.94389');
+INSERT INTO `settlement` VALUES ('3540', 'Malable', '2101049348', '2101', '41', '45.42000', '2.92000');
+INSERT INTO `settlement` VALUES ('3541', 'Mansuur', '2101039046', '2101', '41', '45.53823', '3.07305');
+INSERT INTO `settlement` VALUES ('3542', 'Maqarey', '2101049396', '2101', '41', '45.64194', '2.85861');
+INSERT INTO `settlement` VALUES ('3543', 'Maqax Dameer', '2101029278', '2101', '41', '45.69920', '3.01840');
+INSERT INTO `settlement` VALUES ('3544', 'Maqudale', '2101049376', '2101', '41', '45.43444', '3.11306');
+INSERT INTO `settlement` VALUES ('3545', 'Mareerrey', '2101039190', '2101', '41', '45.53805', '2.88645');
+INSERT INTO `settlement` VALUES ('3546', 'Maxamed Buurfuule', '2101039232', '2101', '41', '45.49432', '2.91366');
+INSERT INTO `settlement` VALUES ('3547', 'Mayoongaale', '2101039158', '2101', '41', '45.52809', '2.77851');
+INSERT INTO `settlement` VALUES ('3548', 'Megedley', '2101039182', '2101', '41', '45.53000', '2.86548');
+INSERT INTO `settlement` VALUES ('3549', 'Miir Toqwo', '2101039004', '2101', '41', '45.85324', '3.10539');
+INSERT INTO `settlement` VALUES ('3550', 'Moiko', '2101049368', '2101', '41', '45.39444', '2.76139');
+INSERT INTO `settlement` VALUES ('3551', 'Mola Borale', '2101029280', '2101', '41', '45.76950', '3.21800');
+INSERT INTO `settlement` VALUES ('3552', 'Moorajiiddo', '2101039262', '2101', '41', '45.34699', '2.75352');
+INSERT INTO `settlement` VALUES ('3553', 'Moyka', '2101039258', '2101', '41', '45.49735', '2.75990');
+INSERT INTO `settlement` VALUES ('3554', 'Muluqey', '2101039058', '2101', '41', '45.75349', '2.92862');
+INSERT INTO `settlement` VALUES ('3555', 'Muryaale', '2101039186', '2101', '41', '45.53422', '2.87573');
+INSERT INTO `settlement` VALUES ('3556', 'Naxaroow', '2101029282', '2101', '41', '45.58250', '2.87800');
+INSERT INTO `settlement` VALUES ('3557', 'Oabdulle Kudaad', '2101039052', '2101', '41', '45.72071', '2.95660');
+INSERT INTO `settlement` VALUES ('3558', 'Oobale', '2101039044', '2101', '41', '45.54803', '3.09557');
+INSERT INTO `settlement` VALUES ('3559', 'Qalimow', '2101039250', '2101', '41', '45.41545', '2.83414');
+INSERT INTO `settlement` VALUES ('3560', 'Qarqarow', '2101049342', '2101', '41', '45.42083', '3.05111');
+INSERT INTO `settlement` VALUES ('3561', 'Qooxle', '2101049358', '2101', '41', '45.30972', '2.92083');
+INSERT INTO `settlement` VALUES ('3562', 'Qumbe', '2101039176', '2101', '41', '45.52981', '2.84211');
+INSERT INTO `settlement` VALUES ('3563', 'Qunda', '2101049384', '2101', '41', '45.61972', '2.76694');
+INSERT INTO `settlement` VALUES ('3564', 'Qurac Faarax', '2101029284', '2101', '41', '45.82210', '3.12050');
+INSERT INTO `settlement` VALUES ('3565', 'Qurac Madoobe', '2101039066', '2101', '41', '45.64384', '2.93310');
+INSERT INTO `settlement` VALUES ('3566', 'Qurac Odiwaa', '2101039272', '2101', '41', '45.66652', '3.20634');
+INSERT INTO `settlement` VALUES ('3567', 'Rala Weyne', '2101039024', '2101', '41', '45.69638', '3.04851');
+INSERT INTO `settlement` VALUES ('3568', 'Reer Caddow', '2101049386', '2101', '41', '45.62500', '2.74444');
+INSERT INTO `settlement` VALUES ('3569', 'Saangadaale', '2101039220', '2101', '41', '45.45488', '3.20504');
+INSERT INTO `settlement` VALUES ('3570', 'Sabbuun', '2101039188', '2101', '41', '45.53910', '2.88243');
+INSERT INTO `settlement` VALUES ('3571', 'Sabdoow', '2101039126', '2101', '41', '45.61831', '2.73773');
+INSERT INTO `settlement` VALUES ('3572', 'Sakhiiro', '2101039106', '2101', '41', '45.67218', '2.75740');
+INSERT INTO `settlement` VALUES ('3573', 'Sangadale', '2101049350', '2101', '41', '45.42000', '2.91556');
+INSERT INTO `settlement` VALUES ('3574', 'Scec Avicher', '2101029308', '2101', '41', '45.83280', '3.13230');
+INSERT INTO `settlement` VALUES ('3575', 'Seexiye', '2101029310', '2101', '41', '45.58180', '2.90260');
+INSERT INTO `settlement` VALUES ('3576', 'Shaan', '2101039216', '2101', '41', '45.51717', '2.98750');
+INSERT INTO `settlement` VALUES ('3577', 'Shameento', '2101039270', '2101', '41', '45.58910', '2.76559');
+INSERT INTO `settlement` VALUES ('3578', 'Shamenlo', '2101039154', '2101', '41', '45.51516', '2.73493');
+INSERT INTO `settlement` VALUES ('3579', 'Shiik Ooyaaye', '2101039156', '2101', '41', '45.51822', '2.78139');
+INSERT INTO `settlement` VALUES ('3580', 'Siicow', '2101039168', '2101', '41', '45.54628', '2.80045');
+INSERT INTO `settlement` VALUES ('3581', 'Siley', '2101039144', '2101', '41', '45.53980', '2.79487');
+INSERT INTO `settlement` VALUES ('3582', 'Tako Tako', '2101049388', '2101', '41', '45.54167', '2.84306');
+INSERT INTO `settlement` VALUES ('3583', 'Tarede', '2101049332', '2101', '41', '45.32084', '2.87083');
+INSERT INTO `settlement` VALUES ('3584', 'Tile', '2101029302', '2101', '41', '45.86870', '3.09840');
+INSERT INTO `settlement` VALUES ('3585', 'Timirre', '2101039164', '2101', '41', '45.53719', '2.81012');
+INSERT INTO `settlement` VALUES ('3586', 'Ubaale', '2101049378', '2101', '41', '45.40833', '3.11306');
+INSERT INTO `settlement` VALUES ('3587', 'War Dhagax', '2101039062', '2101', '41', '45.76309', '2.85360');
+INSERT INTO `settlement` VALUES ('3588', 'Warabo Jiif', '2101039022', '2101', '41', '45.68022', '3.08175');
+INSERT INTO `settlement` VALUES ('3589', 'Warai', '2101049362', '2101', '41', '45.53528', '2.83806');
+INSERT INTO `settlement` VALUES ('3590', 'Waraxley', '2101039074', '2101', '41', '45.64629', '2.88498');
+INSERT INTO `settlement` VALUES ('3591', 'Xaabley', '2101039110', '2101', '41', '45.67363', '2.82130');
+INSERT INTO `settlement` VALUES ('3592', 'Xaanoolay', '2101039136', '2101', '41', '45.60781', '2.80139');
+INSERT INTO `settlement` VALUES ('3593', 'Xuddor', '2101039208', '2101', '41', '45.52972', '2.95560');
+INSERT INTO `settlement` VALUES ('3594', 'Xuddur Ilse', '2101049398', '2101', '41', '45.52611', '2.95444');
+INSERT INTO `settlement` VALUES ('3595', 'Bacaadweyn', '1802039066', '1802', '29', '47.52634', '7.19208');
+INSERT INTO `settlement` VALUES ('3596', 'Bursaalax', '1802049068', '1802', '29', '47.24528', '7.17417');
+INSERT INTO `settlement` VALUES ('3597', 'Darasalaam', '1802049070', '1802', '29', '47.15278', '7.11639');
+INSERT INTO `settlement` VALUES ('3598', 'Roox', '1802049072', '1802', '29', '47.44167', '7.20722');
+INSERT INTO `settlement` VALUES ('3599', 'Abaaray', '1801039004', '1801', '28', '47.47507', '7.07714');
+INSERT INTO `settlement` VALUES ('3600', 'Arfuda', '1801029032', '1801', '28', '47.59760', '6.62720');
+INSERT INTO `settlement` VALUES ('3601', 'Balanbal', '1801039028', '1801', '28', '48.14235', '7.44899');
+INSERT INTO `settlement` VALUES ('3602', 'Balli Busle', '1801039008', '1801', '28', '48.15751', '7.09507');
+INSERT INTO `settlement` VALUES ('3603', 'Balli Lama Adi', '1801029036', '1801', '28', '48.23080', '6.94730');
+INSERT INTO `settlement` VALUES ('3604', 'Balliabees', '1801029034', '1801', '28', '47.82890', '7.49760');
+INSERT INTO `settlement` VALUES ('3605', 'Bandiidley', '1801039002', '1801', '28', '46.94536', '6.47979');
+INSERT INTO `settlement` VALUES ('3606', 'Bardaale', '1801039006', '1801', '28', '47.87147', '7.06564');
+INSERT INTO `settlement` VALUES ('3607', 'Beyra', '1801039014', '1801', '28', '47.31653', '6.95070');
+INSERT INTO `settlement` VALUES ('3608', 'Bissig Gundere', '1801029038', '1801', '28', '48.42200', '7.13060');
+INSERT INTO `settlement` VALUES ('3609', 'Buubis', '1801039012', '1801', '28', '48.37241', '7.14400');
+INSERT INTO `settlement` VALUES ('3610', 'Buuryaqab', '1801029040', '1801', '28', '47.61960', '7.35280');
+INSERT INTO `settlement` VALUES ('3611', 'Ceel Muudaan', '1801029046', '1801', '28', '46.64970', '6.58050');
+INSERT INTO `settlement` VALUES ('3612', 'Dagaari', '1801039022', '1801', '28', '47.28352', '6.55474');
+INSERT INTO `settlement` VALUES ('3613', 'Docol', '1801039024', '1801', '28', '47.48841', '6.43344');
+INSERT INTO `settlement` VALUES ('3614', 'El Engir', '1801029048', '1801', '28', '47.95060', '6.78110');
+INSERT INTO `settlement` VALUES ('3615', 'El Las Derder', '1801029050', '1801', '28', '48.11970', '6.88180');
+INSERT INTO `settlement` VALUES ('3616', 'Erir', '1801029052', '1801', '28', '47.00010', '6.72110');
+INSERT INTO `settlement` VALUES ('3617', 'Gelgaris', '1801029056', '1801', '28', '47.32740', '6.66920');
+INSERT INTO `settlement` VALUES ('3618', 'Godod', '1801039016', '1801', '28', '47.62382', '6.95232');
+INSERT INTO `settlement` VALUES ('3619', 'Gowlallo', '1801039018', '1801', '28', '47.06948', '6.61345');
+INSERT INTO `settlement` VALUES ('3620', 'Malaasle', '1801049062', '1801', '28', '47.43333', '6.84500');
+INSERT INTO `settlement` VALUES ('3621', 'Oalaanqale', '1801039026', '1801', '28', '48.06121', '7.47427');
+INSERT INTO `settlement` VALUES ('3622', 'Qaidarre', '1801029030', '1801', '28', '48.32190', '6.75050');
+INSERT INTO `settlement` VALUES ('3623', 'Qorqoore Dheer', '1801049058', '1801', '28', '47.69556', '6.75278');
+INSERT INTO `settlement` VALUES ('3624', 'Sadder Higle', '1801039020', '1801', '28', '47.10001', '6.49970');
+INSERT INTO `settlement` VALUES ('3625', 'Salax Darandoole', '1801039010', '1801', '28', '48.32294', '7.29696');
+INSERT INTO `settlement` VALUES ('3626', 'Scian Cora', '1801029054', '1801', '28', '47.25000', '6.38300');
+INSERT INTO `settlement` VALUES ('3627', 'Surio', '1801029042', '1801', '28', '47.30150', '6.45020');
+INSERT INTO `settlement` VALUES ('3628', 'Tira Assu', '1801029044', '1801', '28', '47.63160', '7.12970');
+INSERT INTO `settlement` VALUES ('3629', 'Xaarfo', '1801049060', '1801', '28', '47.62056', '7.34833');
+INSERT INTO `settlement` VALUES ('3630', 'Af Barwaaqo', '1803039020', '1803', '30', '48.78341', '6.49712');
+INSERT INTO `settlement` VALUES ('3631', 'Afguduudle', '1803039014', '1803', '30', '48.03437', '5.75875');
+INSERT INTO `settlement` VALUES ('3632', 'Baaduin', '1803029042', '1803', '30', '47.92110', '5.35060');
+INSERT INTO `settlement` VALUES ('3633', 'Bacadweyn', '1803039004', '1803', '30', '47.90740', '5.32558');
+INSERT INTO `settlement` VALUES ('3634', 'Bagahar', '1803029044', '1803', '30', '48.82700', '6.51920');
+INSERT INTO `settlement` VALUES ('3635', 'Bajeela', '1803039008', '1803', '30', '47.70195', '5.78826');
+INSERT INTO `settlement` VALUES ('3636', 'Balli Galad', '1803029046', '1803', '30', '48.37920', '5.52200');
+INSERT INTO `settlement` VALUES ('3637', 'Balli Hat', '1803029048', '1803', '30', '47.95260', '6.12060');
+INSERT INTO `settlement` VALUES ('3638', 'Bandiiraaley', '1803049124', '1803', '30', '47.94556', '6.47778');
+INSERT INTO `settlement` VALUES ('3639', 'BIiadera', '1803029050', '1803', '30', '48.62880', '6.14760');
+INSERT INTO `settlement` VALUES ('3640', 'Bilhelli', '1803029052', '1803', '30', '47.70220', '5.53030');
+INSERT INTO `settlement` VALUES ('3641', 'Bitaale', '1803049126', '1803', '30', '47.83611', '6.70861');
+INSERT INTO `settlement` VALUES ('3642', 'Biyomaal', '1803029054', '1803', '30', '48.03280', '5.35020');
+INSERT INTO `settlement` VALUES ('3643', 'Budbud', '1803039028', '1803', '30', '48.68533', '6.17887');
+INSERT INTO `settlement` VALUES ('3644', 'Ceel Bacduur', '1803029056', '1803', '30', '49.08130', '6.42230');
+INSERT INTO `settlement` VALUES ('3645', 'Ceel Dhahanaan', '1803029058', '1803', '30', '49.12830', '6.57780');
+INSERT INTO `settlement` VALUES ('3646', 'Ceel Dibir', '1803049132', '1803', '30', '48.34417', '5.88472');
+INSERT INTO `settlement` VALUES ('3647', 'Ceeldheer Cammaara', '1803039002', '1803', '30', '47.91411', '5.26493');
+INSERT INTO `settlement` VALUES ('3648', 'Ceelgaalaad', '1803029064', '1803', '30', '48.42170', '5.45240');
+INSERT INTO `settlement` VALUES ('3649', 'Cirai Cheli Dere', '1803029066', '1803', '30', '48.90230', '6.30040');
+INSERT INTO `settlement` VALUES ('3650', 'Colguula', '1803039022', '1803', '30', '47.85416', '6.01191');
+INSERT INTO `settlement` VALUES ('3651', 'Daborow', '1803029068', '1803', '30', '48.72080', '6.35190');
+INSERT INTO `settlement` VALUES ('3652', 'Debatcile', '1803029070', '1803', '30', '48.12800', '5.17100');
+INSERT INTO `settlement` VALUES ('3653', 'Degagou', '1803029072', '1803', '30', '48.41880', '5.63080');
+INSERT INTO `settlement` VALUES ('3654', 'Delenle', '1803029074', '1803', '30', '48.35130', '5.65250');
+INSERT INTO `settlement` VALUES ('3655', 'Dhajimaale', '1803039024', '1803', '30', '48.21786', '6.30236');
+INSERT INTO `settlement` VALUES ('3656', 'Dol', '1803029076', '1803', '30', '48.19770', '6.01820');
+INSERT INTO `settlement` VALUES ('3657', 'Dudun Gallo', '1803029078', '1803', '30', '48.86970', '6.34890');
+INSERT INTO `settlement` VALUES ('3658', 'Duurgale', '1803029080', '1803', '30', '48.26730', '5.58300');
+INSERT INTO `settlement` VALUES ('3659', 'El Af Gumasorrei', '1803029082', '1803', '30', '48.77800', '6.48000');
+INSERT INTO `settlement` VALUES ('3660', 'El Bogofier', '1803029084', '1803', '30', '48.37280', '5.81740');
+INSERT INTO `settlement` VALUES ('3661', 'El Gorei', '1803029086', '1803', '30', '48.42140', '5.67740');
+INSERT INTO `settlement` VALUES ('3662', 'Endo Iero', '1803029088', '1803', '30', '48.67010', '6.20040');
+INSERT INTO `settlement` VALUES ('3663', 'Faddhi Tehele', '1803029090', '1803', '30', '48.27730', '5.31930');
+INSERT INTO `settlement` VALUES ('3664', 'Gal Gorum', '1803029098', '1803', '30', '47.67970', '6.07000');
+INSERT INTO `settlement` VALUES ('3665', 'Garahadde', '1803029100', '1803', '30', '48.63290', '5.50160');
+INSERT INTO `settlement` VALUES ('3666', 'Gawaan', '1803039010', '1803', '30', '48.29597', '5.31182');
+INSERT INTO `settlement` VALUES ('3667', 'Geedaley', '1803029102', '1803', '30', '47.91840', '5.27100');
+INSERT INTO `settlement` VALUES ('3668', 'Gillab Rugis', '1803029104', '1803', '30', '47.81960', '6.41710');
+INSERT INTO `settlement` VALUES ('3669', 'Gira', '1803029106', '1803', '30', '48.09930', '5.38230');
+INSERT INTO `settlement` VALUES ('3670', 'Gopsor', '1803029108', '1803', '30', '48.82990', '6.24810');
+INSERT INTO `settlement` VALUES ('3671', 'Guba Arar', '1803029110', '1803', '30', '48.20090', '6.17990');
+INSERT INTO `settlement` VALUES ('3672', 'Gumar', '1803029112', '1803', '30', '47.74800', '5.18170');
+INSERT INTO `settlement` VALUES ('3673', 'Habad', '1803039016', '1803', '30', '48.53122', '6.43580');
+INSERT INTO `settlement` VALUES ('3674', 'Haf Gudud Mahan', '1803029114', '1803', '30', '47.82020', '5.77250');
+INSERT INTO `settlement` VALUES ('3675', 'Hangut', '1803029116', '1803', '30', '48.61730', '6.42000');
+INSERT INTO `settlement` VALUES ('3676', 'Hem Auare', '1803029118', '1803', '30', '47.92830', '5.52720');
+INSERT INTO `settlement` VALUES ('3677', 'Hen Daier', '1803029120', '1803', '30', '48.37790', '5.14720');
+INSERT INTO `settlement` VALUES ('3678', 'Hero Caralei', '1803029122', '1803', '30', '48.32860', '5.67890');
+INSERT INTO `settlement` VALUES ('3679', 'Hero Dagaxley', '1803049138', '1803', '30', '48.24250', '5.57944');
+INSERT INTO `settlement` VALUES ('3680', 'Higlaale', '1803049128', '1803', '30', '48.10778', '6.69306');
+INSERT INTO `settlement` VALUES ('3681', 'Laz Aer', '1803029032', '1803', '30', '48.23190', '5.77990');
+INSERT INTO `settlement` VALUES ('3682', 'Lazadale', '1803029030', '1803', '30', '48.20240', '6.28060');
+INSERT INTO `settlement` VALUES ('3683', 'Lebed', '1803029034', '1803', '30', '48.68020', '5.56780');
+INSERT INTO `settlement` VALUES ('3684', 'Lulubsho', '1803049140', '1803', '30', '48.03472', '5.57333');
+INSERT INTO `settlement` VALUES ('3685', 'Mirroon', '1803049144', '1803', '30', '47.93750', '5.94528');
+INSERT INTO `settlement` VALUES ('3686', 'Or Ghielleis', '1803029036', '1803', '30', '48.88250', '6.17220');
+INSERT INTO `settlement` VALUES ('3687', 'Ortalis', '1803029038', '1803', '30', '48.18030', '5.99810');
+INSERT INTO `settlement` VALUES ('3688', 'Qallad', '1803029040', '1803', '30', '48.93240', '5.97040');
+INSERT INTO `settlement` VALUES ('3689', 'Qaydarrey', '1803039006', '1803', '30', '47.48840', '5.78739');
+INSERT INTO `settlement` VALUES ('3690', 'Sabacad', '1803039018', '1803', '30', '48.71693', '6.35288');
+INSERT INTO `settlement` VALUES ('3691', 'Saqira', '1803049136', '1803', '30', '48.36666', '5.28833');
+INSERT INTO `settlement` VALUES ('3692', 'Sciander', '1803029092', '1803', '30', '48.12110', '6.73030');
+INSERT INTO `settlement` VALUES ('3693', 'Sermanle', '1803029094', '1803', '30', '48.11990', '6.17730');
+INSERT INTO `settlement` VALUES ('3694', 'Torre', '1803049130', '1803', '30', '47.79222', '6.02028');
+INSERT INTO `settlement` VALUES ('3695', 'Uarah', '1803029060', '1803', '30', '48.42960', '6.25220');
+INSERT INTO `settlement` VALUES ('3696', 'Uarandi', '1803029062', '1803', '30', '47.72040', '5.77740');
+INSERT INTO `settlement` VALUES ('3697', 'Washiir', '1803029096', '1803', '30', '48.53030', '6.20290');
+INSERT INTO `settlement` VALUES ('3698', 'Wisil', '1803039012', '1803', '30', '48.12007', '5.42940');
+INSERT INTO `settlement` VALUES ('3699', 'Xaaro', '1803049134', '1803', '30', '48.18361', '5.81556');
+INSERT INTO `settlement` VALUES ('3700', 'Xingod', '1803039026', '1803', '30', '48.43522', '6.25913');
+INSERT INTO `settlement` VALUES ('3701', 'Xinlaabi', '1803049142', '1803', '30', '47.65000', '5.40000');
+INSERT INTO `settlement` VALUES ('3702', 'Areri Lalamod', '1804029010', '1804', '31', '49.14740', '7.38170');
+INSERT INTO `settlement` VALUES ('3703', 'Balli Hagagari', '1804029012', '1804', '31', '48.87980', '6.95200');
+INSERT INTO `settlement` VALUES ('3704', 'Budunbuto', '1804049030', '1804', '31', '49.07695', '7.61778');
+INSERT INTO `settlement` VALUES ('3705', 'Ceela Helay', '1804049026', '1804', '31', '49.40055', '7.06000');
+INSERT INTO `settlement` VALUES ('3706', 'Dhinoode', '1804049028', '1804', '31', '49.20250', '6.73028');
+INSERT INTO `settlement` VALUES ('3707', 'Garacad', '1804039002', '1804', '31', '49.32650', '6.94326');
+INSERT INTO `settlement` VALUES ('3708', 'Godob Jiraan', '1804039006', '1804', '31', '49.41285', '7.51192');
+INSERT INTO `settlement` VALUES ('3709', 'Gofei', '1804029018', '1804', '31', '49.03040', '7.15020');
+INSERT INTO `settlement` VALUES ('3710', 'Guraladig', '1804029020', '1804', '31', '48.97240', '7.42240');
+INSERT INTO `settlement` VALUES ('3711', 'Heded', '1804029022', '1804', '31', '49.01980', '7.47830');
+INSERT INTO `settlement` VALUES ('3712', 'Iaud', '1804029024', '1804', '31', '49.09800', '7.67270');
+INSERT INTO `settlement` VALUES ('3713', 'Las Inedigh', '1804029008', '1804', '31', '48.54910', '7.14970');
+INSERT INTO `settlement` VALUES ('3714', 'Seemade', '1804039004', '1804', '31', '48.60982', '7.15487');
+INSERT INTO `settlement` VALUES ('3715', 'Semudde', '1804029016', '1804', '31', '48.67210', '6.87710');
+INSERT INTO `settlement` VALUES ('3716', 'Usgure', '1804049032', '1804', '31', '49.41195', '7.51222');
+INSERT INTO `settlement` VALUES ('3717', 'Ambalio', '1805029032', '1805', '32', '47.87730', '5.09980');
+INSERT INTO `settlement` VALUES ('3718', 'Bartir', '1805039022', '1805', '32', '47.83376', '4.86872');
+INSERT INTO `settlement` VALUES ('3719', 'Carfuuda', '1805039014', '1805', '32', '47.79495', '4.83342');
+INSERT INTO `settlement` VALUES ('3720', 'Ceel Cabdi', '1805029034', '1805', '32', '47.95150', '4.48020');
+INSERT INTO `settlement` VALUES ('3721', 'Ceel Dheere', '1805039018', '1805', '32', '47.79104', '4.67996');
+INSERT INTO `settlement` VALUES ('3722', 'Ceel Huur', '1805039030', '1805', '32', '48.27008', '5.00441');
+INSERT INTO `settlement` VALUES ('3723', 'Ceganloo', '1805029038', '1805', '32', '47.62970', '4.46770');
+INSERT INTO `settlement` VALUES ('3724', 'Dabagale', '1805039010', '1805', '32', '47.66421', '4.92539');
+INSERT INTO `settlement` VALUES ('3725', 'Deegaan', '1805039020', '1805', '32', '47.81179', '4.69417');
+INSERT INTO `settlement` VALUES ('3726', 'Dhalwo', '1805039004', '1805', '32', '47.56038', '4.56765');
+INSERT INTO `settlement` VALUES ('3727', 'Dumaaye', '1805039008', '1805', '32', '47.61646', '4.87788');
+INSERT INTO `settlement` VALUES ('3728', 'El Ghan', '1805029040', '1805', '32', '47.99850', '4.54700');
+INSERT INTO `settlement` VALUES ('3729', 'El Gunier', '1805029042', '1805', '32', '48.02730', '4.60280');
+INSERT INTO `settlement` VALUES ('3730', 'El Peccolli', '1805029046', '1805', '32', '48.02230', '4.58030');
+INSERT INTO `settlement` VALUES ('3731', 'Ferdehe', '1805029044', '1805', '32', '48.22950', '4.95240');
+INSERT INTO `settlement` VALUES ('3732', 'Gorayeryaal', '1805039026', '1805', '32', '47.93681', '4.80131');
+INSERT INTO `settlement` VALUES ('3733', 'Jibir', '1805039006', '1805', '32', '47.63006', '4.60850');
+INSERT INTO `settlement` VALUES ('3734', 'Kaynaan', '1805039002', '1805', '32', '47.51234', '4.53406');
+INSERT INTO `settlement` VALUES ('3735', 'Miliqo', '1805039012', '1805', '32', '47.67772', '4.95189');
+INSERT INTO `settlement` VALUES ('3736', 'Mirroon', '1805039024', '1805', '32', '47.93801', '4.94765');
+INSERT INTO `settlement` VALUES ('3737', 'Qeycad', '1805039028', '1805', '32', '47.99275', '5.01162');
+INSERT INTO `settlement` VALUES ('3738', 'Qosol Tire', '1805049048', '1805', '32', '48.21361', '4.92361');
+INSERT INTO `settlement` VALUES ('3739', 'Uaha Ier', '1805029036', '1805', '32', '47.83110', '4.35210');
+INSERT INTO `settlement` VALUES ('3740', 'Xaraf', '1805039016', '1805', '32', '47.78908', '4.67089');
+INSERT INTO `settlement` VALUES ('3741', 'Awr Culus', '1702049046', '1702', '26', '47.99000', '7.76667');
+INSERT INTO `settlement` VALUES ('3742', 'Baaley', '1702049048', '1702', '26', '48.65528', '7.91222');
+INSERT INTO `settlement` VALUES ('3743', 'Bahalei', '1702049030', '1702', '26', '48.18889', '8.13556');
+INSERT INTO `settlement` VALUES ('3744', 'Balli Ahur Barre', '1702029006', '1702', '26', '48.89980', '7.73300');
+INSERT INTO `settlement` VALUES ('3745', 'Balli Gobob Diran', '1702029008', '1702', '26', '43.99770', '8.99920');
+INSERT INTO `settlement` VALUES ('3746', 'Dhabancaddo', '1702029010', '1702', '26', '48.87220', '7.78010');
+INSERT INTO `settlement` VALUES ('3747', 'Dheganle', '1702049044', '1702', '26', '48.79778', '7.80000');
+INSERT INTO `settlement` VALUES ('3748', 'Dhoobo Cantuug', '1702049040', '1702', '26', '48.04278', '7.87111');
+INSERT INTO `settlement` VALUES ('3749', 'Dogob', '1702049028', '1702', '26', '48.60695', '8.05444');
+INSERT INTO `settlement` VALUES ('3750', 'El Kodan', '1702029012', '1702', '26', '48.22860', '8.18160');
+INSERT INTO `settlement` VALUES ('3751', 'El Uaesed', '1702029014', '1702', '26', '48.34840', '8.14920');
+INSERT INTO `settlement` VALUES ('3752', 'Galangulle', '1702029018', '1702', '26', '48.02970', '7.66720');
+INSERT INTO `settlement` VALUES ('3753', 'Godob Jiraan', '1702049036', '1702', '26', '47.78370', '7.64150');
+INSERT INTO `settlement` VALUES ('3754', 'Gori Rit', '1702029020', '1702', '26', '48.12120', '7.97860');
+INSERT INTO `settlement` VALUES ('3755', 'Ina Irman Ad', '1702029022', '1702', '26', '48.40160', '7.98280');
+INSERT INTO `settlement` VALUES ('3756', 'Jaliam', '1702039002', '1702', '26', '48.04326', '7.87264');
+INSERT INTO `settlement` VALUES ('3757', 'Jibagalle', '1702029024', '1702', '26', '48.65030', '8.07120');
+INSERT INTO `settlement` VALUES ('3758', 'Laqlaajis', '1702049052', '1702', '26', '47.83000', '7.64028');
+INSERT INTO `settlement` VALUES ('3759', 'Libaaxo', '1702049032', '1702', '26', '47.84778', '7.62639');
+INSERT INTO `settlement` VALUES ('3760', 'Mayle', '1702049026', '1702', '26', '48.67611', '7.75778');
+INSERT INTO `settlement` VALUES ('3761', 'Qarxis', '1702049042', '1702', '26', '48.10305', '7.98389');
+INSERT INTO `settlement` VALUES ('3762', 'Rabaable', '1702049050', '1702', '26', '48.51722', '7.79972');
+INSERT INTO `settlement` VALUES ('3763', 'Sanaag', '1702029016', '1702', '26', '47.99960', '7.75210');
+INSERT INTO `settlement` VALUES ('3764', 'War Gaduud', '1702049038', '1702', '26', '47.83083', '7.66083');
+INSERT INTO `settlement` VALUES ('3765', 'Xaaji Kheyr', '1702049034', '1702', '26', '47.63445', '7.62833');
+INSERT INTO `settlement` VALUES ('3766', 'Xamur', '1702049054', '1702', '26', '49.15917', '7.95972');
+INSERT INTO `settlement` VALUES ('3767', 'Xas Bahale', '1702039004', '1702', '26', '49.15988', '7.96006');
+INSERT INTO `settlement` VALUES ('3768', 'Yoonbeys', '1702049056', '1702', '26', '49.00500', '8.01750');
+INSERT INTO `settlement` VALUES ('3769', 'Arin Ragazz', '1703029026', '1703', '27', '49.87100', '7.99870');
+INSERT INTO `settlement` VALUES ('3770', 'Arisimo', '1703029008', '1703', '27', '49.14910', '7.80120');
+INSERT INTO `settlement` VALUES ('3771', 'Baarbacadle', '1703029010', '1703', '27', '49.80110', '7.81810');
+INSERT INTO `settlement` VALUES ('3772', 'Bacad Weyn', '1703049034', '1703', '27', '49.39944', '7.98000');
+INSERT INTO `settlement` VALUES ('3773', 'Balli Dacar', '1703049030', '1703', '27', '49.81306', '7.97611');
+INSERT INTO `settlement` VALUES ('3774', 'Baqbaq', '1703049032', '1703', '27', '49.48833', '7.82861');
+INSERT INTO `settlement` VALUES ('3775', 'Budunbuto', '1703039002', '1703', '27', '49.42190', '8.51654');
+INSERT INTO `settlement` VALUES ('3776', 'Dag Lahaa', '1703029012', '1703', '27', '49.92840', '8.04790');
+INSERT INTO `settlement` VALUES ('3777', 'Dighelli', '1703029014', '1703', '27', '49.47860', '7.83200');
+INSERT INTO `settlement` VALUES ('3778', 'Gaalacoodday', '1703029016', '1703', '27', '49.72260', '7.55170');
+INSERT INTO `settlement` VALUES ('3779', 'God Cad', '1703029018', '1703', '27', '49.74710', '8.05120');
+INSERT INTO `settlement` VALUES ('3780', 'Godob Addon', '1703029020', '1703', '27', '49.52810', '7.66930');
+INSERT INTO `settlement` VALUES ('3781', 'Hodol Dabab', '1703029022', '1703', '27', '49.67860', '8.44810');
+INSERT INTO `settlement` VALUES ('3782', 'Il Maradi', '1703029024', '1703', '27', '49.80120', '8.02070');
+INSERT INTO `settlement` VALUES ('3783', 'Jalam', '1703049028', '1703', '27', '49.42028', '8.51639');
+INSERT INTO `settlement` VALUES ('3784', 'Konoco', '1703049036', '1703', '27', '49.57750', '8.49528');
+INSERT INTO `settlement` VALUES ('3785', 'Laas Burre', '1703029004', '1703', '27', '49.24800', '8.19760');
+INSERT INTO `settlement` VALUES ('3786', 'Moraro', '1703029006', '1703', '27', '49.17710', '7.92930');
+INSERT INTO `settlement` VALUES ('3787', 'Sinujiif', '1703049038', '1703', '27', '49.06778', '7.72944');
+INSERT INTO `settlement` VALUES ('3788', 'Af Gadud', '1701029018', '1701', '25', '49.15160', '8.38290');
+INSERT INTO `settlement` VALUES ('3789', 'Bihiyo', '1701029020', '1701', '25', '49.11780', '8.72850');
+INSERT INTO `settlement` VALUES ('3790', 'Birta Dheer', '1701049056', '1701', '25', '48.30583', '8.25639');
+INSERT INTO `settlement` VALUES ('3791', 'Bug Tugo', '1701029022', '1701', '25', '49.02210', '8.36990');
+INSERT INTO `settlement` VALUES ('3792', 'Calahargo', '1701029024', '1701', '25', '48.69870', '8.37220');
+INSERT INTO `settlement` VALUES ('3793', 'Ceel Buh', '1701049048', '1701', '25', '49.23222', '8.56194');
+INSERT INTO `settlement` VALUES ('3794', 'Darin Tog', '1701029028', '1701', '25', '48.27230', '8.22830');
+INSERT INTO `settlement` VALUES ('3795', 'Dhira Doba', '1701029030', '1701', '25', '48.84910', '8.69700');
+INSERT INTO `settlement` VALUES ('3796', 'Diilinmaxato', '1701049052', '1701', '25', '49.19305', '8.59222');
+INSERT INTO `settlement` VALUES ('3797', 'Duss', '1701029032', '1701', '25', '48.27730', '8.27110');
+INSERT INTO `settlement` VALUES ('3798', 'El Chebed', '1701029034', '1701', '25', '48.87150', '8.80110');
+INSERT INTO `settlement` VALUES ('3799', 'El Goddumei', '1701029036', '1701', '25', '48.77850', '8.53010');
+INSERT INTO `settlement` VALUES ('3800', 'Farahgeri', '1701029038', '1701', '25', '49.00140', '8.97840');
+INSERT INTO `settlement` VALUES ('3801', 'Geida Debabo', '1701029042', '1701', '25', '48.38050', '8.57700');
+INSERT INTO `settlement` VALUES ('3802', 'Gudgawobeh', '1701029046', '1701', '25', '48.36751', '8.37798');
+INSERT INTO `settlement` VALUES ('3803', 'Isghibil', '1701029044', '1701', '25', '49.22040', '8.70080');
+INSERT INTO `settlement` VALUES ('3804', 'Kalabayr', '1701049058', '1701', '25', '48.48639', '8.41278');
+INSERT INTO `settlement` VALUES ('3805', 'Kalis', '1701039004', '1701', '25', '49.04633', '8.43591');
+INSERT INTO `settlement` VALUES ('3806', 'Laas Dalbshan', '1701029008', '1701', '25', '49.02280', '8.82270');
+INSERT INTO `settlement` VALUES ('3807', 'Las Anelot', '1701029010', '1701', '25', '48.27040', '8.22110');
+INSERT INTO `settlement` VALUES ('3808', 'Lavadulli', '1701029012', '1701', '25', '48.87000', '8.45280');
+INSERT INTO `settlement` VALUES ('3809', 'Lugo', '1701029014', '1701', '25', '48.40190', '8.34720');
+INSERT INTO `settlement` VALUES ('3810', 'Nar', '1701029016', '1701', '25', '48.93280', '8.82090');
+INSERT INTO `settlement` VALUES ('3811', 'Qalanqal', '1701049054', '1701', '25', '49.10083', '8.39611');
+INSERT INTO `settlement` VALUES ('3812', 'Rabaable', '1701039002', '1701', '25', '48.29549', '8.28128');
+INSERT INTO `settlement` VALUES ('3813', 'Reebanti', '1701049060', '1701', '25', '48.48139', '8.40861');
+INSERT INTO `settlement` VALUES ('3814', 'Scef Garas', '1701029040', '1701', '25', '49.00150', '8.41780');
+INSERT INTO `settlement` VALUES ('3815', 'Siiga Dheer', '1701049064', '1701', '25', '48.74222', '8.72333');
+INSERT INTO `settlement` VALUES ('3816', 'Sinujiif', '1701039006', '1701', '25', '48.98689', '8.53419');
+INSERT INTO `settlement` VALUES ('3817', 'Timirka', '1701049062', '1701', '25', '49.05639', '8.15444');
+INSERT INTO `settlement` VALUES ('3818', 'Uar Ueiten', '1701029026', '1701', '25', '48.57190', '8.27230');
+INSERT INTO `settlement` VALUES ('3819', 'Xasbahale', '1701049050', '1701', '25', '48.61611', '8.57917');
+INSERT INTO `settlement` VALUES ('3820', 'Ballanbaal', '1502039012', '1502', '17', '46.67711', '9.59841');
+INSERT INTO `settlement` VALUES ('3821', 'Camoud', '1502049046', '1502', '17', '47.22889', '9.95694');
+INSERT INTO `settlement` VALUES ('3822', 'Cankhor', '1502029032', '1502', '17', '46.21830', '10.76950');
+INSERT INTO `settlement` VALUES ('3823', 'Ceelal', '1502039004', '1502', '17', '46.24233', '9.91665');
+INSERT INTO `settlement` VALUES ('3824', 'Dagah Gudud', '1502029036', '1502', '17', '46.29810', '10.72250');
+INSERT INTO `settlement` VALUES ('3825', 'Dhur Cilaan', '1502039022', '1502', '17', '46.35132', '10.12655');
+INSERT INTO `settlement` VALUES ('3826', 'Ferdi Gab', '1502029038', '1502', '17', '47.03240', '9.63290');
+INSERT INTO `settlement` VALUES ('3827', 'Gal Shiikh', '1502039016', '1502', '17', '47.20477', '10.06802');
+INSERT INTO `settlement` VALUES ('3828', 'Gobol Gobol', '1502029042', '1502', '17', '46.70060', '9.59850');
+INSERT INTO `settlement` VALUES ('3829', 'Gudmo Biyo Cas', '1502039024', '1502', '17', '46.95408', '10.59003');
+INSERT INTO `settlement` VALUES ('3830', 'Guud Caanood', '1502039018', '1502', '17', '47.30616', '10.11181');
+INSERT INTO `settlement` VALUES ('3831', 'Huluul', '1502039006', '1502', '17', '46.70077', '9.97119');
+INSERT INTO `settlement` VALUES ('3832', 'Ilad', '1502039014', '1502', '17', '47.11651', '10.16966');
+INSERT INTO `settlement` VALUES ('3833', 'Jidbaale', '1502029044', '1502', '17', '47.17240', '9.97780');
+INSERT INTO `settlement` VALUES ('3834', 'Kaldaray', '1502039008', '1502', '17', '46.57479', '9.84207');
+INSERT INTO `settlement` VALUES ('3835', 'Koolo', '1502039020', '1502', '17', '46.19277', '10.12463');
+INSERT INTO `settlement` VALUES ('3836', 'Laas Doomaare', '1502039010', '1502', '17', '46.88803', '9.85419');
+INSERT INTO `settlement` VALUES ('3837', 'Mulaax', '1502039026', '1502', '17', '46.71824', '10.77527');
+INSERT INTO `settlement` VALUES ('3838', 'Mundila Bayi', '1502029028', '1502', '17', '46.76900', '10.79880');
+INSERT INTO `settlement` VALUES ('3839', 'Raguuda', '1502029040', '1502', '17', '46.62170', '10.69910');
+INSERT INTO `settlement` VALUES ('3840', 'Ras Wed', '1502029030', '1502', '17', '46.56800', '9.89940');
+INSERT INTO `settlement` VALUES ('3841', 'Sinnar', '1502029034', '1502', '17', '46.98070', '9.56870');
+INSERT INTO `settlement` VALUES ('3842', 'Badhan', '1501039016', '1501', '16', '48.33312', '10.71324');
+INSERT INTO `settlement` VALUES ('3843', 'Baraaktaqol', '1501039012', '1501', '16', '48.48764', '9.55723');
+INSERT INTO `settlement` VALUES ('3844', 'Buq', '1501039022', '1501', '16', '47.17985', '10.62234');
+INSERT INTO `settlement` VALUES ('3845', 'Cabaydh', '1501039042', '1501', '16', '47.45628', '10.81020');
+INSERT INTO `settlement` VALUES ('3846', 'Carmaale', '1501039052', '1501', '16', '47.95862', '10.47946');
+INSERT INTO `settlement` VALUES ('3847', 'Ceel Laqoday', '1501039020', '1501', '16', '47.41343', '10.64132');
+INSERT INTO `settlement` VALUES ('3848', 'Ceelbul', '1501039050', '1501', '16', '48.30836', '10.22673');
+INSERT INTO `settlement` VALUES ('3849', 'Celaya', '1501029060', '1501', '16', '47.29760', '10.76910');
+INSERT INTO `settlement` VALUES ('3850', 'Daloh', '1501029062', '1501', '16', '47.30080', '10.76840');
+INSERT INTO `settlement` VALUES ('3851', 'Dararweyne', '1501039004', '1501', '16', '47.52736', '9.75728');
+INSERT INTO `settlement` VALUES ('3852', 'Darsi', '1501029064', '1501', '16', '47.27940', '9.46720');
+INSERT INTO `settlement` VALUES ('3853', 'Dayaxa', '1501039024', '1501', '16', '47.18728', '10.58211');
+INSERT INTO `settlement` VALUES ('3854', 'Durdur', '1501039048', '1501', '16', '47.42990', '10.22339');
+INSERT INTO `settlement` VALUES ('3855', 'Fararali', '1501029066', '1501', '16', '48.29970', '10.41950');
+INSERT INTO `settlement` VALUES ('3856', 'Fiqi Fuliye', '1501039018', '1501', '16', '47.78165', '10.02702');
+INSERT INTO `settlement` VALUES ('3857', 'Garabcad', '1501039002', '1501', '16', '47.51914', '9.93074');
+INSERT INTO `settlement` VALUES ('3858', 'Gudmo Afat', '1501039026', '1501', '16', '47.09696', '10.58632');
+INSERT INTO `settlement` VALUES ('3859', 'Hadaaftimo', '1501039014', '1501', '16', '48.10497', '10.76536');
+INSERT INTO `settlement` VALUES ('3860', 'Hamas', '1501029072', '1501', '16', '47.52887', '10.78360');
+INSERT INTO `settlement` VALUES ('3861', 'Helem Bahaila', '1501029068', '1501', '16', '47.50160', '11.17150');
+INSERT INTO `settlement` VALUES ('3862', 'Hundegal', '1501029070', '1501', '16', '47.92120', '11.10080');
+INSERT INTO `settlement` VALUES ('3863', 'Jidali', '1501039034', '1501', '16', '47.66663', '10.70059');
+INSERT INTO `settlement` VALUES ('3864', 'Kalgaraf', '1501029056', '1501', '16', '47.79800', '10.15210');
+INSERT INTO `settlement` VALUES ('3865', 'Karin Tuurwa', '1501039046', '1501', '16', '47.61416', '11.01322');
+INSERT INTO `settlement` VALUES ('3866', 'Lo\'aneba', '1501039040', '1501', '16', '47.12841', '10.80156');
+INSERT INTO `settlement` VALUES ('3867', 'Masagan', '1501039028', '1501', '16', '47.44030', '10.46470');
+INSERT INTO `settlement` VALUES ('3868', 'Maydh', '1501039036', '1501', '16', '47.09496', '10.98149');
+INSERT INTO `settlement` VALUES ('3869', 'Midhisho', '1501029058', '1501', '16', '47.55000', '10.75300');
+INSERT INTO `settlement` VALUES ('3870', 'Owrboogeys', '1501039008', '1501', '16', '47.75312', '9.56820');
+INSERT INTO `settlement` VALUES ('3871', 'Rugay', '1501039038', '1501', '16', '47.30584', '10.84592');
+INSERT INTO `settlement` VALUES ('3872', 'Xabaalo Camare', '1501039006', '1501', '16', '47.83317', '9.49481');
+INSERT INTO `settlement` VALUES ('3873', 'Xiis', '1501039054', '1501', '16', '46.91845', '10.89676');
+INSERT INTO `settlement` VALUES ('3874', 'Xingalool', '1501039010', '1501', '16', '48.30962', '9.75354');
+INSERT INTO `settlement` VALUES ('3875', 'Yagoomas', '1501039044', '1501', '16', '47.16684', '10.70891');
+INSERT INTO `settlement` VALUES ('3876', 'Yube', '1501039032', '1501', '16', '47.92119', '10.74873');
+INSERT INTO `settlement` VALUES ('3877', 'Yufle', '1501039030', '1501', '16', '47.19653', '10.37667');
+INSERT INTO `settlement` VALUES ('3878', 'Alhamdulilah', '1503049042', '1503', '18', '49.02889', '10.08472');
+INSERT INTO `settlement` VALUES ('3879', 'Audelle Ier', '1503029026', '1503', '18', '49.01990', '10.65290');
+INSERT INTO `settlement` VALUES ('3880', 'Buraan', '1503039004', '1503', '18', '48.76878', '10.21845');
+INSERT INTO `settlement` VALUES ('3881', 'Ceelayo', '1503039014', '1503', '18', '48.89213', '11.24392');
+INSERT INTO `settlement` VALUES ('3882', 'Daamo', '1503029032', '1503', '18', '48.75190', '10.67080');
+INSERT INTO `settlement` VALUES ('3883', 'Deb Boni', '1503029034', '1503', '18', '49.05000', '9.65280');
+INSERT INTO `settlement` VALUES ('3884', 'Durdur Melo', '1503029036', '1503', '18', '48.72820', '10.98190');
+INSERT INTO `settlement` VALUES ('3885', 'Durduri', '1503039020', '1503', '18', '48.58513', '11.30717');
+INSERT INTO `settlement` VALUES ('3886', 'El Laghodeh', '1503029038', '1503', '18', '48.62930', '9.66740');
+INSERT INTO `settlement` VALUES ('3887', 'Faaracood', '1503029040', '1503', '18', '48.72910', '11.06750');
+INSERT INTO `settlement` VALUES ('3888', 'Geedlarifay', '1503039012', '1503', '18', '48.35680', '10.96938');
+INSERT INTO `settlement` VALUES ('3889', 'Hiil Buraan', '1503039006', '1503', '18', '48.69842', '10.21161');
+INSERT INTO `settlement` VALUES ('3890', 'Laas Xuliya', '1503039018', '1503', '18', '48.68190', '11.03188');
+INSERT INTO `settlement` VALUES ('3891', 'Las Mahan', '1503029022', '1503', '18', '48.25120', '11.19860');
+INSERT INTO `settlement` VALUES ('3892', 'Las Mehein', '1503029024', '1503', '18', '48.50210', '11.17860');
+INSERT INTO `settlement` VALUES ('3893', 'Maraje', '1503039008', '1503', '18', '48.97190', '10.90930');
+INSERT INTO `settlement` VALUES ('3894', 'Qayadsame', '1503049044', '1503', '18', '49.01139', '10.13722');
+INSERT INTO `settlement` VALUES ('3895', 'Rad', '1503039010', '1503', '18', '48.58542', '10.72277');
+INSERT INTO `settlement` VALUES ('3896', 'Uullad', '1503029028', '1503', '18', '48.58010', '11.16970');
+INSERT INTO `settlement` VALUES ('3897', 'Waaciye', '1503049046', '1503', '18', '49.04417', '10.01333');
+INSERT INTO `settlement` VALUES ('3898', 'Xawaal Shawacle', '1503029030', '1503', '18', '48.31710', '11.01960');
+INSERT INTO `settlement` VALUES ('3899', 'Xidid', '1503039016', '1503', '18', '48.59183', '11.06118');
+INSERT INTO `settlement` VALUES ('3900', 'Badweyn', '1402039020', '1402', '13', '46.65588', '8.99482');
+INSERT INTO `settlement` VALUES ('3901', 'Dhanaano', '1402039024', '1402', '13', '46.62754', '9.47291');
+INSERT INTO `settlement` VALUES ('3902', 'Gowsaweyne', '1402039008', '1402', '13', '46.77288', '9.08888');
+INSERT INTO `settlement` VALUES ('3903', 'Guumays', '1402039016', '1402', '13', '46.79449', '8.85213');
+INSERT INTO `settlement` VALUES ('3904', 'Habariheshay', '1402039012', '1402', '13', '46.40495', '8.84070');
+INSERT INTO `settlement` VALUES ('3905', 'Hargo', '1402039026', '1402', '13', '46.49835', '9.49176');
+INSERT INTO `settlement` VALUES ('3906', 'Jable', '1402039022', '1402', '13', '46.10925', '9.97550');
+INSERT INTO `settlement` VALUES ('3907', 'Oog', '1402039018', '1402', '13', '46.61836', '8.93479');
+INSERT INTO `settlement` VALUES ('3908', 'Qalloocan', '1402039002', '1402', '13', '46.48148', '9.10294');
+INSERT INTO `settlement` VALUES ('3909', 'Qoridheere', '1402039010', '1402', '13', '46.66987', '9.18301');
+INSERT INTO `settlement` VALUES ('3910', 'Tukub', '1402039004', '1402', '13', '46.48363', '9.14462');
+INSERT INTO `settlement` VALUES ('3911', 'Wadamago', '1402039014', '1402', '13', '46.26835', '8.92423');
+INSERT INTO `settlement` VALUES ('3912', 'Wanriir', '1402029028', '1402', '13', '46.20050', '9.47260');
+INSERT INTO `settlement` VALUES ('3913', 'War Idaad', '1402039006', '1402', '13', '46.25154', '9.28301');
+INSERT INTO `settlement` VALUES ('3914', 'Adhicadeeye', '1401039012', '1401', '12', '47.15817', '8.67352');
+INSERT INTO `settlement` VALUES ('3915', 'Boocane', '1401039014', '1401', '12', '47.93614', '8.39598');
+INSERT INTO `settlement` VALUES ('3916', 'Dabataag', '1401039004', '1401', '12', '47.16015', '8.11337');
+INSERT INTO `settlement` VALUES ('3917', 'Dermatile', '1401029024', '1401', '12', '47.87920', '8.63050');
+INSERT INTO `settlement` VALUES ('3918', 'Dhummay', '1401039002', '1401', '12', '47.06398', '8.32913');
+INSERT INTO `settlement` VALUES ('3919', 'Fardhiddin', '1401029026', '1401', '12', '47.98220', '8.06940');
+INSERT INTO `settlement` VALUES ('3920', 'Kalabaydh', '1401039006', '1401', '12', '47.22661', '8.24222');
+INSERT INTO `settlement` VALUES ('3921', 'Karin Dabayl Weyn', '1401039008', '1401', '12', '47.53812', '8.11535');
+INSERT INTO `settlement` VALUES ('3922', 'Karingorfood', '1401039010', '1401', '12', '47.75936', '8.12162');
+INSERT INTO `settlement` VALUES ('3923', 'Korile', '1401039018', '1401', '12', '47.56533', '8.00474');
+INSERT INTO `settlement` VALUES ('3924', 'Laas Magugle', '1401029020', '1401', '12', '47.50040', '8.58280');
+INSERT INTO `settlement` VALUES ('3925', 'Okueleh', '1401029022', '1401', '12', '47.98000', '8.32840');
+INSERT INTO `settlement` VALUES ('3926', 'Sahader', '1401039016', '1401', '12', '47.10245', '8.00443');
+INSERT INTO `settlement` VALUES ('3927', 'Aad', '1403049028', '1403', '14', '49.00278', '9.42750');
+INSERT INTO `settlement` VALUES ('3928', 'Bar Madobeh', '1403029014', '1403', '14', '48.89970', '8.99720');
+INSERT INTO `settlement` VALUES ('3929', 'Carrooley', '1403039002', '1403', '14', '48.14662', '8.85608');
+INSERT INTO `settlement` VALUES ('3930', 'Ceel Dameer', '1403029016', '1403', '14', '48.51790', '9.29990');
+INSERT INTO `settlement` VALUES ('3931', 'Dahan', '1403049026', '1403', '14', '48.99889', '9.36194');
+INSERT INTO `settlement` VALUES ('3932', 'Daran Taleh', '1403029020', '1403', '14', '48.48230', '9.04880');
+INSERT INTO `settlement` VALUES ('3933', 'Doofaaro', '1403039006', '1403', '14', '48.42642', '9.10848');
+INSERT INTO `settlement` VALUES ('3934', 'Gaulo', '1403029022', '1403', '14', '48.28110', '9.03200');
+INSERT INTO `settlement` VALUES ('3935', 'Hah Suga', '1403029024', '1403', '14', '48.13040', '9.16710');
+INSERT INTO `settlement` VALUES ('3936', 'Kal Noolaatay', '1403049030', '1403', '14', '49.05944', '9.46028');
+INSERT INTO `settlement` VALUES ('3937', 'Kheyra Xerta', '1403049032', '1403', '14', '49.04556', '9.49972');
+INSERT INTO `settlement` VALUES ('3938', 'Kombeyo', '1403029010', '1403', '14', '48.58090', '8.92280');
+INSERT INTO `settlement` VALUES ('3939', 'Laanle', '1403029012', '1403', '14', '48.14770', '8.83230');
+INSERT INTO `settlement` VALUES ('3940', 'Qol', '1403039004', '1403', '14', '48.11173', '9.45711');
+INSERT INTO `settlement` VALUES ('3941', 'Wailo', '1403029018', '1403', '14', '48.91750', '9.42110');
+INSERT INTO `settlement` VALUES ('3942', 'Xalin', '1403039008', '1403', '14', '48.62037', '9.08642');
+INSERT INTO `settlement` VALUES ('3943', 'Bohol', '1404039004', '1404', '15', '47.30237', '9.36146');
+INSERT INTO `settlement` VALUES ('3944', 'Ceel Lahelay', '1404029016', '1404', '15', '47.14950', '9.37200');
+INSERT INTO `settlement` VALUES ('3945', 'Darre', '1404029018', '1404', '15', '47.83090', '8.82970');
+INSERT INTO `settlement` VALUES ('3946', 'Darrin Garsit', '1404029020', '1404', '15', '47.58050', '9.46740');
+INSERT INTO `settlement` VALUES ('3947', 'Dumodleh', '1404029022', '1404', '15', '47.09920', '9.41770');
+INSERT INTO `settlement` VALUES ('3948', 'Fiqishinni', '1404039002', '1404', '15', '47.57480', '9.13087');
+INSERT INTO `settlement` VALUES ('3949', 'Garba Gabat', '1404029024', '1404', '15', '47.39810', '8.87950');
+INSERT INTO `settlement` VALUES ('3950', 'Genyu Ado', '1404029026', '1404', '15', '47.48070', '9.29860');
+INSERT INTO `settlement` VALUES ('3951', 'Godaalo', '1404039008', '1404', '15', '47.92379', '9.08910');
+INSERT INTO `settlement` VALUES ('3952', 'Sarmaanyo', '1404039006', '1404', '15', '47.98952', '9.48924');
+INSERT INTO `settlement` VALUES ('3953', 'Tuursubag', '1404029010', '1404', '15', '47.43230', '8.86720');
+INSERT INTO `settlement` VALUES ('3954', 'Wad', '1404029012', '1404', '15', '46.92980', '8.87300');
+INSERT INTO `settlement` VALUES ('3955', 'Xolxol', '1404029014', '1404', '15', '47.74860', '8.94800');
+INSERT INTO `settlement` VALUES ('3956', 'Afgooye', '1301039094', '1301', '8', '45.63299', '9.74523');
+INSERT INTO `settlement` VALUES ('3957', 'Agarada', '1301039122', '1301', '8', '45.68401', '8.62366');
+INSERT INTO `settlement` VALUES ('3958', 'Ali Isa', '1301039118', '1301', '8', '45.50979', '8.54922');
+INSERT INTO `settlement` VALUES ('3959', 'Balanbaal', '1301039048', '1301', '8', '45.77139', '8.88462');
+INSERT INTO `settlement` VALUES ('3960', 'Ballay Hiile', '1301039022', '1301', '8', '45.57953', '9.18028');
+INSERT INTO `settlement` VALUES ('3961', 'Balleh Dig', '1301039110', '1301', '8', '45.90811', '8.37342');
+INSERT INTO `settlement` VALUES ('3962', 'Balli Calanle', '1301039082', '1301', '8', '45.97428', '8.55052');
+INSERT INTO `settlement` VALUES ('3963', 'Ballicalanle', '1301039080', '1301', '8', '46.08188', '8.59136');
+INSERT INTO `settlement` VALUES ('3964', 'Beer', '1301039102', '1301', '8', '45.74259', '9.36877');
+INSERT INTO `settlement` VALUES ('3965', 'Beli Adaax', '1301039050', '1301', '8', '45.73608', '8.85978');
+INSERT INTO `settlement` VALUES ('3966', 'Bilcilwayso', '1301039042', '1301', '8', '45.57913', '8.93609');
+INSERT INTO `settlement` VALUES ('3967', 'Bisiqa', '1301039034', '1301', '8', '45.47612', '8.70475');
+INSERT INTO `settlement` VALUES ('3968', 'Bodhley', '1301039036', '1301', '8', '45.30436', '8.91514');
+INSERT INTO `settlement` VALUES ('3969', 'Boodhlay', '1301039092', '1301', '8', '45.57286', '9.79616');
+INSERT INTO `settlement` VALUES ('3970', 'Cadow Jurara', '1301039006', '1301', '8', '45.42115', '9.26943');
+INSERT INTO `settlement` VALUES ('3971', 'Calan Dabe', '1301029136', '1301', '8', '45.90060', '8.74720');
+INSERT INTO `settlement` VALUES ('3972', 'Cali Saahid', '1301039004', '1301', '8', '45.39466', '9.11621');
+INSERT INTO `settlement` VALUES ('3973', 'Ceek', '1301039038', '1301', '8', '45.35863', '8.99920');
+INSERT INTO `settlement` VALUES ('3974', 'Ceel Baxay', '1301049144', '1301', '8', '45.90861', '10.03556');
+INSERT INTO `settlement` VALUES ('3975', 'Ceel Dheere', '1301039096', '1301', '8', '45.81781', '9.67730');
+INSERT INTO `settlement` VALUES ('3976', 'Daba Qabad', '1301039064', '1301', '8', '45.81463', '8.69206');
+INSERT INTO `settlement` VALUES ('3977', 'Dakhanyado', '1301029138', '1301', '8', '45.59980', '9.49790');
+INSERT INTO `settlement` VALUES ('3978', 'Dandan', '1301039062', '1301', '8', '45.92953', '8.76029');
+INSERT INTO `settlement` VALUES ('3979', 'Daryaleh', '1301039114', '1301', '8', '45.76122', '8.42054');
+INSERT INTO `settlement` VALUES ('3980', 'Durukhs', '1301039120', '1301', '8', '45.47139', '8.51715');
+INSERT INTO `settlement` VALUES ('3981', 'Fiqi Ayuub', '1301039098', '1301', '8', '46.02640', '9.93681');
+INSERT INTO `settlement` VALUES ('3982', 'Gaba Gabo', '1301039090', '1301', '8', '45.89134', '9.79674');
+INSERT INTO `settlement` VALUES ('3983', 'Galooley', '1301039088', '1301', '8', '45.30658', '9.78474');
+INSERT INTO `settlement` VALUES ('3984', 'Gola Fardod', '1301029142', '1301', '8', '45.60200', '8.76940');
+INSERT INTO `settlement` VALUES ('3985', 'Gorayaood', '1301039002', '1301', '8', '45.28953', '9.03464');
+INSERT INTO `settlement` VALUES ('3986', 'Gorayo Humeh', '1301039124', '1301', '8', '45.33162', '8.60940');
+INSERT INTO `settlement` VALUES ('3987', 'Goyta', '1301039084', '1301', '8', '45.44188', '9.68394');
+INSERT INTO `settlement` VALUES ('3988', 'Gubataxil', '1301039040', '1301', '8', '45.46558', '8.77947');
+INSERT INTO `settlement` VALUES ('3989', 'Gumburlibaax', '1301039014', '1301', '8', '45.75745', '9.07997');
+INSERT INTO `settlement` VALUES ('3990', 'Habeidleh', '1301039116', '1301', '8', '45.64323', '8.46568');
+INSERT INTO `settlement` VALUES ('3991', 'Haldirir', '1301039126', '1301', '8', '45.43100', '8.74600');
+INSERT INTO `settlement` VALUES ('3992', 'Here', '1301039074', '1301', '8', '45.85168', '8.66062');
+INSERT INTO `settlement` VALUES ('3993', 'Hogganka Mashruuca', '1301039106', '1301', '8', '45.45495', '9.46817');
+INSERT INTO `settlement` VALUES ('3994', 'Iima Shiikh', '1301039104', '1301', '8', '45.47116', '9.34979');
+INSERT INTO `settlement` VALUES ('3995', 'Inaafmadow', '1301039018', '1301', '8', '45.94130', '9.15520');
+INSERT INTO `settlement` VALUES ('3996', 'Inadadan', '1301039076', '1301', '8', '45.91265', '8.59517');
+INSERT INTO `settlement` VALUES ('3997', 'Iskudhoon', '1301039024', '1301', '8', '45.54377', '9.26753');
+INSERT INTO `settlement` VALUES ('3998', 'Jaamac Liibaan', '1301039044', '1301', '8', '45.72127', '8.96467');
+INSERT INTO `settlement` VALUES ('3999', 'Jami Gaban', '1301039112', '1301', '8', '45.70618', '8.56308');
+INSERT INTO `settlement` VALUES ('4000', 'Kal Qaliifo', '1301039032', '1301', '8', '46.03065', '9.12019');
+INSERT INTO `settlement` VALUES ('4001', 'Kiridh', '1301039070', '1301', '8', '46.13271', '8.97950');
+INSERT INTO `settlement` VALUES ('4002', 'Kundulah', '1301029128', '1301', '8', '45.55290', '9.03290');
+INSERT INTO `settlement` VALUES ('4003', 'Labiguun', '1301039010', '1301', '8', '45.57760', '9.09258');
+INSERT INTO `settlement` VALUES ('4004', 'Lebe Bos', '1301029130', '1301', '8', '45.46710', '9.23140');
+INSERT INTO `settlement` VALUES ('4005', 'Lebe Rare', '1301029132', '1301', '8', '45.88090', '9.24980');
+INSERT INTO `settlement` VALUES ('4006', 'Libaaxley', '1301039066', '1301', '8', '45.66860', '8.68653');
+INSERT INTO `settlement` VALUES ('4007', 'Naqdhabijo', '1301039020', '1301', '8', '45.72866', '9.16603');
+INSERT INTO `settlement` VALUES ('4008', 'Nasiye', '1301039056', '1301', '8', '45.63554', '8.74877');
+INSERT INTO `settlement` VALUES ('4009', 'Qararro', '1301039072', '1301', '8', '46.16769', '8.89638');
+INSERT INTO `settlement` VALUES ('4010', 'Qeedi Haan', '1301039012', '1301', '8', '45.65981', '9.02625');
+INSERT INTO `settlement` VALUES ('4011', 'Qoryale', '1301039016', '1301', '8', '45.97054', '9.07047');
+INSERT INTO `settlement` VALUES ('4012', 'Qudhacdheer', '1301039100', '1301', '8', '45.49779', '9.58800');
+INSERT INTO `settlement` VALUES ('4013', 'Qudhaosafar', '1301039060', '1301', '8', '45.81014', '8.77540');
+INSERT INTO `settlement` VALUES ('4014', 'Qundalle', '1301029134', '1301', '8', '45.57720', '9.07900');
+INSERT INTO `settlement` VALUES ('4015', 'Rayaare', '1301029140', '1301', '8', '45.94860', '8.48000');
+INSERT INTO `settlement` VALUES ('4016', 'Sanyare', '1301039008', '1301', '8', '45.58428', '9.00533');
+INSERT INTO `settlement` VALUES ('4017', 'Shanshacade', '1301039078', '1301', '8', '45.93315', '8.65475');
+INSERT INTO `settlement` VALUES ('4018', 'Shiikh Aba Yoonis', '1301039068', '1301', '8', '46.16385', '8.92957');
+INSERT INTO `settlement` VALUES ('4019', 'Suryo Qansax', '1301039028', '1301', '8', '45.52092', '9.33267');
+INSERT INTO `settlement` VALUES ('4020', 'Ulla San', '1301039030', '1301', '8', '46.18629', '9.02505');
+INSERT INTO `settlement` VALUES ('4021', 'Ununley', '1301039026', '1301', '8', '45.82615', '9.26264');
+INSERT INTO `settlement` VALUES ('4022', 'Wadhan', '1301039108', '1301', '8', '45.31442', '9.63244');
+INSERT INTO `settlement` VALUES ('4023', 'War Cimraan', '1301039046', '1301', '8', '45.89273', '8.80054');
+INSERT INTO `settlement` VALUES ('4024', 'Warabeye', '1301039052', '1301', '8', '45.57674', '8.87639');
+INSERT INTO `settlement` VALUES ('4025', 'Xaydhducaale', '1301039058', '1301', '8', '45.73473', '8.71750');
+INSERT INTO `settlement` VALUES ('4026', 'Ximan', '1301039086', '1301', '8', '45.46204', '9.79173');
+INSERT INTO `settlement` VALUES ('4027', 'Xuseen Xamar', '1301039054', '1301', '8', '45.54083', '8.80413');
+INSERT INTO `settlement` VALUES ('4028', 'Baleh Dandan', '1302029040', '1302', '9', '46.53090', '8.20020');
+INSERT INTO `settlement` VALUES ('4029', 'Beras', '1302029042', '1302', '9', '46.29980', '8.54960');
+INSERT INTO `settlement` VALUES ('4030', 'Booc', '1302039014', '1302', '9', '46.61197', '8.63982');
+INSERT INTO `settlement` VALUES ('4031', 'Caroweyn', '1302039018', '1302', '9', '46.59060', '8.53603');
+INSERT INTO `settlement` VALUES ('4032', 'Cudanlay', '1302039002', '1302', '9', '46.48099', '8.32779');
+INSERT INTO `settlement` VALUES ('4033', 'Dabo Kabud', '1302029044', '1302', '9', '46.66940', '8.25070');
+INSERT INTO `settlement` VALUES ('4034', 'Darkein Genyo', '1302039036', '1302', '9', '46.99073', '8.00164');
+INSERT INTO `settlement` VALUES ('4035', 'Dhallaamocune', '1302039030', '1302', '9', '46.62178', '8.37543');
+INSERT INTO `settlement` VALUES ('4036', 'Dhilaalo', '1302039024', '1302', '9', '46.46499', '8.44116');
+INSERT INTO `settlement` VALUES ('4037', 'Dogo Kabud', '1302029046', '1302', '9', '46.64770', '8.21840');
+INSERT INTO `settlement` VALUES ('4038', 'Dula Carcaraaf', '1302039004', '1302', '9', '46.39069', '8.80285');
+INSERT INTO `settlement` VALUES ('4039', 'Goonle', '1302039032', '1302', '9', '46.52311', '8.36036');
+INSERT INTO `settlement` VALUES ('4040', 'Hadhwanaag', '1302039008', '1302', '9', '46.72213', '8.70855');
+INSERT INTO `settlement` VALUES ('4041', 'Higleh Gorder', '1302029048', '1302', '9', '46.75040', '8.24780');
+INSERT INTO `settlement` VALUES ('4042', 'Horufadhi', '1302039012', '1302', '9', '46.40102', '8.58024');
+INSERT INTO `settlement` VALUES ('4043', 'Iaheele', '1302029050', '1302', '9', '47.06880', '8.52880');
+INSERT INTO `settlement` VALUES ('4044', 'Laasadhaar', '1302039016', '1302', '9', '46.88104', '8.58024');
+INSERT INTO `settlement` VALUES ('4045', 'Megagle', '1302039022', '1302', '9', '46.29152', '8.47264');
+INSERT INTO `settlement` VALUES ('4046', 'Musa Ghudeir', '1302029038', '1302', '9', '46.59880', '8.32860');
+INSERT INTO `settlement` VALUES ('4047', 'Qoorlugud', '1302039020', '1302', '9', '46.22359', '8.55228');
+INSERT INTO `settlement` VALUES ('4048', 'Sarmaantuqo', '1302039034', '1302', '9', '46.50906', '8.35069');
+INSERT INTO `settlement` VALUES ('4049', 'Widhwidh', '1302039026', '1302', '9', '46.70713', '8.45449');
+INSERT INTO `settlement` VALUES ('4050', 'Xidhxidh', '1302039028', '1302', '9', '46.98879', '8.37587');
+INSERT INTO `settlement` VALUES ('4051', 'Yagoori', '1302039010', '1302', '9', '46.96300', '8.75141');
+INSERT INTO `settlement` VALUES ('4052', 'Yeyle', '1302039006', '1302', '9', '46.61264', '8.69863');
+INSERT INTO `settlement` VALUES ('4053', 'Barcad', '1303039004', '1303', '10', '45.09951', '8.88208');
+INSERT INTO `settlement` VALUES ('4054', 'Beerato', '1303039014', '1303', '10', '45.06751', '9.35651');
+INSERT INTO `settlement` VALUES ('4055', 'Bilcijabe', '1303029074', '1303', '10', '45.25420', '8.59970');
+INSERT INTO `settlement` VALUES ('4056', 'Cabdi Dhere', '1303039040', '1303', '10', '44.78377', '9.08006');
+INSERT INTO `settlement` VALUES ('4057', 'Cabdi-Faarah', '1303039038', '1303', '10', '44.98676', '9.18840');
+INSERT INTO `settlement` VALUES ('4058', 'Camadheere', '1303029056', '1303', '10', '45.07850', '9.24960');
+INSERT INTO `settlement` VALUES ('4059', 'Ceeg Bilcille', '1303039010', '1303', '10', '45.24429', '9.38314');
+INSERT INTO `settlement` VALUES ('4060', 'Ceel Same', '1303039012', '1303', '10', '45.15794', '9.38907');
+INSERT INTO `settlement` VALUES ('4061', 'Darfacle', '1303049076', '1303', '10', '44.93250', '9.44472');
+INSERT INTO `settlement` VALUES ('4062', 'Davegoriale', '1303029058', '1303', '10', '44.83100', '8.75110');
+INSERT INTO `settlement` VALUES ('4063', 'Dubur', '1303039008', '1303', '10', '45.26393', '9.86608');
+INSERT INTO `settlement` VALUES ('4064', 'Duudweeyn', '1303029060', '1303', '10', '44.87170', '9.31950');
+INSERT INTO `settlement` VALUES ('4065', 'Duur-Cad', '1303039044', '1303', '10', '44.96896', '9.02169');
+INSERT INTO `settlement` VALUES ('4066', 'El Hume', '1303029062', '1303', '10', '45.18020', '9.40140');
+INSERT INTO `settlement` VALUES ('4067', 'Galoolleey', '1303039026', '1303', '10', '44.89622', '9.47214');
+INSERT INTO `settlement` VALUES ('4068', 'Gedobeh', '1303039048', '1303', '10', '45.13404', '8.81292');
+INSERT INTO `settlement` VALUES ('4069', 'Getiitaley', '1303039022', '1303', '10', '44.86412', '9.51889');
+INSERT INTO `settlement` VALUES ('4070', 'Go\' Yar', '1303039006', '1303', '10', '45.00616', '9.76120');
+INSERT INTO `settlement` VALUES ('4071', 'Gobdheere', '1303039024', '1303', '10', '44.84355', '9.52584');
+INSERT INTO `settlement` VALUES ('4072', 'Godama Dera', '1303029064', '1303', '10', '44.95250', '9.25180');
+INSERT INTO `settlement` VALUES ('4073', 'Go\'oo', '1303039032', '1303', '10', '44.90840', '9.78640');
+INSERT INTO `settlement` VALUES ('4074', 'Gosol', '1303039016', '1303', '10', '45.01794', '9.33634');
+INSERT INTO `settlement` VALUES ('4075', 'Gud Ado', '1303029066', '1303', '10', '45.16870', '8.79840');
+INSERT INTO `settlement` VALUES ('4076', 'Haji Saleh', '1303039050', '1303', '10', '45.23699', '8.59396');
+INSERT INTO `settlement` VALUES ('4077', 'Haqayo Malaasle', '1303039018', '1303', '10', '45.12664', '9.62106');
+INSERT INTO `settlement` VALUES ('4078', 'Haro Shiikh', '1303039036', '1303', '10', '44.75758', '9.31625');
+INSERT INTO `settlement` VALUES ('4079', 'Hebateh', '1303029068', '1303', '10', '44.75150', '9.12890');
+INSERT INTO `settlement` VALUES ('4080', 'Iskudar', '1303039030', '1303', '10', '44.98347', '9.90648');
+INSERT INTO `settlement` VALUES ('4081', 'Iyehyeh', '1303029070', '1303', '10', '45.02170', '9.37110');
+INSERT INTO `settlement` VALUES ('4082', 'Jaleelo', '1303029072', '1303', '10', '44.72930', '9.17280');
+INSERT INTO `settlement` VALUES ('4083', 'Kain Galoleh', '1303029052', '1303', '10', '45.01860', '9.09730');
+INSERT INTO `settlement` VALUES ('4084', 'Liban Esa', '1303029054', '1303', '10', '44.84930', '9.36870');
+INSERT INTO `settlement` VALUES ('4085', 'Oolqol ka Madoobe', '1303039042', '1303', '10', '44.91179', '9.04086');
+INSERT INTO `settlement` VALUES ('4086', 'Qallocato', '1303039020', '1303', '10', '44.90599', '9.52511');
+INSERT INTO `settlement` VALUES ('4087', 'Qurac Kudle', '1303039002', '1303', '10', '45.13491', '9.02433');
+INSERT INTO `settlement` VALUES ('4088', 'Reidab Khatumo', '1303039046', '1303', '10', '45.02832', '8.66563');
+INSERT INTO `settlement` VALUES ('4089', 'Wacays Oodane', '1303039034', '1303', '10', '44.74370', '8.94961');
+INSERT INTO `settlement` VALUES ('4090', 'Xaaxi', '1303039028', '1303', '10', '44.96547', '9.35096');
+INSERT INTO `settlement` VALUES ('4091', 'Bixinduule', '1304039030', '1304', '11', '45.10383', '10.16303');
+INSERT INTO `settlement` VALUES ('4092', 'Calaacule', '1304039008', '1304', '11', '45.09718', '9.92924');
+INSERT INTO `settlement` VALUES ('4093', 'Dagaane', '1304029038', '1304', '11', '45.17080', '10.08210');
+INSERT INTO `settlement` VALUES ('4094', 'Dameer', '1304039002', '1304', '11', '45.34038', '9.91735');
+INSERT INTO `settlement` VALUES ('4095', 'Gal Cad', '1304039010', '1304', '11', '45.04893', '9.91956');
+INSERT INTO `settlement` VALUES ('4096', 'Gal Madoobe', '1304039014', '1304', '11', '45.33187', '9.95452');
+INSERT INTO `settlement` VALUES ('4097', 'Gedeys', '1304039022', '1304', '11', '45.45971', '9.94846');
+INSERT INTO `settlement` VALUES ('4098', 'Gugux', '1304039018', '1304', '11', '45.40389', '9.96524');
+INSERT INTO `settlement` VALUES ('4099', 'Huddisa', '1304039012', '1304', '11', '45.16441', '9.99939');
+INSERT INTO `settlement` VALUES ('4100', 'Kalarog', '1304039006', '1304', '11', '45.29854', '9.92271');
+INSERT INTO `settlement` VALUES ('4101', 'Kalbarre', '1304039024', '1304', '11', '45.57134', '9.90523');
+INSERT INTO `settlement` VALUES ('4102', 'Laaleys', '1304039032', '1304', '11', '45.15261', '10.07947');
+INSERT INTO `settlement` VALUES ('4103', 'Mijacaseeye', '1304039028', '1304', '11', '45.10965', '10.13740');
+INSERT INTO `settlement` VALUES ('4104', 'Sugsade', '1304039004', '1304', '11', '45.32931', '9.94136');
+INSERT INTO `settlement` VALUES ('4105', 'Sugsade', '1304039016', '1304', '11', '45.36916', '9.95289');
+INSERT INTO `settlement` VALUES ('4106', 'Tulo Dibijo', '1304029034', '1304', '11', '45.30050', '10.07010');
+INSERT INTO `settlement` VALUES ('4107', 'Wadaba', '1304029036', '1304', '11', '45.04900', '10.07230');
+INSERT INTO `settlement` VALUES ('4108', 'Wagar', '1304039020', '1304', '11', '45.40004', '9.95872');
+INSERT INTO `settlement` VALUES ('4109', 'Ximan', '1304039026', '1304', '11', '45.50247', '9.85908');
+INSERT INTO `settlement` VALUES ('4110', 'Adhi-Cadays', '1202049046', '1202', '6', '44.75500', '10.40722');
+INSERT INTO `settlement` VALUES ('4111', 'Ago Merodeh', '1202029026', '1202', '6', '44.66810', '10.21780');
+INSERT INTO `settlement` VALUES ('4112', 'Batalaale', '1202029028', '1202', '6', '45.12000', '10.48010');
+INSERT INTO `settlement` VALUES ('4113', 'Ceel Dhaareed', '1202029030', '1202', '6', '45.59710', '10.71760');
+INSERT INTO `settlement` VALUES ('4114', 'Ceel Shiikh', '1202039014', '1202', '6', '44.25942', '10.43873');
+INSERT INTO `settlement` VALUES ('4115', 'Daragodle', '1202039018', '1202', '6', '44.84912', '10.16635');
+INSERT INTO `settlement` VALUES ('4116', 'Dayer Gal', '1202029036', '1202', '6', '45.68250', '10.73080');
+INSERT INTO `settlement` VALUES ('4117', 'Dubar', '1202039012', '1202', '6', '45.05016', '10.34225');
+INSERT INTO `settlement` VALUES ('4118', 'El Madoba', '1202029038', '1202', '6', '45.89930', '10.65080');
+INSERT INTO `settlement` VALUES ('4119', 'Gargaar', '1202049048', '1202', '6', '44.51472', '10.23306');
+INSERT INTO `settlement` VALUES ('4120', 'Geeri', '1202039016', '1202', '6', '44.56973', '10.37428');
+INSERT INTO `settlement` VALUES ('4121', 'Halle', '1202029044', '1202', '6', '45.41940', '10.38080');
+INSERT INTO `settlement` VALUES ('4122', 'Laas Dhuure', '1202039006', '1202', '6', '45.98347', '10.17478');
+INSERT INTO `settlement` VALUES ('4123', 'Lafaruug', '1202039022', '1202', '6', '44.77421', '10.01056');
+INSERT INTO `settlement` VALUES ('4124', 'Laso-Dacawo', '1202049052', '1202', '6', '44.98139', '10.04972');
+INSERT INTO `settlement` VALUES ('4125', 'Qabura', '1202029024', '1202', '6', '45.72050', '10.75080');
+INSERT INTO `settlement` VALUES ('4126', 'Samafara', '1202029040', '1202', '6', '44.55260', '10.08230');
+INSERT INTO `settlement` VALUES ('4127', 'Shimbiraale', '1202039010', '1202', '6', '45.02249', '10.13130');
+INSERT INTO `settlement` VALUES ('4128', 'Siyaara', '1202029032', '1202', '6', '45.27200', '10.57900');
+INSERT INTO `settlement` VALUES ('4129', 'Waibioh', '1202029034', '1202', '6', '44.26710', '10.30280');
+INSERT INTO `settlement` VALUES ('4130', 'Xabalo-Tumalo', '1202049050', '1202', '6', '44.89389', '10.21361');
+INSERT INTO `settlement` VALUES ('4131', 'Xagal', '1202039008', '1202', '6', '45.73958', '10.25114');
+INSERT INTO `settlement` VALUES ('4132', 'Xamaas', '1202039020', '1202', '6', '44.81410', '10.08437');
+INSERT INTO `settlement` VALUES ('4133', 'Xiinweyni', '1202039004', '1202', '6', '44.88980', '9.95731');
+INSERT INTO `settlement` VALUES ('4134', 'Yos', '1202029042', '1202', '6', '45.66970', '10.77160');
+INSERT INTO `settlement` VALUES ('4135', 'Ada', '1203029088', '1203', '7', '43.77740', '9.91780');
+INSERT INTO `settlement` VALUES ('4136', 'Agabar', '1203039036', '1203', '7', '43.91871', '9.92485');
+INSERT INTO `settlement` VALUES ('4137', 'Agamsaha', '1203039058', '1203', '7', '43.71970', '9.68276');
+INSERT INTO `settlement` VALUES ('4138', 'Akamso', '1203039026', '1203', '7', '43.65366', '9.66385');
+INSERT INTO `settlement` VALUES ('4139', 'Allaybaday', '1203049128', '1203', '7', '43.52306', '9.38528');
+INSERT INTO `settlement` VALUES ('4140', 'Arroberar', '1203029090', '1203', '7', '43.44960', '9.60210');
+INSERT INTO `settlement` VALUES ('4141', 'Baceyga', '1203039030', '1203', '7', '43.39122', '9.65502');
+INSERT INTO `settlement` VALUES ('4142', 'Biyo As', '1203029092', '1203', '7', '43.85000', '9.76910');
+INSERT INTO `settlement` VALUES ('4143', 'Boocda Kabaab', '1203039042', '1203', '7', '43.60005', '9.83580');
+INSERT INTO `settlement` VALUES ('4144', 'Boodhka', '1203029094', '1203', '7', '43.48190', '9.92090');
+INSERT INTO `settlement` VALUES ('4145', 'Boodhley', '1203039016', '1203', '7', '43.55433', '9.59332');
+INSERT INTO `settlement` VALUES ('4146', 'Boodhley', '1203039018', '1203', '7', '43.59448', '9.58470');
+INSERT INTO `settlement` VALUES ('4147', 'Boqor', '1203039020', '1203', '7', '43.57199', '9.63726');
+INSERT INTO `settlement` VALUES ('4148', 'Bus', '1203039044', '1203', '7', '43.67391', '9.85622');
+INSERT INTO `settlement` VALUES ('4149', 'Cali-haidh', '1203049120', '1203', '7', '43.78528', '10.04500');
+INSERT INTO `settlement` VALUES ('4150', 'Canjeel', '1203039034', '1203', '7', '43.80633', '9.95747');
+INSERT INTO `settlement` VALUES ('4151', 'Cayngala', '1203029096', '1203', '7', '43.38080', '9.69710');
+INSERT INTO `settlement` VALUES ('4152', 'Ceel Bardale', '1203049132', '1203', '7', '43.47500', '9.82444');
+INSERT INTO `settlement` VALUES ('4153', 'Cumar Aadan', '1203039064', '1203', '7', '43.64613', '9.69922');
+INSERT INTO `settlement` VALUES ('4154', 'Daarimo', '1203039040', '1203', '7', '43.50064', '9.90385');
+INSERT INTO `settlement` VALUES ('4155', 'Dagah Waraba', '1203029100', '1203', '7', '43.82710', '10.00280');
+INSERT INTO `settlement` VALUES ('4156', 'Damerabob', '1203029118', '1203', '7', '43.48650', '9.41740');
+INSERT INTO `settlement` VALUES ('4157', 'Dila', '1203049122', '1203', '7', '43.35695', '9.77444');
+INSERT INTO `settlement` VALUES ('4158', 'Duburaha', '1203039006', '1203', '7', '43.70590', '9.59112');
+INSERT INTO `settlement` VALUES ('4159', 'Dudweyne', '1203029102', '1203', '7', '43.36990', '9.74880');
+INSERT INTO `settlement` VALUES ('4160', 'Fooda', '1203029104', '1203', '7', '43.47240', '9.85200');
+INSERT INTO `settlement` VALUES ('4161', 'Galoolay', '1203039028', '1203', '7', '43.72345', '9.65849');
+INSERT INTO `settlement` VALUES ('4162', 'Galooley', '1203039060', '1203', '7', '43.70295', '9.70667');
+INSERT INTO `settlement` VALUES ('4163', 'Garbadheere', '1203049124', '1203', '7', '43.91250', '9.91472');
+INSERT INTO `settlement` VALUES ('4164', 'Geed Ballaadh', '1203049136', '1203', '7', '43.43083', '9.49417');
+INSERT INTO `settlement` VALUES ('4165', 'Geed Diqsi', '1203029114', '1203', '7', '43.41950', '9.82960');
+INSERT INTO `settlement` VALUES ('4166', 'Godka carrada', '1203049144', '1203', '7', '43.40556', '9.54778');
+INSERT INTO `settlement` VALUES ('4167', 'Gogaysa', '1203039050', '1203', '7', '43.50926', '9.73038');
+INSERT INTO `settlement` VALUES ('4168', 'Gogaysi', '1203039054', '1203', '7', '43.67885', '9.75565');
+INSERT INTO `settlement` VALUES ('4169', 'Gogol Wanaak', '1203039056', '1203', '7', '43.78261', '9.71858');
+INSERT INTO `settlement` VALUES ('4170', 'Golka', '1203039066', '1203', '7', '43.64255', '9.70754');
+INSERT INTO `settlement` VALUES ('4171', 'Gurayar', '1203029116', '1203', '7', '43.47740', '9.75150');
+INSERT INTO `settlement` VALUES ('4172', 'Guulma Waydo', '1203039072', '1203', '7', '43.60228', '9.67173');
+INSERT INTO `settlement` VALUES ('4173', 'Idhan', '1203039032', '1203', '7', '43.42582', '9.65780');
+INSERT INTO `settlement` VALUES ('4174', 'Idhanka Deeryahan', '1203049138', '1203', '7', '43.47000', '9.56833');
+INSERT INTO `settlement` VALUES ('4175', 'Ijaara', '1203039012', '1203', '7', '43.62801', '9.58428');
+INSERT INTO `settlement` VALUES ('4176', 'Ilkaweyne', '1203049146', '1203', '7', '43.40167', '9.68944');
+INSERT INTO `settlement` VALUES ('4177', 'Ilma Dedo', '1203049140', '1203', '7', '43.46861', '9.75278');
+INSERT INTO `settlement` VALUES ('4178', 'Isha Gugban', '1203039038', '1203', '7', '43.63093', '9.93356');
+INSERT INTO `settlement` VALUES ('4179', 'Jameycada', '1203039068', '1203', '7', '43.64100', '9.68954');
+INSERT INTO `settlement` VALUES ('4180', 'Jidhi', '1203049126', '1203', '7', '43.77806', '9.86028');
+INSERT INTO `settlement` VALUES ('4181', 'Kadiga Dhanaan', '1203039046', '1203', '7', '43.77836', '9.84877');
+INSERT INTO `settlement` VALUES ('4182', 'Kalabaydh', '1203049142', '1203', '7', '43.47667', '9.68167');
+INSERT INTO `settlement` VALUES ('4183', 'Korji', '1203039010', '1203', '7', '43.68183', '9.61981');
+INSERT INTO `settlement` VALUES ('4184', 'Laaye', '1203049130', '1203', '7', '43.58778', '9.50194');
+INSERT INTO `settlement` VALUES ('4185', 'Lafta Tinka', '1203049134', '1203', '7', '43.64222', '9.65306');
+INSERT INTO `settlement` VALUES ('4186', 'Lafta-Boqorka', '1203039014', '1203', '7', '43.55853', '9.61571');
+INSERT INTO `settlement` VALUES ('4187', 'Lo\'ka-Aroor', '1203039078', '1203', '7', '43.56569', '9.68450');
+INSERT INTO `settlement` VALUES ('4188', 'Nasiyeh Kado', '1203029082', '1203', '7', '43.52150', '9.49990');
+INSERT INTO `settlement` VALUES ('4189', 'Qabri Dhaweyd', '1203029084', '1203', '7', '43.36730', '9.72970');
+INSERT INTO `settlement` VALUES ('4190', 'Qoolka', '1203029086', '1203', '7', '43.46790', '9.70190');
+INSERT INTO `settlement` VALUES ('4191', 'Reehalas', '1203039062', '1203', '7', '43.65833', '9.69321');
+INSERT INTO `settlement` VALUES ('4192', 'Saarey', '1203039052', '1203', '7', '43.53675', '9.72196');
+INSERT INTO `settlement` VALUES ('4193', 'Sanlaawaha', '1203039076', '1203', '7', '43.52310', '9.67579');
+INSERT INTO `settlement` VALUES ('4194', 'Sareyaha', '1203039074', '1203', '7', '43.51603', '9.71596');
+INSERT INTO `settlement` VALUES ('4195', 'Shabeelley', '1203039024', '1203', '7', '43.65198', '9.62780');
+INSERT INTO `settlement` VALUES ('4196', 'Shambacayno', '1203039008', '1203', '7', '43.70716', '9.62044');
+INSERT INTO `settlement` VALUES ('4197', 'Teysa', '1203039004', '1203', '7', '43.67334', '9.57182');
+INSERT INTO `settlement` VALUES ('4198', 'Tiin', '1203039070', '1203', '7', '43.62145', '9.67850');
+INSERT INTO `settlement` VALUES ('4199', 'Tog Wajaale', '1203049148', '1203', '7', '43.33583', '9.59972');
+INSERT INTO `settlement` VALUES ('4200', 'Wajaale', '1203029106', '1203', '7', '43.48190', '9.56760');
+INSERT INTO `settlement` VALUES ('4201', 'Waran Weis', '1203029108', '1203', '7', '43.82040', '10.20160');
+INSERT INTO `settlement` VALUES ('4202', 'Waxaralis', '1203029110', '1203', '7', '43.34900', '9.72160');
+INSERT INTO `settlement` VALUES ('4203', 'Xirsi Jiciir', '1203029098', '1203', '7', '43.47900', '9.83160');
+INSERT INTO `settlement` VALUES ('4204', 'Xuunshaley', '1203029112', '1203', '7', '43.42870', '9.72020');
+INSERT INTO `settlement` VALUES ('4205', 'Yaldo', '1203039022', '1203', '7', '43.59784', '9.65628');
+INSERT INTO `settlement` VALUES ('4206', 'Abaarso', '1201039110', '1201', '5', '43.88049', '9.60173');
+INSERT INTO `settlement` VALUES ('4207', 'Abdi Samad', '1201049248', '1201', '5', '43.82361', '9.40500');
+INSERT INTO `settlement` VALUES ('4208', 'Aburriin', '1201039090', '1201', '5', '43.80575', '9.51743');
+INSERT INTO `settlement` VALUES ('4209', 'Agadoon', '1201049304', '1201', '5', '44.52139', '9.29000');
+INSERT INTO `settlement` VALUES ('4210', 'Alaalacadka', '1201039132', '1201', '5', '44.33382', '9.84336');
+INSERT INTO `settlement` VALUES ('4211', 'Anayo', '1201049276', '1201', '5', '43.97750', '9.69111');
+INSERT INTO `settlement` VALUES ('4212', 'Araweelo', '1201049306', '1201', '5', '44.24944', '9.34806');
+INSERT INTO `settlement` VALUES ('4213', 'Awbarkhadle', '1201049232', '1201', '5', '44.30889', '9.69111');
+INSERT INTO `settlement` VALUES ('4214', 'Bacado', '1201039026', '1201', '5', '44.07379', '9.63946');
+INSERT INTO `settlement` VALUES ('4215', 'Balayga Cas', '1201049234', '1201', '5', '44.09111', '9.80917');
+INSERT INTO `settlement` VALUES ('4216', 'Bali Cabane', '1201049238', '1201', '5', '44.53000', '9.29667');
+INSERT INTO `settlement` VALUES ('4217', 'Balleh Dobo Haya', '1201029192', '1201', '5', '44.67790', '9.12290');
+INSERT INTO `settlement` VALUES ('4218', 'Balli Damal', '1201049308', '1201', '5', '44.25861', '9.00861');
+INSERT INTO `settlement` VALUES ('4219', 'Balli Kaliil', '1201039166', '1201', '5', '44.49845', '9.08194');
+INSERT INTO `settlement` VALUES ('4220', 'Balli Mataan', '1201049240', '1201', '5', '44.48528', '9.11056');
+INSERT INTO `settlement` VALUES ('4221', 'Balli shire', '1201049292', '1201', '5', '44.53167', '8.90389');
+INSERT INTO `settlement` VALUES ('4222', 'Ban-Yoro', '1201039018', '1201', '5', '44.50073', '9.42671');
+INSERT INTO `settlement` VALUES ('4223', 'Bartanno', '1201029194', '1201', '5', '44.20020', '9.51940');
+INSERT INTO `settlement` VALUES ('4224', 'Beeyo Doofar', '1201039148', '1201', '5', '44.02876', '9.67964');
+INSERT INTO `settlement` VALUES ('4225', 'Beeyo Khadar', '1201049268', '1201', '5', '44.11195', '9.66194');
+INSERT INTO `settlement` VALUES ('4226', 'Biyadhanane', '1201039144', '1201', '5', '44.29023', '9.67382');
+INSERT INTO `settlement` VALUES ('4227', 'Boo\'Lay', '1201049256', '1201', '5', '44.27444', '9.92417');
+INSERT INTO `settlement` VALUES ('4228', 'Booli Diido', '1201039098', '1201', '5', '43.86913', '9.53877');
+INSERT INTO `settlement` VALUES ('4229', 'Boqol Jire', '1201039030', '1201', '5', '44.02890', '9.54743');
+INSERT INTO `settlement` VALUES ('4230', 'Cadaroosh', '1201049246', '1201', '5', '43.77389', '9.35417');
+INSERT INTO `settlement` VALUES ('4231', 'Cali Aadan', '1201039164', '1201', '5', '44.66156', '9.07372');
+INSERT INTO `settlement` VALUES ('4232', 'Caramadow', '1201049250', '1201', '5', '43.85500', '9.38111');
+INSERT INTO `settlement` VALUES ('4233', 'Carro Muse Case', '1201039094', '1201', '5', '43.84559', '9.55937');
+INSERT INTO `settlement` VALUES ('4234', 'Caynle', '1201029196', '1201', '5', '44.17030', '9.41960');
+INSERT INTO `settlement` VALUES ('4235', 'Ceel Canood', '1201049226', '1201', '5', '44.55194', '9.97389');
+INSERT INTO `settlement` VALUES ('4236', 'Cuno Qabad', '1201039038', '1201', '5', '44.01072', '9.43471');
+INSERT INTO `settlement` VALUES ('4237', 'Daba Bahal', '1201049286', '1201', '5', '44.42556', '9.31500');
+INSERT INTO `settlement` VALUES ('4238', 'Dabahandabo', '1201049222', '1201', '5', '44.46833', '9.31500');
+INSERT INTO `settlement` VALUES ('4239', 'Dabdheera', '1201029202', '1201', '5', '44.50180', '9.50170');
+INSERT INTO `settlement` VALUES ('4240', 'Dabooye', '1201029204', '1201', '5', '43.92030', '9.32960');
+INSERT INTO `settlement` VALUES ('4241', 'Dacarbudhug', '1201039120', '1201', '5', '44.52798', '9.86016');
+INSERT INTO `settlement` VALUES ('4242', 'Dacar-Budhuq', '1201049252', '1201', '5', '44.17500', '9.59833');
+INSERT INTO `settlement` VALUES ('4243', 'Dacawalay', '1201039052', '1201', '5', '43.91728', '9.38604');
+INSERT INTO `settlement` VALUES ('4244', 'Dalooldho', '1201039028', '1201', '5', '44.06169', '9.59288');
+INSERT INTO `settlement` VALUES ('4245', 'Daradawanle', '1201039126', '1201', '5', '44.19294', '9.99562');
+INSERT INTO `settlement` VALUES ('4246', 'Dararweyne', '1201039146', '1201', '5', '44.22306', '9.71959');
+INSERT INTO `settlement` VALUES ('4247', 'Darburruk', '1201029206', '1201', '5', '44.52080', '9.73210');
+INSERT INTO `settlement` VALUES ('4248', 'Darfacle', '1201039048', '1201', '5', '44.03353', '9.40917');
+INSERT INTO `settlement` VALUES ('4249', 'Darka', '1201039010', '1201', '5', '44.57234', '9.65161');
+INSERT INTO `settlement` VALUES ('4250', 'Dayma Shiikh', '1201039064', '1201', '5', '43.78420', '9.44112');
+INSERT INTO `settlement` VALUES ('4251', 'Dhaboolaq', '1201039100', '1201', '5', '43.87302', '9.51365');
+INSERT INTO `settlement` VALUES ('4252', 'Dhaga-Warabe', '1201049260', '1201', '5', '44.01361', '9.84139');
+INSERT INTO `settlement` VALUES ('4253', 'Dhalanya Dhuex', '1201039152', '1201', '5', '43.98841', '9.80066');
+INSERT INTO `settlement` VALUES ('4254', 'Dhinbi Riyaale', '1201039176', '1201', '5', '44.11112', '9.27226');
+INSERT INTO `settlement` VALUES ('4255', 'Dhubbato', '1201039140', '1201', '5', '44.47324', '9.73598');
+INSERT INTO `settlement` VALUES ('4256', 'Dhungaal', '1201039114', '1201', '5', '43.74048', '9.61182');
+INSERT INTO `settlement` VALUES ('4257', 'Diini Goobaale', '1201039056', '1201', '5', '43.59984', '9.41369');
+INSERT INTO `settlement` VALUES ('4258', 'Diirato', '1201049278', '1201', '5', '44.01917', '9.79306');
+INSERT INTO `settlement` VALUES ('4259', 'Einleh', '1201029208', '1201', '5', '44.10170', '9.34720');
+INSERT INTO `settlement` VALUES ('4260', 'Ergimo', '1201039034', '1201', '5', '44.23755', '9.49147');
+INSERT INTO `settlement` VALUES ('4261', 'Fadhixun', '1201039060', '1201', '5', '43.76623', '9.41516');
+INSERT INTO `settlement` VALUES ('4262', 'Fahday', '1201039072', '1201', '5', '43.91622', '9.44953');
+INSERT INTO `settlement` VALUES ('4263', 'Farah Baladi', '1201049236', '1201', '5', '44.08556', '9.66861');
+INSERT INTO `settlement` VALUES ('4264', 'Faraweyne', '1201039066', '1201', '5', '43.78988', '9.42367');
+INSERT INTO `settlement` VALUES ('4265', 'Faraweyne', '1201049264', '1201', '5', '43.67083', '9.34333');
+INSERT INTO `settlement` VALUES ('4266', 'Ferlibah', '1201029210', '1201', '5', '44.14710', '9.26940');
+INSERT INTO `settlement` VALUES ('4267', 'Gaas', '1201049294', '1201', '5', '44.63222', '8.92611');
+INSERT INTO `settlement` VALUES ('4268', 'Gaban Hurudo', '1201039086', '1201', '5', '43.75740', '9.56641');
+INSERT INTO `settlement` VALUES ('4269', 'Gacan', '1201029212', '1201', '5', '44.11790', '10.05130');
+INSERT INTO `settlement` VALUES ('4270', 'Gadhka Carmada', '1201039036', '1201', '5', '44.30230', '9.53635');
+INSERT INTO `settlement` VALUES ('4271', 'Gadhyogol', '1201039074', '1201', '5', '43.86041', '9.49273');
+INSERT INTO `settlement` VALUES ('4272', 'Garabis', '1201039070', '1201', '5', '43.95469', '9.43965');
+INSERT INTO `settlement` VALUES ('4273', 'Ged Deeble', '1201039156', '1201', '5', '43.97273', '9.74732');
+INSERT INTO `settlement` VALUES ('4274', 'Geed Abeerah', '1201039112', '1201', '5', '43.76045', '9.58733');
+INSERT INTO `settlement` VALUES ('4275', 'Geli-Darxumo', '1201039014', '1201', '5', '44.68612', '9.50765');
+INSERT INTO `settlement` VALUES ('4276', 'Gibil-ku-Dirir', '1201039154', '1201', '5', '43.95859', '9.81624');
+INSERT INTO `settlement` VALUES ('4277', 'Godgal', '1201039024', '1201', '5', '44.01760', '9.61481');
+INSERT INTO `settlement` VALUES ('4278', 'Goonle', '1201039058', '1201', '5', '43.74216', '9.44459');
+INSERT INTO `settlement` VALUES ('4279', 'Goryo', '1201039076', '1201', '5', '43.78547', '9.48611');
+INSERT INTO `settlement` VALUES ('4280', 'Gulaanle', '1201039134', '1201', '5', '44.44275', '9.85938');
+INSERT INTO `settlement` VALUES ('4281', 'Gumbura', '1201029214', '1201', '5', '44.10000', '9.11730');
+INSERT INTO `settlement` VALUES ('4282', 'Gumburaha', '1201049270', '1201', '5', '44.01944', '9.17361');
+INSERT INTO `settlement` VALUES ('4283', 'Gunbur Shiikhdoon', '1201039022', '1201', '5', '44.03184', '9.62306');
+INSERT INTO `settlement` VALUES ('4284', 'Habaasweyne', '1201039050', '1201', '5', '44.05865', '9.38657');
+INSERT INTO `settlement` VALUES ('4285', 'Habareh', '1201029216', '1201', '5', '44.06830', '9.42820');
+INSERT INTO `settlement` VALUES ('4286', 'Halaya', '1201049274', '1201', '5', '44.16917', '9.59833');
+INSERT INTO `settlement` VALUES ('4287', 'Har', '1201039084', '1201', '5', '43.74510', '9.55717');
+INSERT INTO `settlement` VALUES ('4288', 'Har Cadaad', '1201039088', '1201', '5', '43.76119', '9.53562');
+INSERT INTO `settlement` VALUES ('4289', 'Hargoleh', '1201029218', '1201', '5', '44.32700', '9.25200');
+INSERT INTO `settlement` VALUES ('4290', 'Higlada', '1201049298', '1201', '5', '44.54750', '8.81917');
+INSERT INTO `settlement` VALUES ('4291', 'Horahaadley', '1201039130', '1201', '5', '44.03186', '9.87758');
+INSERT INTO `settlement` VALUES ('4292', 'Hulluuq', '1201039158', '1201', '5', '43.80275', '9.68963');
+INSERT INTO `settlement` VALUES ('4293', 'Hundulli', '1201039178', '1201', '5', '44.14724', '9.32138');
+INSERT INTO `settlement` VALUES ('4294', 'Ibraahim Koodbuur', '1201049228', '1201', '5', '44.70895', '2.09989');
+INSERT INTO `settlement` VALUES ('4295', 'Iied Godir', '1201029220', '1201', '5', '43.94710', '9.82140');
+INSERT INTO `settlement` VALUES ('4296', 'Illinta Bacaado', '1201039128', '1201', '5', '44.19822', '9.96741');
+INSERT INTO `settlement` VALUES ('4297', 'Illinta Dhexe', '1201039124', '1201', '5', '44.12387', '9.98406');
+INSERT INTO `settlement` VALUES ('4298', 'Illinta Galbeed', '1201049282', '1201', '5', '44.15222', '9.92222');
+INSERT INTO `settlement` VALUES ('4299', 'Illinta Qoryaale', '1201039122', '1201', '5', '44.02176', '9.96249');
+INSERT INTO `settlement` VALUES ('4300', 'Ina Guuxa', '1201049310', '1201', '5', '44.22111', '8.92778');
+INSERT INTO `settlement` VALUES ('4301', 'Ina Igirre', '1201049284', '1201', '5', '44.40778', '8.97750');
+INSERT INTO `settlement` VALUES ('4302', 'Ina-Barre', '1201049272', '1201', '5', '44.36139', '9.36194');
+INSERT INTO `settlement` VALUES ('4303', 'Jabaqle', '1201049258', '1201', '5', '44.04556', '9.32611');
+INSERT INTO `settlement` VALUES ('4304', 'Jabdhurwaa', '1201039040', '1201', '5', '44.36179', '9.35209');
+INSERT INTO `settlement` VALUES ('4305', 'Jabdhurwaa', '1201039180', '1201', '5', '44.42554', '9.30136');
+INSERT INTO `settlement` VALUES ('4306', 'Jaleelo', '1201039138', '1201', '5', '44.29095', '9.75199');
+INSERT INTO `settlement` VALUES ('4307', 'Kaam Cumar', '1201049288', '1201', '5', '44.46833', '9.22861');
+INSERT INTO `settlement` VALUES ('4308', 'Kala Baydh', '1201049262', '1201', '5', '43.97167', '9.87583');
+INSERT INTO `settlement` VALUES ('4309', 'Karin Lebi', '1201049290', '1201', '5', '44.55806', '9.16556');
+INSERT INTO `settlement` VALUES ('4310', 'Kuranuh', '1201029186', '1201', '5', '44.07730', '9.25090');
+INSERT INTO `settlement` VALUES ('4311', 'Laaleys', '1201039096', '1201', '5', '43.83697', '9.57251');
+INSERT INTO `settlement` VALUES ('4312', 'Laan Qayrla', '1201049312', '1201', '5', '44.35972', '8.89361');
+INSERT INTO `settlement` VALUES ('4313', 'Lebi sagaal', '1201049296', '1201', '5', '44.64833', '8.78639');
+INSERT INTO `settlement` VALUES ('4314', 'Libaax Qowdhama', '1201049300', '1201', '5', '44.48778', '8.83917');
+INSERT INTO `settlement` VALUES ('4315', 'llinta Bari', '1201049280', '1201', '5', '44.20000', '9.95972');
+INSERT INTO `settlement` VALUES ('4316', 'Makhayada Inanta', '1201049230', '1201', '5', '43.96500', '9.59222');
+INSERT INTO `settlement` VALUES ('4317', 'Malloukta', '1201039150', '1201', '5', '43.99499', '9.83793');
+INSERT INTO `settlement` VALUES ('4318', 'Malowle', '1201039102', '1201', '5', '43.91738', '9.55328');
+INSERT INTO `settlement` VALUES ('4319', 'Maraaga', '1201039062', '1201', '5', '43.74542', '9.39771');
+INSERT INTO `settlement` VALUES ('4320', 'Maxamed Axmed', '1201039162', '1201', '5', '44.58060', '9.04463');
+INSERT INTO `settlement` VALUES ('4321', 'Megag Wein', '1201029188', '1201', '5', '44.33240', '9.37990');
+INSERT INTO `settlement` VALUES ('4322', 'Oolonweyn', '1201039170', '1201', '5', '44.48373', '9.10727');
+INSERT INTO `settlement` VALUES ('4323', 'Oool Cadday', '1201039174', '1201', '5', '44.16487', '9.21167');
+INSERT INTO `settlement` VALUES ('4324', 'Oori Jabley', '1201039168', '1201', '5', '44.38275', '9.18959');
+INSERT INTO `settlement` VALUES ('4325', 'Ooton-Dabo', '1201039160', '1201', '5', '44.64376', '9.17453');
+INSERT INTO `settlement` VALUES ('4326', 'Oromo', '1201039108', '1201', '5', '43.92821', '9.60541');
+INSERT INTO `settlement` VALUES ('4327', 'Qaloocan', '1201039032', '1201', '5', '44.04744', '9.52878');
+INSERT INTO `settlement` VALUES ('4328', 'Qool Buulale', '1201049302', '1201', '5', '44.39889', '8.86889');
+INSERT INTO `settlement` VALUES ('4329', 'Qool Cadday', '1201029190', '1201', '5', '44.20040', '9.11820');
+INSERT INTO `settlement` VALUES ('4330', 'Qoryaale', '1201049242', '1201', '5', '44.52083', '9.60722');
+INSERT INTO `settlement` VALUES ('4331', 'Qururuxley', '1201049254', '1201', '5', '44.25222', '9.82222');
+INSERT INTO `settlement` VALUES ('4332', 'Reydab', '1201039172', '1201', '5', '44.24137', '9.28544');
+INSERT INTO `settlement` VALUES ('4333', 'Saley', '1201039182', '1201', '5', '44.31421', '10.15755');
+INSERT INTO `settlement` VALUES ('4334', 'Sallaxley', '1201049314', '1201', '5', '44.20639', '9.02556');
+INSERT INTO `settlement` VALUES ('4335', 'Sayla Galbeed', '1201049320', '1201', '5', '43.79528', '9.20889');
+INSERT INTO `settlement` VALUES ('4336', 'Saynla Bari', '1201049266', '1201', '5', '44.17028', '9.17361');
+INSERT INTO `settlement` VALUES ('4337', 'Shariif', '1201039078', '1201', '5', '43.82993', '9.50734');
+INSERT INTO `settlement` VALUES ('4338', 'Sharmaarke', '1201039044', '1201', '5', '44.21852', '9.40034');
+INSERT INTO `settlement` VALUES ('4339', 'Sheikh Mooldhe', '1201049318', '1201', '5', '43.85472', '9.29722');
+INSERT INTO `settlement` VALUES ('4340', 'Shiikh Abdaal', '1201039118', '1201', '5', '44.69231', '9.95092');
+INSERT INTO `settlement` VALUES ('4341', 'Shiikh Maldha', '1201039068', '1201', '5', '43.88774', '9.43324');
+INSERT INTO `settlement` VALUES ('4342', 'Shilmaale', '1201039012', '1201', '5', '44.69959', '9.59509');
+INSERT INTO `settlement` VALUES ('4343', 'Sobaad', '1201039142', '1201', '5', '44.30897', '9.70158');
+INSERT INTO `settlement` VALUES ('4344', 'Sool Midgaan', '1201029198', '1201', '5', '44.45000', '10.08100');
+INSERT INTO `settlement` VALUES ('4345', 'Suradle', '1201039016', '1201', '5', '44.60771', '9.57467');
+INSERT INTO `settlement` VALUES ('4346', 'Sut', '1201029200', '1201', '5', '44.04990', '9.10290');
+INSERT INTO `settlement` VALUES ('4347', 'Toon', '1201039046', '1201', '5', '44.11856', '9.39277');
+INSERT INTO `settlement` VALUES ('4348', 'Udaan', '1201039116', '1201', '5', '43.85127', '9.64672');
+INSERT INTO `settlement` VALUES ('4349', 'Ugaadhyahay', '1201039080', '1201', '5', '43.72839', '9.45689');
+INSERT INTO `settlement` VALUES ('4350', 'Wadabariis', '1201039054', '1201', '5', '43.85410', '9.38142');
+INSERT INTO `settlement` VALUES ('4351', 'Wadda Makaahiil', '1201049224', '1201', '5', '43.61000', '9.36028');
+INSERT INTO `settlement` VALUES ('4352', 'Wado-Bariis', '1201049322', '1201', '5', '43.79556', '9.20833');
+INSERT INTO `settlement` VALUES ('4353', 'Waraabaley', '1201039020', '1201', '5', '44.56924', '9.40348');
+INSERT INTO `settlement` VALUES ('4354', 'Waraabaley', '1201039092', '1201', '5', '43.78631', '9.56620');
+INSERT INTO `settlement` VALUES ('4355', 'Warta cas', '1201049316', '1201', '5', '44.10250', '9.42528');
+INSERT INTO `settlement` VALUES ('4356', 'Weeraata', '1201049244', '1201', '5', '44.68139', '9.70861');
+INSERT INTO `settlement` VALUES ('4357', 'Xadhig Xadhig', '1201039042', '1201', '5', '44.27413', '9.38909');
+INSERT INTO `settlement` VALUES ('4358', 'Xagal', '1201039106', '1201', '5', '43.94555', '9.52542');
+INSERT INTO `settlement` VALUES ('4359', 'Xaraf', '1201039184', '1201', '5', '43.99299', '9.54409');
+INSERT INTO `settlement` VALUES ('4360', 'Xareed', '1201039104', '1201', '5', '43.92453', '9.51964');
+INSERT INTO `settlement` VALUES ('4361', 'Xidhinta', '1201039082', '1201', '5', '43.73186', '9.54644');
+INSERT INTO `settlement` VALUES ('4362', 'Xunbaweyne', '1201039136', '1201', '5', '44.28941', '9.79950');
 
--- -----------------------------------------------------
--- Table `species`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `species` ;
+-- ----------------------------
+-- Table structure for `sms`
+-- ----------------------------
+DROP TABLE IF EXISTS `sms`;
+CREATE TABLE `sms` (
+  `id` smallint(5) unsigned NOT NULL,
+  `phone_number` varchar(255) NOT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `species` (
-  `id` SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(45) NOT NULL ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Records of sms
+-- ----------------------------
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Table structure for `species`
+-- ----------------------------
+DROP TABLE IF EXISTS `species`;
+CREATE TABLE `species` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- -----------------------------------------------------
--- Table `incident_species`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `incident_species` ;
+-- ----------------------------
+-- Records of species
+-- ----------------------------
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `incident_species` (
-  `species_id` SMALLINT UNSIGNED NOT NULL ,
-  `incident_id` SMALLINT UNSIGNED NOT NULL ,
-  `number` TINYINT UNSIGNED NOT NULL ,
-  PRIMARY KEY (`species_id`, `incident_id`) ,
-  CONSTRAINT `fk_species_incident`
-    FOREIGN KEY (`species_id` )
-    REFERENCES `species` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_incident_species`
-    FOREIGN KEY (`incident_id` )
-    REFERENCES `incident` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Table structure for `symptom`
+-- ----------------------------
+DROP TABLE IF EXISTS `symptom`;
+CREATE TABLE `symptom` (
+  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(25) NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
-CREATE INDEX `incident_species_idx` ON `incident_species` (`incident_id` ASC) ;
+-- ----------------------------
+-- Records of symptom
+-- ----------------------------
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Table structure for `town`
+-- ----------------------------
+DROP TABLE IF EXISTS `town`;
+CREATE TABLE `town` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` tinytext NOT NULL,
+  `pcode` varchar(10) NOT NULL DEFAULT '',
+  `district_pcode_id` varchar(4) NOT NULL DEFAULT '',
+  `district_id` int(11) NOT NULL DEFAULT '0',
+  `coordinates` text NOT NULL,
+  `longitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `latitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
+  `fsaucode` varchar(4) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `inx_district_id` (`district_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
--- -----------------------------------------------------
--- Table `sms`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `sms` ;
+-- ----------------------------
+-- Records of town
+-- ----------------------------
+INSERT INTO `town` VALUES ('1', 'BOWN', '1101034002', '1101', '1', '', '43.08799', '10.19391', 'A01');
+INSERT INTO `town` VALUES ('2', 'BORAMA', '1101042000', '1101', '1', '', '43.18335', '9.92893', 'A02');
+INSERT INTO `town` VALUES ('3', 'LUGHAYE', '1103033000', '1103', '3', '', '43.94053', '10.68326', 'A03');
+INSERT INTO `town` VALUES ('4', 'ZEYLAC', '1104033000', '1104', '4', '', '43.47282', '11.35455', 'A04');
+INSERT INTO `town` VALUES ('5', 'BALLI GUBADLE(BALLI KHADAR)', '1201024008', '1201', '5', '', '43.99770', '8.99920', 'S01');
+INSERT INTO `town` VALUES ('6', 'HARGEYSA', '1201032000', '1201', '5', '', '44.06678', '9.55975', 'S02');
+INSERT INTO `town` VALUES ('7', 'BANDAR WANAG', '1201034002', '1201', '5', '', '44.40085', '9.58146', 'S03');
+INSERT INTO `town` VALUES ('8', 'MANDHEERA', '1201034004', '1201', '5', '', '44.71298', '9.90873', 'S04');
+INSERT INTO `town` VALUES ('9', 'CADAADLEY', '1201034006', '1201', '5', '', '44.69325', '9.76639', 'S05');
+INSERT INTO `town` VALUES ('10', 'BERBERA', '1202033000', '1202', '6', '', '45.01140', '10.43872', 'S06');
+INSERT INTO `town` VALUES ('11', 'BULLAXAAR', '1202034002', '1202', '6', '', '44.41773', '10.38772', 'S07');
+INSERT INTO `town` VALUES ('12', 'GEBILEY', '1203033000', '1203', '7', '', '43.62551', '9.70231', 'S08');
+INSERT INTO `town` VALUES ('13', 'ARABSIYO', '1203034002', '1203', '7', '', '43.75967', '9.67695', 'S09');
+INSERT INTO `town` VALUES ('14', 'BURCO', '1301032000', '1301', '8', '', '45.53747', '9.52749', 'R01');
+INSERT INTO `town` VALUES ('15', 'BUUHOODLE', '1302033000', '1302', '9', '', '46.31713', '8.25135', 'R02');
+INSERT INTO `town` VALUES ('16', 'OWDWEYNE', '1303033000', '1303', '10', '', '45.06171', '9.40858', 'R03');
+INSERT INTO `town` VALUES ('17', 'SHEIKH', '1304033000', '1304', '11', '', '45.19133', '9.92994', 'R04');
+INSERT INTO `town` VALUES ('18', 'LAAS CAANOOD', '1401032000', '1401', '12', '', '47.35613', '8.47645', 'Q01');
+INSERT INTO `town` VALUES ('19', 'CAYNABO', '1402033000', '1402', '13', '', '46.41249', '8.95755', 'Q02');
+INSERT INTO `town` VALUES ('20', 'TALEEX', '1403033000', '1403', '14', '', '48.42087', '9.14875', 'Q03');
+INSERT INTO `town` VALUES ('21', 'XUDUN', '1404033000', '1404', '15', '', '47.47722', '9.15444', 'Q04');
+INSERT INTO `town` VALUES ('22', 'CEERIGAABO', '1501032000', '1501', '16', '', '47.36847', '10.62035', 'P01');
+INSERT INTO `town` VALUES ('23', 'CEEL AFWEYN', '1502033000', '1502', '17', '', '47.21678', '9.93027', 'P02');
+INSERT INTO `town` VALUES ('24', 'GARADAG', '1502034002', '1502', '17', '', '46.86733', '9.48847', 'P03');
+INSERT INTO `town` VALUES ('25', 'LAASQORAY', '1503033000', '1503', '18', '', '48.19494', '11.16002', 'P04');
+INSERT INTO `town` VALUES ('26', 'DHARAR', '1503034002', '1503', '18', '', '48.82125', '9.74796', 'P05');
+INSERT INTO `town` VALUES ('27', 'BOSSASO', '1601032000', '1601', '19', '', '49.18063', '11.28366', 'D01');
+INSERT INTO `town` VALUES ('28', 'BANDARBEYLA', '1602033002', '1602', '20', '', '50.81223', '9.49482', 'D02');
+INSERT INTO `town` VALUES ('29', 'CALUULA', '1603033000', '1603', '21', '', '50.75658', '11.96531', 'D03');
+INSERT INTO `town` VALUES ('30', 'BOLIMOOG', '1603034002', '1603', '21', '', '50.62629', '11.92872', 'D04');
+INSERT INTO `town` VALUES ('31', 'ISKUSHUBAN', '1604033000', '1604', '22', '', '50.22879', '10.28235', 'D05');
+INSERT INTO `town` VALUES ('32', 'XAAFUUN', '1604034002', '1604', '22', '', '51.26127', '10.42056', 'D06');
+INSERT INTO `town` VALUES ('33', 'BARGAAL', '1604034004', '1604', '22', '', '51.07728', '11.28535', 'D07');
+INSERT INTO `town` VALUES ('34', 'QANDALA', '1605033000', '1605', '23', '', '49.87139', '11.47237', 'D08');
+INSERT INTO `town` VALUES ('35', 'QARDHO', '1606033000', '1606', '24', '', '49.08608', '9.50694', 'D09');
+INSERT INTO `town` VALUES ('36', 'DAN GORAYO', '1606034002', '1606', '24', '', '49.34177', '8.72792', 'D10');
+INSERT INTO `town` VALUES ('37', 'GAROOWE', '1701032000', '1701', '25', '', '48.48270', '8.40710', 'O01');
+INSERT INTO `town` VALUES ('38', 'BURTINLE', '1702043000', '1702', '26', '', '47.83679', '7.64727', 'O02');
+INSERT INTO `town` VALUES ('39', 'EYL', '1703033000', '1703', '27', '', '49.81773', '7.97941', 'O03');
+INSERT INTO `town` VALUES ('40', 'GAALKACYO', '1801032000', '1801', '28', '', '47.43061', '6.76924', 'M01');
+INSERT INTO `town` VALUES ('41', 'GALDOGOB', '1802013064', '1802', '29', '', '47.13104', '7.05739', 'M02');
+INSERT INTO `town` VALUES ('42', 'HOBYO', '1803033000', '1803', '30', '', '48.52627', '5.35021', 'M03');
+INSERT INTO `town` VALUES ('43', 'JARIIBAN', '1804033000', '1804', '31', '', '48.85376', '7.21308', 'M04');
+INSERT INTO `town` VALUES ('44', 'XARARDHEERE', '1805033000', '1805', '32', '', '47.85717', '4.65421', 'M05');
+INSERT INTO `town` VALUES ('45', 'DHUUSAMARREEB', '1901032000', '1901', '33', '', '46.38465', '5.53594', 'F01');
+INSERT INTO `town` VALUES ('46', 'GURI CEEL', '1901034002', '1901', '33', '', '45.87931', '5.30909', 'F02');
+INSERT INTO `town` VALUES ('47', 'CABUDWAAQ', '1902013000', '1902', '34', '', '46.37659', '6.22159', 'F03');
+INSERT INTO `town` VALUES ('48', 'BALANBALE', '1902014002', '1902', '34', '', '45.96978', '5.68904', 'F04');
+INSERT INTO `town` VALUES ('49', 'CADAADO', '1903033000', '1903', '35', '', '46.62551', '6.13812', 'F05');
+INSERT INTO `town` VALUES ('50', 'CEEL BUUR', '1904033000', '1904', '36', '', '46.61739', '4.68441', 'F06');
+INSERT INTO `town` VALUES ('51', 'GAL HAREERI', '1904034002', '1904', '36', '', '47.14533', '4.53037', 'F07');
+INSERT INTO `town` VALUES ('52', 'CEEL DHEER', '1905033000', '1905', '37', '', '47.18031', '3.84909', 'F08');
+INSERT INTO `town` VALUES ('53', 'GALCAD', '1905034002', '1905', '37', '', '46.61695', '4.02430', 'F09');
+INSERT INTO `town` VALUES ('54', 'BELET WEYNE', '2001032000', '2001', '38', '', '45.20620', '4.73671', 'H01');
+INSERT INTO `town` VALUES ('55', 'BULO BURTO', '2002033000', '2002', '39', '', '45.56596', '3.85357', 'H02');
+INSERT INTO `town` VALUES ('56', 'JALALAQSI', '2003033000', '2003', '40', '', '45.59941', '3.37951', 'H03');
+INSERT INTO `town` VALUES ('57', 'JOWHAR', '2101032000', '2101', '41', '', '45.50038', '2.78060', 'L01');
+INSERT INTO `town` VALUES ('58', 'MAHADAY WEYN', '2101034002', '2101', '41', '', '45.53355', '2.97552', 'L02');
+INSERT INTO `town` VALUES ('59', 'ADAN YABAAL', '2102033000', '2102', '42', '', '46.24544', '3.77760', 'L03');
+INSERT INTO `town` VALUES ('60', 'BALCAD', '2103033000', '2103', '43', '', '45.38705', '2.35991', 'L04');
+INSERT INTO `town` VALUES ('61', 'WARSHEIKH', '2103044002', '2103', '43', '', '45.79556', '2.29667', 'L05');
+INSERT INTO `town` VALUES ('62', 'CADALE', '2104033000', '2104', '44', '', '46.32271', '2.75925', 'L06');
+INSERT INTO `town` VALUES ('63', 'MOGADISHU', '2201032000', '2201', '45', '', '45.33372', '2.04139', 'C01');
+INSERT INTO `town` VALUES ('64', 'TOG WAJAALE', '1203049148', '1203', '7', '', '43.33583', '9.59972', 'S10');
+INSERT INTO `town` VALUES ('65', 'MARKA', '2301032000', '2301', '46', '', '44.76990', '1.71567', 'J01');
+INSERT INTO `town` VALUES ('66', 'WAGADAY', '2301034002', '2301', '46', '', '44.64170', '1.75548', 'J02');
+INSERT INTO `town` VALUES ('67', 'MISHAANI', '2301034004', '2301', '46', '', '44.65664', '1.77884', 'J03');
+INSERT INTO `town` VALUES ('68', 'SHALAAMBOOT', '2301034006', '2301', '46', '', '44.69499', '1.70951', 'J04');
+INSERT INTO `town` VALUES ('69', 'MAREER', '2301034008', '2301', '46', '', '44.52052', '1.63498', 'J05');
+INSERT INTO `town` VALUES ('70', 'GOLWEYN', '2301034010', '2301', '46', '', '44.57882', '1.65922', 'J06');
+INSERT INTO `town` VALUES ('71', 'AFGOOYE', '2302033000', '2302', '47', '', '45.11870', '2.14158', 'J07');
+INSERT INTO `town` VALUES ('72', 'MALABLE', '2302034002', '2302', '47', '', '44.83239', '1.98467', 'J08');
+INSERT INTO `town` VALUES ('73', 'AW DHEEGLE', '2302034004', '2302', '47', '', '44.83135', '1.97936', 'J09');
+INSERT INTO `town` VALUES ('74', 'BARAAWE', '2303033000', '2303', '48', '', '44.03043', '1.11477', 'J10');
+INSERT INTO `town` VALUES ('75', 'MARIAN GUWAAY', '2303034002', '2303', '48', '', '44.32574', '1.44943', 'J11');
+INSERT INTO `town` VALUES ('76', 'KURTUNWAAREY', '2304033000', '2304', '49', '', '44.33030', '1.61101', 'J12');
+INSERT INTO `town` VALUES ('77', 'ARBOW HEEROW', '2304034002', '2304', '49', '', '44.17778', '1.58340', 'J13');
+INSERT INTO `town` VALUES ('78', 'IDOW GUUDOW', '2304034004', '2304', '49', '', '44.40529', '1.62911', 'J14');
+INSERT INTO `town` VALUES ('79', 'MOKOYJAALLE', '2304034006', '2304', '49', '', '44.43575', '1.61420', 'J15');
+INSERT INTO `town` VALUES ('80', 'QORYOOLEY', '2305033000', '2305', '50', '', '44.53130', '1.78586', 'J16');
+INSERT INTO `town` VALUES ('81', 'MAANYOMURUG', '2305034002', '2305', '50', '', '44.47320', '1.75967', 'J17');
+INSERT INTO `town` VALUES ('82', 'FURUQLEEY', '2305034004', '2305', '50', '', '44.46505', '1.72617', 'J18');
+INSERT INTO `town` VALUES ('83', 'JEEROW', '2305034006', '2305', '50', '', '44.49764', '1.69152', 'J19');
+INSERT INTO `town` VALUES ('84', 'FAR XAANO', '2305034008', '2305', '50', '', '44.52178', '1.75114', 'J20');
+INSERT INTO `town` VALUES ('85', 'BANDAR', '2305034010', '2305', '50', '', '44.50114', '1.76827', 'J21');
+INSERT INTO `town` VALUES ('86', 'GAAYWARROW', '2305034012', '2305', '50', '', '44.56845', '1.76911', 'J22');
+INSERT INTO `town` VALUES ('87', 'BUUFFOW CUSBOOLEY', '2305034014', '2305', '50', '', '44.58794', '1.73058', 'J23');
+INSERT INTO `town` VALUES ('88', 'JANNAALE', '2305034016', '2305', '50', '', '44.69089', '1.80743', 'J24');
+INSERT INTO `town` VALUES ('89', 'UGUNJI', '2305034018', '2305', '50', '', '44.72092', '1.87315', 'J25');
+INSERT INTO `town` VALUES ('90', 'MUBAARAK', '2305034020', '2305', '50', '', '44.77345', '1.91705', 'J26');
+INSERT INTO `town` VALUES ('91', 'DAARASALAAM', '2305034022', '2305', '50', '', '44.78671', '1.92271', 'J27');
+INSERT INTO `town` VALUES ('92', 'DEGWARIRROW', '2305034024', '2305', '50', '', '44.68343', '1.84348', 'J28');
+INSERT INTO `town` VALUES ('93', 'SABLAALE', '2306033000', '2306', '51', '', '43.88903', '1.30517', 'J29');
+INSERT INTO `town` VALUES ('94', 'WANLA WEYN', '2307033000', '2307', '52', '', '44.89357', '2.61945', 'J30');
+INSERT INTO `town` VALUES ('95', 'BAYDHABA', '2401032000', '2401', '53', '', '43.64690', '3.11718', 'E01');
+INSERT INTO `town` VALUES ('96', 'BARDAALE', '2401034002', '2401', '53', '', '43.19809', '3.21460', 'E02');
+INSERT INTO `town` VALUES ('97', 'BUUR HAKABA', '2402033000', '2402', '54', '', '44.08205', '2.80488', 'E03');
+INSERT INTO `town` VALUES ('98', 'DIINSOOR', '2403033000', '2403', '55', '', '42.97655', '2.40735', 'E04');
+INSERT INTO `town` VALUES ('99', 'QANSAX DHEERE', '2404033000', '2404', '56', '', '43.00434', '2.87123', 'E05');
+INSERT INTO `town` VALUES ('100', 'UFUROW', '2404034002', '2404', '56', '', '42.88179', '2.76366', 'E06');
+INSERT INTO `town` VALUES ('101', 'XUDUR', '2501032000', '2501', '57', '', '43.89012', '4.12303', 'B01');
+INSERT INTO `town` VALUES ('102', 'CEEL BARDE', '2502033000', '2502', '58', '', '43.65993', '4.82821', 'B02');
+INSERT INTO `town` VALUES ('103', 'TAYEEGLOW', '2503033000', '2503', '59', '', '44.51275', '4.01820', 'B03');
+INSERT INTO `town` VALUES ('104', 'WAAJID', '2504033000', '2504', '60', '', '43.24709', '3.80925', 'B04');
+INSERT INTO `town` VALUES ('105', 'YEED', '2505013000', '2505', '61', '', '43.04459', '4.55237', 'B05');
+INSERT INTO `town` VALUES ('106', 'RAB DHUURE', '2505034002', '2505', '61', '', '43.16359', '4.35047', 'B06');
+INSERT INTO `town` VALUES ('107', 'GARBAHAAREY', '2601032000', '2601', '62', '', '42.21988', '3.32800', 'G01');
+INSERT INTO `town` VALUES ('108', 'BUUR DHUUBO', '2601034002', '2601', '62', '', '42.50181', '3.17280', 'G02');
+INSERT INTO `town` VALUES ('109', 'BAARDHEERE', '2602033000', '2602', '63', '', '42.28502', '2.33966', 'G03');
+INSERT INTO `town` VALUES ('110', 'BELET XAAWO', '2603013000', '2603', '64', '', '41.89431', '3.78074', 'G04');
+INSERT INTO `town` VALUES ('111', 'CEEL WAQ', '2604013000', '2604', '65', '', '40.99829', '2.78767', 'G05');
+INSERT INTO `town` VALUES ('112', 'DOOLOW', '2605033000', '2605', '66', '', '42.07796', '4.16423', 'G06');
+INSERT INTO `town` VALUES ('113', 'LUUQ', '2606033000', '2606', '67', '', '42.54459', '3.79999', 'G07');
+INSERT INTO `town` VALUES ('114', 'BU\'AALE', '2701032000', '2701', '68', '', '42.57317', '1.24477', 'K01');
+INSERT INTO `town` VALUES ('115', 'JILIB', '2702033000', '2702', '69', '', '42.77020', '0.49345', 'K02');
+INSERT INTO `town` VALUES ('116', 'SAAKOW', '2703033000', '2703', '70', '', '42.45217', '1.63938', 'K03');
+INSERT INTO `town` VALUES ('117', 'KISMAAYO', '2801032000', '2801', '71', '', '42.54626', '-0.36029', 'I01');
+INSERT INTO `town` VALUES ('118', 'AFMADOW', '2802033000', '2802', '72', '', '42.07301', '0.51486', 'I02');
+INSERT INTO `town` VALUES ('119', 'XAGAR', '2802034002', '2802', '72', '', '41.97531', '0.87003', 'I04');
+INSERT INTO `town` VALUES ('120', 'BADHAADHE', '2803033000', '2803', '73', '', '41.50047', '-1.03537', 'I05');
+INSERT INTO `town` VALUES ('121', 'JAMAAME', '2804033000', '2804', '74', '', '42.73820', '0.06916', 'I06');
+INSERT INTO `town` VALUES ('122', 'NAIROBI', '', '', '75', '', '0.00000', '0.00000', 'N01');
+INSERT INTO `town` VALUES ('123', 'DIBI', '280202912', '2802', '72', '', '41.12170', '0.58040', 'I03');
+INSERT INTO `town` VALUES ('124', '', '', '03', '48', '', '0.00000', '0.00000', '');
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `sms` (
-  `id` SMALLINT UNSIGNED NOT NULL ,
-  `phone_number` VARCHAR(255) NOT NULL ,
-  `description` TEXT NULL DEFAULT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Table structure for `users`
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `person_id` int(10) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `password` varchar(40) NOT NULL,
+  `active` enum('0','1') NOT NULL DEFAULT '0',
+  `is_admin` enum('0','1') NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `fk_person_id` (`person_id`),
+  CONSTRAINT `fk_person_id` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
-SHOW WARNINGS;
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+INSERT INTO `users` VALUES ('1', '1', 'nkerandi', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', '1', '0');
+INSERT INTO `users` VALUES ('2', '2', 'gmirindi', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', '1', '0');
+INSERT INTO `users` VALUES ('3', '3', 'andrew', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', '1', '0');
+INSERT INTO `users` VALUES ('4', '4', 'obed', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', '1', '0');
+INSERT INTO `users` VALUES ('5', '5', 'titus', '5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8', '1', '0');
 
--- -----------------------------------------------------
--- Table `incident_sms`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `incident_sms` ;
+-- ----------------------------
+-- Table structure for `zone`
+-- ----------------------------
+DROP TABLE IF EXISTS `zone`;
+CREATE TABLE `zone` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL DEFAULT '',
+  `country_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `inx_country_id` (`country_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 ROW_FORMAT=DYNAMIC;
 
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `incident_sms` (
-  `incident_id` SMALLINT UNSIGNED NOT NULL ,
-  `sms_id` SMALLINT UNSIGNED NOT NULL ,
-  `last_update` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-  PRIMARY KEY (`incident_id`, `sms_id`) ,
-  CONSTRAINT `fk_incident_sms`
-    FOREIGN KEY (`incident_id` )
-    REFERENCES `incident` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_sms_incident`
-    FOREIGN KEY (`sms_id` )
-    REFERENCES `sms` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
+-- ----------------------------
+-- Records of zone
+-- ----------------------------
+INSERT INTO `zone` VALUES ('1', 'NORTHEAST', '118');
+INSERT INTO `zone` VALUES ('2', 'NORTHWEST', '118');
+INSERT INTO `zone` VALUES ('3', 'SORGHUM BELT', '118');
+INSERT INTO `zone` VALUES ('4', 'CENTRAL', '118');
+INSERT INTO `zone` VALUES ('5', 'SHABELLE', '118');
+INSERT INTO `zone` VALUES ('6', 'JUBA', '118');
 
-SHOW WARNINGS;
-CREATE INDEX `incident_sms_idx` ON `incident_sms` (`sms_id` ASC) ;
-
-SHOW WARNINGS;
-
--- -----------------------------------------------------
--- Table `ci_sessions`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `ci_sessions` ;
-
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `ci_sessions` (
-  `session_id` VARCHAR(40) NOT NULL DEFAULT '0' ,
-  `ip_address` VARCHAR(45) NOT NULL DEFAULT '0' ,
-  `user_agent` VARCHAR(120) NOT NULL ,
-  `last_activity` INT(10) UNSIGNED NOT NULL DEFAULT 0 ,
-  `user_data` TEXT NOT NULL ,
-  PRIMARY KEY (`session_id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-SHOW WARNINGS;
-CREATE INDEX `last_activity_idx` ON `ci_sessions` (`last_activity` ASC) ;
-
-SHOW WARNINGS;
-
--- -----------------------------------------------------
--- Table `users`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `users` ;
-
-SHOW WARNINGS;
-CREATE  TABLE IF NOT EXISTS `users` (
-  `id` INT(10) NOT NULL AUTO_INCREMENT ,
-  `person_id` INT(10) NOT NULL ,
-  `username` VARCHAR(20) NOT NULL ,
-  `password` VARCHAR(40) NOT NULL ,
-  `active` ENUM('0','1') NOT NULL DEFAULT '0' ,
-  `is_admin` ENUM('0','1') NOT NULL DEFAULT '0' ,
-  PRIMARY KEY (`id`) ,
-  CONSTRAINT `fk_person_id`
-    FOREIGN KEY (`person_id` )
-    REFERENCES `person` (`id` )
-    ON DELETE RESTRICT
-    ON UPDATE RESTRICT)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-SHOW WARNINGS;
-CREATE UNIQUE INDEX ON `users` (`username` ASC) ;
-
-SHOW WARNINGS;
-CREATE INDEX `person_id_idx` ON `users` (`person_id` ASC) ;
-
-SHOW WARNINGS;
-
--- POPULATE THE 'users' TABLE WITH USERS
-INSERT INTO users 
-(person_id, username, password, active, is_admin) 
-VALUES
-(1,'nkerandi','5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8','1','0'),
-(2,'gmirindi','5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8','1','0'),
-(3,'andrew','5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8','1','0'),
-(4,'obed','5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8','1','0'),
-(5,'titus','5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8','1','0');
-
-USE `ahis` ;
-
--- -----------------------------------------------------
--- Placeholder table for view `view_users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `view_users` (`person_id` INT, `firstname` INT, `surname` INT, `othernames` INT, `birthdate` INT, `gender` INT, `email` INT, `telephone` INT, `biodata` INT, `avatar` INT, `user_id` INT, `username` INT, `password` INT, `active` INT, `is_admin` INT);
-SHOW WARNINGS;
-
--- -----------------------------------------------------
--- View `view_users`
--- -----------------------------------------------------
-DROP VIEW IF EXISTS `view_users` ;
-SHOW WARNINGS;
-DROP TABLE IF EXISTS `view_users`;
-SHOW WARNINGS;
-USE `ahis`;
-CREATE OR REPLACE VIEW `view_users` AS
-(
-SELECT
-    `person`.`id` AS `person_id`
-    , `person`.`firstname` AS `firstname`
-    , `person`.`surname` AS `surname`
-    , `person`.`othernames` AS `othernames`
-    , `person`.`birthdate` AS `birthdate`
-    , `person`.`gender` AS `gender`
-    , `person`.`email` AS `email`
-    , `person`.`telephone` AS `telephone`
-    , `person`.`biodata` AS `biodata`
-    , `person`.`avatar` AS `avatar`
-    , `users`.`id` AS `user_id`
-    , `users`.`username` AS `username`
-    , `users`.`password` AS `password`
-    , `users`.`active` AS `active`
-    , `users`.`is_admin` AS `is_admin`
-FROM
-    `users`
-    INNER JOIN `person` 
-        ON (`users`.`person_id` = `person`.`id`)
-);
-SHOW WARNINGS;
-
-
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- ----------------------------
+-- View structure for `view_users`
+-- ----------------------------
+DROP VIEW IF EXISTS `view_users`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_users` AS (select `person`.`id` AS `person_id`,`person`.`firstname` AS `firstname`,`person`.`surname` AS `surname`,`person`.`othernames` AS `othernames`,`person`.`birthdate` AS `birthdate`,`person`.`gender` AS `gender`,`person`.`email` AS `email`,`person`.`telephone` AS `telephone`,`person`.`biodata` AS `biodata`,`person`.`avatar` AS `avatar`,`users`.`id` AS `user_id`,`users`.`username` AS `username`,`users`.`password` AS `password`,`users`.`active` AS `active`,`users`.`is_admin` AS `is_admin` from (`users` join `person` on((`users`.`person_id` = `person`.`id`)))) ;
