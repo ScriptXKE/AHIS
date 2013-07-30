@@ -9,15 +9,17 @@
         
      <!-- common stylesheets-->
         <!-- bootstrap framework css -->
-            <link rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap.min.css">
-            <link rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap-responsive.min.css">
-        <!-- google web fonts -->
-            <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Abel">
-            <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300">
+        <link rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap.min.css">
+        <link rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap-responsive.min.css">
 
-    <!-- aditional stylesheets -->
-        <!-- main stylesheet -->
-            <link rel="stylesheet" href="<?php echo base_url(); ?>css/ahis-main.css">
+        <!-- google web fonts -->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Abel">
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300">
+
+        <!-- aditional stylesheets -->
+        <!-- main stylesheets -->
+        <link rel="stylesheet" href="<?php echo base_url(); ?>css/ahis-main.css">
+        <link rel="stylesheet" href="<?php echo base_url(); ?>css/ahis-custom.css">
 
         <!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css"><![endif]-->
         <!--[if IE 9]><link rel="stylesheet" href="css/ie9.css"><![endif]-->

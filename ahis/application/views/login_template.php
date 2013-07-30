@@ -13,14 +13,15 @@ if (trim($this->session->flashdata('msg')) != "") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-        <link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
+    <link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
     <title>AHIS - Animal Health Information System</title>
     <link rel="stylesheet" href="<?php echo base_url(); ?>css/login.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>css/ahis-custom.css">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet'>
     <!-- jQuery framework -->
-        <script src="<?php echo base_url(); ?>js/jquery.min.js"></script>
+    <script src="<?php echo base_url(); ?>js/jquery.min.js"></script>
     <!-- validation -->
-        <script src="<?php echo base_url(); ?>js/lib/jquery-validation/jquery.validate.js"></script>
+    <script src="<?php echo base_url(); ?>js/lib/jquery-validation/jquery.validate.js"></script>
     <script type="text/javascript">
         (function(a){a.fn.vAlign=function(){return this.each(function(){var b=a(this).height(),c=a(this).outerHeight(),b=(b+(c-b))/2;a(this).css("margin-top","-"+b+"px");a(this).css("top","50%");a(this).css("position","absolute")})}})(jQuery);(function(a){a.fn.hAlign=function(){return this.each(function(){var b=a(this).width(),c=a(this).outerWidth(),b=(b+(c-b))/2;a(this).css("margin-left","-"+b+"px");a(this).css("left","50%");a(this).css("position","absolute")})}})(jQuery);
         $(document).ready(function() {

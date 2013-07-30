@@ -6,7 +6,7 @@
 <title>AHIS - Animal Health Information System</title>
 
 <link href="<?php echo base_url(); ?>css/splash.css" rel="stylesheet" type="text/css" />
-        <link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
+<link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
 
 </head>
 
