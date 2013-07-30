@@ -47,7 +47,7 @@ class Auth_model extends CI_Model {
 		if (!$user_id || $user_id <= 0) {
 
 			//	Simply redirect via the logout page to kill all remnant session variables and then redirect to the login page
-			redirect(base_url() . 'logout');
+			redirect(base_url() . 'logout', 'refresh');
 
 		}	// Checking if the session variable is valid
 

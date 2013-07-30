@@ -10,15 +10,11 @@ class Logout extends CI_Controller
 
 
 
-	/**
-	 * Constructor for the Logout class / controller
-	 */
+	//	Constructor for the Logout class / controller
 	public function __construct() 
 	{
 
-		/**
-		 * this constructor does nothing right now
-		 */
+		//	This constructor does nothing right now
 		parent::__construct();
 
 	}	// END: __construct()
@@ -42,29 +38,23 @@ class Logout extends CI_Controller
 	public function index() 
 	{
 
-		/**
-		 * Set the session array to nothing
-		 */
-		$this->session->userdata = array();
+		if ($this->session->userdata('user_id')) {
 
-		/**
-		 * Destroy the session
-		 */
-		$this->session->sess_destroy();
+			//	Set the session array to nothing
+			$this->session->userdata = array();
 
-		/**
-		 * Destroy the cookie by setting its expiration to a past time/date
-		 */
-		setcookie( config_item('sess_cookie_name'), '', time() - 3600 );
+			//	Destroy the session
+			$this->session->sess_destroy();
 
-		/**
-		 * Clear the cache
-		 */
+			//	Destroy the cookie by setting its expiration to a past time/date
+			setcookie( config_item('sess_cookie_name'), '', time() - 3600 );
+
+		}	//	Check for valid session to avoid non-valid session related errors e.g. Undefined session variables
+
+		//	Clear the cache
 		$this->base_model->clear_cache();
 
-		/**
-		 * Now redirect to the login page
-		 */
+		//	Now redirect to the login page
 		redirect(base_url().'login');
 
 	}	// END: index()
