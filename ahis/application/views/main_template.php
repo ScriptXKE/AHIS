@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <title>AHIS - Animal Health Information System</title>
         <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-        <link rel="icon" type="<?php echo base_url(); ?>image/ico" href="favicon.ico">
+        <link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
         
      <!-- common stylesheets-->
         <!-- bootstrap framework css -->

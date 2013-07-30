@@ -399,3 +399,23 @@ LOCK TABLES `disease_symptoms` WRITE;
 insert  into `disease_symptoms`(`id`,`disease_id`,`symptom_id`) values (1,1,1),(2,2,3);
 
 UNLOCK TABLES;
+
+
+
+
+
+/*Table structure for table `incidents` */
+DROP TABLE IF EXISTS `incidents`;
+
+CREATE TABLE `incidents` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `incidents` */
+
+LOCK TABLES `incidents` WRITE;
+
+-- insert  into `incidents`(`id`,`disease_id`,`symptom_id`) values (1,1,1),(2,2,3);
+
+UNLOCK TABLES;

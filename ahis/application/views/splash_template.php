@@ -5,17 +5,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>AHIS - Animal Health Information System</title>
 
-<link href="style/format.css" rel="stylesheet" type="text/css" />
-<link href="css/splash.css" rel="stylesheet" type="text/css" />
-<link rel="shortcut icon" href="favicon.ico" />
+<link href="<?php echo base_url(); ?>css/splash.css" rel="stylesheet" type="text/css" />
+        <link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
 
 </head>
 
 <body>
 
 <div class="container">
-<p align="center" style="margin-top:200px;"><img src="img/logo-login.png" /></p>
-  <p align="center" style="margin-top:20px;"><img src="img/66.gif" /></p>
+<p align="center" style="margin-top:200px;"><img src="<?php echo base_url(); ?>img/logo-login.png" /></p>
+  <p align="center" style="margin-top:20px;"><img src="<?php echo base_url(); ?>img/66.gif" /></p>
     
 </div><!-- end .container -->
 

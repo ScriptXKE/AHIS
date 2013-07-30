@@ -13,7 +13,7 @@ if (trim($this->session->flashdata('msg')) != "") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-    <link rel="icon" type="<?php echo base_url(); ?><?php echo base_url(); ?>image/ico" href="favicon.ico">
+        <link rel="icon" type="image/ico" href="<?php echo base_url(); ?>favicon.ico">
     <title>AHIS - Animal Health Information System</title>
     <link rel="stylesheet" href="<?php echo base_url(); ?>css/login.css">
     <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet'>
