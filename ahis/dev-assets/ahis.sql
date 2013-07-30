@@ -341,8 +341,8 @@ DROP TABLE IF EXISTS `diseases`;
 
 CREATE TABLE `diseases` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(20) NOT NULL DEFAULT '',
-  `animal_id` int(11) NOT NULL DEFAULT '0',
+  `name` text NOT NULL,
+  `animal_id` int(11) NOT NULL,
   FOREIGN KEY (animal_id) REFERENCES animals(id) ON DELETE RESTRICT,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -351,7 +351,7 @@ CREATE TABLE `diseases` (
 
 LOCK TABLES `diseases` WRITE;
 
-insert  into `diseases`(`id`,`name`) values (1,'Bovine Babesiosis',2),(2,'Bovine Tuberculosis',2);
+insert  into `diseases`(`id`,`name`,`animal_id`) values (1,'Bovine Babesiosis',2),(2,'Bovine Tuberculosis',2);
 
 UNLOCK TABLES;
 
@@ -364,7 +364,7 @@ DROP TABLE IF EXISTS `symptoms`;
 
 CREATE TABLE `symptoms` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `description` varchar(20) NOT NULL DEFAULT '',
+  `description` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
