@@ -86,25 +86,41 @@
                                             <a href="<?php echo base_url(); ?>incident/create">Open New Incident</a>
                                         </li>
                                         <li>
-                                            <a href="<?php echo base_url(); ?>incident/edit">Open Existing Incident</a>
+                                            <a href="<?php echo base_url(); ?>incident/list">Open Existing Incident</a>
                                         </li>
                                     </ul>
                                 </li>
                                 <li><a href="javascript:void(0)"><i class="icsw16-chart-5 icsw16-white"></i>&nbsp;&nbsp;Reports</a>
                                     <ul>
                                         <li>
-                                            <a href="#">Create New Report</a>
+                                            <a href="<?php echo base_url(); ?>report/create">Create New Report</a>
                                         </li>
                                         <li>
-                                            <a href="#">Open Existing Report</a>
+                                            <a href="<?php echo base_url(); ?>report/list">Open Existing Report</a>
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="javascript:void(0)"><i class="icsw16-megaphone icsw16-white"></i>&nbsp;&nbsp;Support Ticket</a>
-                                   
                                 </li>
-                                <li><a href="javascript:void(0)"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Help</a>
-                                   
+                                <li><a href="javascript:void(0)"><i class="icsw16-user icsw16-white"></i>&nbsp;&nbsp;Users</a>
+                                 <ul>
+                                        <li>
+                                            <a href="<?php echo base_url(); ?>user/accounts">User Accounts</a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo base_url(); ?>user/roles">User Roles</a>
+                                        </li>
+                                    </ul>                                   
+                                </li>
+                                <li><a href="javascript:void(0)"><i class="icsw16-megaphone icsw16-white"></i>&nbsp;&nbsp;System Setup</a>
+                                 <ul>
+                                        <li>
+                                            <a href="<?php echo base_url(); ?>setup/diseases">Diseases</a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo base_url(); ?>setup/locations">Locations</a>
+                                        </li>
+                                    </ul>
+                                <li><a href="javascript:void(0)"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Help</a>                                   
                                 </li>
                             </ul>
                         </div>
@@ -113,7 +129,7 @@
             </div>
 
         </div>
-        <!-----End my top bar-------->
+        <!-- End my top bar -->
         
         <!-- breadcrumbs -->
         <div class="container">
@@ -121,19 +137,87 @@
                 <li><a href="<?php echo base_url(); ?>dashboard"><i class="icon-home"></i></a></li>
             </ul>
         </div>
-        
-        <!-- notification messages -->
-        <?php
-        // Check for the $msg variable
-        if ( (isset($msg) && trim($msg) != "") ) {
-        ?>
-        <div class="container notifications-container">
-            <p class="notifications-text"><?php echo $msg; ?></p>
-        </div>
-        <?php } ?>
             
         <!-- main content -->
         <div class="container">
+
+        <!-- NOTIFICATIONS START -->
+        <?php
+        /* 
+        Check if the $msg variable is set
+        The $msg variable is constructed as follows ...
+        $msg = array(
+                'type' => 'warning | error | success | notification',
+                'message' => 'Your message goes here ...'
+            );
+        It is envisaged that each view load will have a single message OR none at all
+        The various message types have the following colours
+        a) warning - yellow
+        b) error - red/pink
+        c) success - green
+        d) notification - blue
+        The value of 'type' in the $msg array determines the kind of warning/notification loaded
+        If no value is defined for 'type', 'success' is used by default
+        */
+        if (isset($msg) && is_array($msg)) {
+
+            // check for the type
+            $available_types = array('warning','error','success','notification');
+            $message_type = (in_array($msg['type'], $available_types)) ? $msg['type'] : 'success';
+
+            // Initialize the $style and $prompt variables just in case
+            $style = '';
+            $prompt = '';
+
+            // Set the style based on the passed on message type value
+            switch ($message_type) {
+
+                // warning
+                case 'warning':
+                    $style = '';
+                    $prompt = '';
+                    break;
+
+                // error
+                case 'error':
+                    $style = ' alert-error';
+                    $prompt = '';
+                    break;
+
+                // success
+                case 'success':
+                    $style = ' alert-success';
+                    $prompt = '';
+                    break;
+
+                // notification
+                case 'notification':
+                    $style = ' alert-info';
+                    $prompt = '';
+                    break;
+
+                // default
+                default:
+                    $style = ' alert-success';
+                    $prompt = '';
+                    break;            
+            }
+
+            // Now grab the message
+            $message = $msg['message'];
+
+        ?>
+
+        <div class="w-box-content cnt_a">
+            <div class="alert<?php echo $style; ?>">
+                <a data-dismiss="alert" class="close">×</a>
+                <strong><?php echo $prompt; ?></strong><?php echo $message; ?>
+            </div>
+        </div>
+
+        <?php } // Checking if there is a $msg variable ?>
+
+        <!-- NOTIFICATIONS END -->
 
         <!-- LOAD THE VIEW HERE : START -->
         <?php $this->load->view($view); ?>

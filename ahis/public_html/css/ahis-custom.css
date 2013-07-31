@@ -1,5 +1,13 @@
 /* CUSTOM CODE BY NICK */
+.w-box-content {
+	padding: 0;
+	border: 0;
+	padding: 10px;
+}
 
+.w-box-content .alert {
+	margin-bottom: 0;
+}
 
 /* CUSTOM CODE BY DREW */
 
