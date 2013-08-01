@@ -14,9 +14,32 @@ MySQL - 5.6.12-log : Database - ahisv5
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 DROP DATABASE IF EXISTS `ahis`;
 DROP DATABASE IF EXISTS `ahisv5`;
+
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`ahis` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 USE `ahis`;
+
+/*Table structure for table `animals` */
+
+DROP TABLE IF EXISTS `animals`;
+
+CREATE TABLE `animals` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+/*Data for the table `animals` */
+
+LOCK TABLES `animals` WRITE;
+
+insert  into `animals`(`id`,`name`) values (1,'Camel');
+insert  into `animals`(`id`,`name`) values (2,'Cow');
+insert  into `animals`(`id`,`name`) values (3,'Goat');
+insert  into `animals`(`id`,`name`) values (4,'Sheep');
+insert  into `animals`(`id`,`name`) values (5,'Chicken');
+
+UNLOCK TABLES;
 
 /*Table structure for table `ci_sessions` */
 
@@ -110,18 +133,18 @@ DROP TABLE IF EXISTS `diseases`;
 CREATE TABLE `diseases` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text NOT NULL,
-  `species_id` int(11) NOT NULL,
+  `animals_id` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `species_id` (`species_id`),
-  CONSTRAINT `diseases_ibfk_1` FOREIGN KEY (`species_id`) REFERENCES `species` (`id`)
+  KEY `animals_id` (`animals_id`),
+  CONSTRAINT `diseases_ibfk_1` FOREIGN KEY (`animals_id`) REFERENCES `animals` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 /*Data for the table `diseases` */
 
 LOCK TABLES `diseases` WRITE;
 
-insert  into `diseases`(`id`,`name`,`species_id`) values (1,'Bovine Babesiosis',2);
-insert  into `diseases`(`id`,`name`,`species_id`) values (2,'Bovine Tuberculosis',2);
+insert  into `diseases`(`id`,`name`,`animals_id`) values (1,'Bovine Babesiosis',2);
+insert  into `diseases`(`id`,`name`,`animals_id`) values (2,'Bovine Tuberculosis',2);
 
 UNLOCK TABLES;
 
@@ -132,93 +155,114 @@ DROP TABLE IF EXISTS `districts`;
 CREATE TABLE `districts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` tinytext NOT NULL,
-  `region_id` char(2) NOT NULL DEFAULT '',
+  `region_id` int(11) NOT NULL,
   `district_pcode_id` char(2) NOT NULL DEFAULT '',
   `coordinates` text NOT NULL,
   `gaul_code` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `inx_region_id` (`region_id`)
+  KEY `inx_region_id` (`region_id`),
+  CONSTRAINT `fk_districts_regions1` FOREIGN KEY (`region_id`) REFERENCES `regions` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `districts` */
 
 LOCK TABLES `districts` WRITE;
 
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (1,'BORAMA','11','01','149,187,171,176,177,176,175,206,173,216,174,218,171,213,163,209,159,201,152,194','25654');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (2,'BAKI','11','02','178,213,180,186,220,172,227,179,217,191,199,185','25653');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (3,'LUGHAYE','11','03','166,164,199,152,217,169,181,181,181,172,170,173','25655');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (4,'ZEYLAC','11','04','172,120,183,126,195,149,161,162,166,173,147,184,140,169','25656');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (5,'HARGEYSA','12','01','194,241,222,200,223,193,227,187,256,209,264,211,256,242,255,277,218,264','25726');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (6,'BERBERA','12','02','229,182,230,185,257,205,269,207,280,192,334,197,336,161,325,156,299,168,274,181,258,183','25724');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (7,'GEBILEY','12','03','175,225,202,190,220,197,190,239','25725');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (8,'BURCO','13','01','295,215,327,219,325,206,330,202,336,203,347,261,345,280,349,307,295,290','25720');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (9,'BUUHOODLE','13','02','351,278,390,280,395,281,399,294,394,323,352,309','25721');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (10,'OWDWEYNE','13','03','268,211,292,215,292,288,260,279,259,245','25722');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (11,'SHEIKH','13','04','273,208,283,197,325,201,322,206,322,214','25723');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (12,'LAAS CAANOOD','14','01','392,276,485,280,457,309,459,312,449,322,398,324,403,290,399,281','25717');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (13,'CAYNABO','14','02','342,207,388,243,388,275,350,274,351,260','25716');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (14,'TALEEX','14','03','461,235,516,233,517,257,497,276,460,276','25718');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (15,'XUDUN','14','04','392,242,458,237,455,275,392,272','25719');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (16,'CEERIGAABO','15','01','385,157,405,147,406,141,431,136,434,142,449,140,491,176,487,230,405,237,419,211,419,193','25715');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (17,'CEEL AFWEYNE','15','02','340,160,352,160,356,168,382,159,415,194,415,212,399,237,388,238,338,200','25714');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (18,'LAASQORAY','15','03','453,140,468,140,475,132,495,127,509,133,515,159,517,228,491,231,494,173',NULL);
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (19,'BOSSAASSO','16','01','512,133,541,127,548,122,561,142,568,155,551,174,528,170,519,180,518,155','25663');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (20,'BANDAR BEYLA','16','02','582,217,603,212,625,212,621,233,625,237,613,252,613,258,600,272,593,290,587,303,575,294,570,299,571,259,580,251','25662');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (21,'CALUULA','16','03','599,109,609,100,611,91,625,89,637,95,651,98,641,112,614,119,601,119,596,115','25664');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (22,'ISKUSHUBAN','16','04','601,123,643,116,636,134,644,139,639,149,641,170,658,180,642,178,627,184,625,207,604,207,577,215,559,203,552,177,603,167,609,155,599,136','25665');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (23,'QANDALA','16','05','559,131,552,120,560,119,572,118,581,117,592,111,591,121,598,122,593,137,604,155,599,165,558,172,573,153','25666');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (24,'QARDHO','16','06','519,184,533,173,548,178,555,206,570,215,578,217,576,249,568,255,566,299,563,293,558,288,542,287,528,278,523,264,521,234','25667');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (25,'GAROOWE','17','01','462,309,489,281,501,279,518,261,525,283,529,285,524,301,524,321','25712');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (26,'BURTINLE','17','02','455,327,454,324,463,313,523,324,515,341,485,358,432,349','25710');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (27,'EYL','17','03','535,285,544,292,559,292,564,308,576,298,585,309,565,325,562,337,562,348,560,350,554,357,548,351,531,343,522,339,531,315,529,300','25711');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (28,'GAALKACYO','18','01','426,352,484,362,483,399,448,397,436,408,429,426,371,412,390,392,401,402,431,373,419,363','25705');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (29,'GALDOGOB','18','02','418,366,425,373,402,397,393,391','25706');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (30,'HOBYO','18','03','436,424,439,409,451,400,484,403,494,408,523,409,519,421,518,432,485,486,472,502,433,490,419,458','25707');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (31,'JARIIBAN','18','04','488,361,520,343,547,354,550,362,524,406,498,406,487,399','25708');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (32,'HARARDHEERE','18','05','434,495,469,506,456,531,444,542,428,534','25709');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (33,'DHUSA MARREEB','19','01','318,495,363,454,373,450,374,455,416,459,429,491,398,492,372,492,336,499','25677');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (34,'CABUDWAAQ','19','02','365,418,374,448,363,448,317,490,310,475','25673');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (35,'CADAADO','19','03','428,429,370,416,380,451,415,455','25674');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (36,'CEEL BUR','19','04','353,501,371,496,430,495,423,532,360,547,347,539,343,522','25675');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (37,'CEEL DHEERE','19','05','388,544,423,536,441,545,399,592,362,570,363,551','25676');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (38,'BELET WEYNE','20','01','307,478,315,500,341,503,349,500,340,520,342,536,317,537,311,544,299,540,282,546,271,556,263,557,252,508,273,511','25684');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (39,'BULO BURTI','20','02','264,561,277,557,283,549,299,543,309,548,320,540,344,540,358,551,358,570,347,573,337,589,284,588,291,611,281,607,265,607,263,588,267,571','25685');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (40,'JALALAQSI','20','03','288,592,338,593,330,607,295,609','25686');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (41,'JOWHAR','21','01','285,613,331,612,329,638,310,639,305,636,295,637,283,620','25704');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (42,'ADAN YABAL','21','02','358,573,397,595,381,611,377,603,342,589,349,578',NULL);
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (43,'BALCAD','21','03','298,643,302,641,306,643,334,642,339,651,326,663,313,671,304,672,296,671','25702');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (44,'CADALE','21','04','341,594,376,608,376,616,342,650,341,641,334,638,334,613','25703');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (45,'MOGADISHU','22','01','293,684,300,674,309,674','25672');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (46,'MARKA','23','01','281,690,266,690,250,704,242,710,242,714','25694');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (47,'AFGOOYE','23','02','259,673,277,661,293,646,294,674,292,681,281,687,269,687','25691');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (48,'BARAAWE','23','03','239,715,226,718,180,748,189,760,208,743,226,727','25692');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (49,'KURTUNWAAREY','23','04','208,693,244,704,238,710,224,714,197,697','25693');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (50,'QORYOLEY','23','05','216,691,236,682,255,672,264,687,247,701','25695');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (51,'SABLAALE','23','06','158,717,192,700,221,717,178,745','25696');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (52,'WANLA WEYNE','23','07','259,610,280,611,279,622,293,639,266,663,255,668','25697');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (53,'BAYDHABA','24','01','164,585,180,593,192,591,207,569,226,575,233,589,232,600,202,627,180,650,166,647','25668');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (54,'BUUR HAKABA','24','02','233,605,244,611,255,611,251,669,174,703,178,695,169,685,184,651','25669');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (55,'DIINSOR','24','03','129,651,162,651,178,654,165,687,173,696,171,706,154,713,123,684','25670');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (56,'QANSAX DHEERE','24','04','134,620,150,624,161,622,161,647,129,647','25671');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (57,'XUDUR','25','01','177,537,232,540,232,580,228,571,207,566,203,569','25661');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (58,'CEEL BARDE','25','02','166,527,181,519,214,508,249,509,255,538,225,535,173,534','25657');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (59,'TAYEGLOW','25','03','235,540,255,541,262,571,261,591,260,606,255,606,243,606,237,602,237,592,235,579','25659');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (60,'WAJID','25','04','166,568,192,562,201,571,195,580,185,589,165,582','25660');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (61,'YEED','25','05','151,545,158,540,162,529,176,543,190,559,162,565',NULL);
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (62,'GARBAHAREY','26','01','100,585,160,608,159,620,150,621,131,617,127,637,82,622','25682');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (63,'BAARDHEERE','26','02','96,630,127,641,120,686,73,686,61,728,39,727,39,667,84,667','25678');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (64,'BELET XAAWA','26','03','87,572,100,578,78,620,60,614','25679');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (65,'CEEL WAAQ','26','04','54,617,93,628,82,664,39,664,39,633','25680');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (66,'DOOLOW','26','05','89,568,101,555,118,555,110,572,104,575','25681');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (67,'LUUQ','26','06','122,554,149,549,162,571,160,605,103,582,104,577,111,576','25683');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (68,'BU\'AALE','27','01','107,723,113,714,153,717,169,741,134,755,124,723','25698');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (69,'JILIB','27','02','135,759,171,744,186,764,167,782,142,783','25699');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (70,'SAAKOW','27','03','64,726,78,689,123,690,149,713,110,710,104,724','25700');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (71,'KISMAAYO','28','01','55,814,91,807,129,808,136,815,97,862','25690');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (72,'AFMADOW','28','02','37,731,122,726,139,783,128,795,127,804,92,803,38,813','25687');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (73,'BADHADHE','28','03','38,817,50,814,95,865,71,899,39,854','25688');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (74,'JAMAAME','28','04','141,785,163,786,139,813,130,803,131,798','25689');
-insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (75,'NAIROBI','29','','',NULL);
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (1,'BORAMA',11,'01','149,187,171,176,177,176,175,206,173,216,174,218,171,213,163,209,159,201,152,194','25654');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (2,'BAKI',11,'02','178,213,180,186,220,172,227,179,217,191,199,185','25653');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (3,'LUGHAYE',11,'03','166,164,199,152,217,169,181,181,181,172,170,173','25655');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (4,'ZEYLAC',11,'04','172,120,183,126,195,149,161,162,166,173,147,184,140,169','25656');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (5,'HARGEYSA',12,'01','194,241,222,200,223,193,227,187,256,209,264,211,256,242,255,277,218,264','25726');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (6,'BERBERA',12,'02','229,182,230,185,257,205,269,207,280,192,334,197,336,161,325,156,299,168,274,181,258,183','25724');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (7,'GEBILEY',12,'03','175,225,202,190,220,197,190,239','25725');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (8,'BURCO',13,'01','295,215,327,219,325,206,330,202,336,203,347,261,345,280,349,307,295,290','25720');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (9,'BUUHOODLE',13,'02','351,278,390,280,395,281,399,294,394,323,352,309','25721');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (10,'OWDWEYNE',13,'03','268,211,292,215,292,288,260,279,259,245','25722');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (11,'SHEIKH',13,'04','273,208,283,197,325,201,322,206,322,214','25723');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (12,'LAAS CAANOOD',14,'01','392,276,485,280,457,309,459,312,449,322,398,324,403,290,399,281','25717');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (13,'CAYNABO',14,'02','342,207,388,243,388,275,350,274,351,260','25716');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (14,'TALEEX',14,'03','461,235,516,233,517,257,497,276,460,276','25718');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (15,'XUDUN',14,'04','392,242,458,237,455,275,392,272','25719');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (16,'CEERIGAABO',15,'01','385,157,405,147,406,141,431,136,434,142,449,140,491,176,487,230,405,237,419,211,419,193','25715');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (17,'CEEL AFWEYNE',15,'02','340,160,352,160,356,168,382,159,415,194,415,212,399,237,388,238,338,200','25714');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (18,'LAASQORAY',15,'03','453,140,468,140,475,132,495,127,509,133,515,159,517,228,491,231,494,173',NULL);
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (19,'BOSSAASSO',16,'01','512,133,541,127,548,122,561,142,568,155,551,174,528,170,519,180,518,155','25663');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (20,'BANDAR BEYLA',16,'02','582,217,603,212,625,212,621,233,625,237,613,252,613,258,600,272,593,290,587,303,575,294,570,299,571,259,580,251','25662');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (21,'CALUULA',16,'03','599,109,609,100,611,91,625,89,637,95,651,98,641,112,614,119,601,119,596,115','25664');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (22,'ISKUSHUBAN',16,'04','601,123,643,116,636,134,644,139,639,149,641,170,658,180,642,178,627,184,625,207,604,207,577,215,559,203,552,177,603,167,609,155,599,136','25665');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (23,'QANDALA',16,'05','559,131,552,120,560,119,572,118,581,117,592,111,591,121,598,122,593,137,604,155,599,165,558,172,573,153','25666');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (24,'QARDHO',16,'06','519,184,533,173,548,178,555,206,570,215,578,217,576,249,568,255,566,299,563,293,558,288,542,287,528,278,523,264,521,234','25667');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (25,'GAROOWE',17,'01','462,309,489,281,501,279,518,261,525,283,529,285,524,301,524,321','25712');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (26,'BURTINLE',17,'02','455,327,454,324,463,313,523,324,515,341,485,358,432,349','25710');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (27,'EYL',17,'03','535,285,544,292,559,292,564,308,576,298,585,309,565,325,562,337,562,348,560,350,554,357,548,351,531,343,522,339,531,315,529,300','25711');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (28,'GAALKACYO',18,'01','426,352,484,362,483,399,448,397,436,408,429,426,371,412,390,392,401,402,431,373,419,363','25705');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (29,'GALDOGOB',18,'02','418,366,425,373,402,397,393,391','25706');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (30,'HOBYO',18,'03','436,424,439,409,451,400,484,403,494,408,523,409,519,421,518,432,485,486,472,502,433,490,419,458','25707');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (31,'JARIIBAN',18,'04','488,361,520,343,547,354,550,362,524,406,498,406,487,399','25708');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (32,'HARARDHEERE',18,'05','434,495,469,506,456,531,444,542,428,534','25709');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (33,'DHUSA MARREEB',19,'01','318,495,363,454,373,450,374,455,416,459,429,491,398,492,372,492,336,499','25677');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (34,'CABUDWAAQ',19,'02','365,418,374,448,363,448,317,490,310,475','25673');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (35,'CADAADO',19,'03','428,429,370,416,380,451,415,455','25674');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (36,'CEEL BUR',19,'04','353,501,371,496,430,495,423,532,360,547,347,539,343,522','25675');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (37,'CEEL DHEERE',19,'05','388,544,423,536,441,545,399,592,362,570,363,551','25676');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (38,'BELET WEYNE',20,'01','307,478,315,500,341,503,349,500,340,520,342,536,317,537,311,544,299,540,282,546,271,556,263,557,252,508,273,511','25684');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (39,'BULO BURTI',20,'02','264,561,277,557,283,549,299,543,309,548,320,540,344,540,358,551,358,570,347,573,337,589,284,588,291,611,281,607,265,607,263,588,267,571','25685');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (40,'JALALAQSI',20,'03','288,592,338,593,330,607,295,609','25686');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (41,'JOWHAR',21,'01','285,613,331,612,329,638,310,639,305,636,295,637,283,620','25704');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (42,'ADAN YABAL',21,'02','358,573,397,595,381,611,377,603,342,589,349,578',NULL);
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (43,'BALCAD',21,'03','298,643,302,641,306,643,334,642,339,651,326,663,313,671,304,672,296,671','25702');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (44,'CADALE',21,'04','341,594,376,608,376,616,342,650,341,641,334,638,334,613','25703');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (45,'MOGADISHU',22,'01','293,684,300,674,309,674','25672');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (46,'MARKA',23,'01','281,690,266,690,250,704,242,710,242,714','25694');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (47,'AFGOOYE',23,'02','259,673,277,661,293,646,294,674,292,681,281,687,269,687','25691');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (48,'BARAAWE',23,'03','239,715,226,718,180,748,189,760,208,743,226,727','25692');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (49,'KURTUNWAAREY',23,'04','208,693,244,704,238,710,224,714,197,697','25693');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (50,'QORYOLEY',23,'05','216,691,236,682,255,672,264,687,247,701','25695');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (51,'SABLAALE',23,'06','158,717,192,700,221,717,178,745','25696');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (52,'WANLA WEYNE',23,'07','259,610,280,611,279,622,293,639,266,663,255,668','25697');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (53,'BAYDHABA',24,'01','164,585,180,593,192,591,207,569,226,575,233,589,232,600,202,627,180,650,166,647','25668');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (54,'BUUR HAKABA',24,'02','233,605,244,611,255,611,251,669,174,703,178,695,169,685,184,651','25669');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (55,'DIINSOR',24,'03','129,651,162,651,178,654,165,687,173,696,171,706,154,713,123,684','25670');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (56,'QANSAX DHEERE',24,'04','134,620,150,624,161,622,161,647,129,647','25671');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (57,'XUDUR',25,'01','177,537,232,540,232,580,228,571,207,566,203,569','25661');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (58,'CEEL BARDE',25,'02','166,527,181,519,214,508,249,509,255,538,225,535,173,534','25657');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (59,'TAYEGLOW',25,'03','235,540,255,541,262,571,261,591,260,606,255,606,243,606,237,602,237,592,235,579','25659');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (60,'WAJID',25,'04','166,568,192,562,201,571,195,580,185,589,165,582','25660');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (61,'YEED',25,'05','151,545,158,540,162,529,176,543,190,559,162,565',NULL);
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (62,'GARBAHAREY',26,'01','100,585,160,608,159,620,150,621,131,617,127,637,82,622','25682');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (63,'BAARDHEERE',26,'02','96,630,127,641,120,686,73,686,61,728,39,727,39,667,84,667','25678');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (64,'BELET XAAWA',26,'03','87,572,100,578,78,620,60,614','25679');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (65,'CEEL WAAQ',26,'04','54,617,93,628,82,664,39,664,39,633','25680');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (66,'DOOLOW',26,'05','89,568,101,555,118,555,110,572,104,575','25681');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (67,'LUUQ',26,'06','122,554,149,549,162,571,160,605,103,582,104,577,111,576','25683');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (68,'BU\'AALE',27,'01','107,723,113,714,153,717,169,741,134,755,124,723','25698');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (69,'JILIB',27,'02','135,759,171,744,186,764,167,782,142,783','25699');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (70,'SAAKOW',27,'03','64,726,78,689,123,690,149,713,110,710,104,724','25700');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (71,'KISMAAYO',28,'01','55,814,91,807,129,808,136,815,97,862','25690');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (72,'AFMADOW',28,'02','37,731,122,726,139,783,128,795,127,804,92,803,38,813','25687');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (73,'BADHADHE',28,'03','38,817,50,814,95,865,71,899,39,854','25688');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (74,'JAMAAME',28,'04','141,785,163,786,139,813,130,803,131,798','25689');
+insert  into `districts`(`id`,`name`,`region_id`,`district_pcode_id`,`coordinates`,`gaul_code`) values (75,'NAIROBI',29,'','',NULL);
+
+UNLOCK TABLES;
+
+/*Table structure for table `incident_animals` */
+
+DROP TABLE IF EXISTS `incident_animals`;
+
+CREATE TABLE `incident_animals` (
+  `animals_id` int(11) NOT NULL,
+  `incident_id` int(11) NOT NULL,
+  `number` int(11) NOT NULL,
+  PRIMARY KEY (`animals_id`,`incident_id`),
+  KEY `incident_animal_idx` (`incident_id`),
+  CONSTRAINT `fk_incident_animal` FOREIGN KEY (`incident_id`) REFERENCES `incidents` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_animal_incident` FOREIGN KEY (`animals_id`) REFERENCES `animals` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `incident_animals` */
+
+LOCK TABLES `incident_animals` WRITE;
 
 UNLOCK TABLES;
 
@@ -239,26 +283,6 @@ CREATE TABLE `incident_sms` (
 /*Data for the table `incident_sms` */
 
 LOCK TABLES `incident_sms` WRITE;
-
-UNLOCK TABLES;
-
-/*Table structure for table `incident_species` */
-
-DROP TABLE IF EXISTS `incident_species`;
-
-CREATE TABLE `incident_species` (
-  `species_id` int(11) NOT NULL,
-  `incident_id` int(11) NOT NULL,
-  `number` int(11) NOT NULL,
-  PRIMARY KEY (`species_id`,`incident_id`),
-  KEY `incident_species_idx` (`incident_id`),
-  CONSTRAINT `fk_incident_species` FOREIGN KEY (`incident_id`) REFERENCES `incidents` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_species_incident` FOREIGN KEY (`species_id`) REFERENCES `species` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `incident_species` */
-
-LOCK TABLES `incident_species` WRITE;
 
 UNLOCK TABLES;
 
@@ -316,7 +340,7 @@ CREATE TABLE `livelihood_zones` (
   `name` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_name_index` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 
 /*Data for the table `livelihood_zones` */
 
@@ -408,8 +432,9 @@ CREATE TABLE `regions` (
   `securityofficer` int(11) NOT NULL DEFAULT '0',
   `gaul_code` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `inx_zone_id` (`zone_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  KEY `inx_zone_id` (`zone_id`),
+  CONSTRAINT `fk_regions_zones1` FOREIGN KEY (`zone_id`) REFERENCES `zones` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `regions` */
 
@@ -471,8 +496,9 @@ CREATE TABLE `settlements` (
   `longitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
   `latitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
   PRIMARY KEY (`id`),
-  KEY `inx_district_id` (`district_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4363 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  KEY `inx_district_id` (`district_id`),
+  CONSTRAINT `fk_settlements_districts1` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4363 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `settlements` */
 
@@ -4897,7 +4923,8 @@ CREATE TABLE `towns` (
   `latitude` decimal(8,5) NOT NULL DEFAULT '0.00000',
   `fsaucode` varchar(4) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
-  KEY `inx_district_id` (`district_id`)
+  KEY `inx_district_id` (`district_id`),
+  CONSTRAINT `fk_towns_districts1` FOREIGN KEY (`district_id`) REFERENCES `districts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=125 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `towns` */
@@ -5066,8 +5093,9 @@ CREATE TABLE `zones` (
   `name` varchar(20) NOT NULL DEFAULT '',
   `country_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `inx_country_id` (`country_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+  KEY `inx_country_id` (`country_id`),
+  CONSTRAINT `fk_zones_countries1` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 /*Data for the table `zones` */
 
@@ -5112,7 +5140,7 @@ DROP TABLE IF EXISTS `view_users`;
 /*!50001 DROP TABLE IF EXISTS `view_users` */;
 /*!50001 DROP VIEW IF EXISTS `view_users` */;
 
-/*!50001 CREATE VIEW `view_users` AS (select `persons`.`id` AS `person_id`,`persons`.`firstname` AS `firstname`,`persons`.`surname` AS `surname`,`persons`.`othernames` AS `othernames`,`persons`.`birthdate` AS `birthdate`,`persons`.`gender` AS `gender`,`persons`.`email` AS `email`,`persons`.`telephone` AS `telephone`,`persons`.`biodata` AS `biodata`,`persons`.`avatar` AS `avatar`,`users`.`id` AS `user_id`,`users`.`username` AS `username`,`users`.`password` AS `password`,`users`.`active` AS `active`,`users`.`is_admin` AS `is_admin` from (`users` join `persons` on((`users`.`person_id` = `persons`.`id`)))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_users` AS (select `persons`.`id` AS `person_id`,`persons`.`firstname` AS `firstname`,`persons`.`surname` AS `surname`,`persons`.`othernames` AS `othernames`,`persons`.`birthdate` AS `birthdate`,`persons`.`gender` AS `gender`,`persons`.`email` AS `email`,`persons`.`telephone` AS `telephone`,`persons`.`biodata` AS `biodata`,`persons`.`avatar` AS `avatar`,`users`.`id` AS `user_id`,`users`.`username` AS `username`,`users`.`password` AS `password`,`users`.`active` AS `active`,`users`.`is_admin` AS `is_admin` from (`users` join `persons` on((`users`.`person_id` = `persons`.`id`)))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
