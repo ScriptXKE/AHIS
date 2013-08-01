@@ -8,47 +8,61 @@
  */
 class Incident_model extends CI_Model {
 	
-	private $tbl_incident= 'incident';
+	private $tbl_incident = 'incidents';
 	
-        /**
-	 * Constructor method
-	 */
+	/**
+	* Constructor method
+	*/
 	function __construct(){
 		parent::__construct();
 	} // END: __construct()
 	
-        function list_all(){
+    
+    // Get list of all incidents in the database
+    public function list_all(){
 		$this->db->order_by('id','asc');
 		return $this->db->get($this->tbl_incident);
 	}
 	
-	function count_all(){
+	// Get a count of all incidents
+	public function count_all(){
 		return $this->db->count_all($this->tbl_incident);
 	}
 	
-	function get_paged_list($limit = 10, $offset = 0){
+	// Get a paged list of all incidents
+	public function get_paged_list($limit = 10, $offset = 0){
 		$this->db->order_by('id','asc');
 		return $this->db->get($this->tbl_incident, $limit, $offset);
 	}
 	
-	function get_by_id($id){
+	// Get incident details by ID
+	public function get_by_id($id){
 		$this->db->where('id', $id);
 		return $this->db->get($this->tbl_incident);
 	}
 	
-	function save($incident){
+	// Save an incident
+	public function save($incident){
 		$this->db->insert($this->tbl_incident, $incident);
 		return $this->db->insert_id();
 	}
 	
-	function update($id, $incident){
+	// Update an incident
+	public function update($id, $incident){
 		$this->db->where('id', $id);
 		$this->db->update($this->tbl_incident, $incident);
 	}
 	
-	function delete($id){
+	// Delete an incident
+	public function delete($id){
 		$this->db->where('id', $id);
 		$this->db->delete($this->tbl_incident);
 	}
+
+	// Method to process an incident
+	public function process_incident() {
+		// check for the $_POST variable
+		
+	}
+
 }
-?>

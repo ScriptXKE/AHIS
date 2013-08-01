@@ -4,6 +4,10 @@ class User extends CI_Controller
 {
 
 
+	// Declare private variables that hold table names
+	$tbl_users = 'users';
+	$vw_users = 'view_users';
+
 	
 	/**
 	 * Constructor for the User class / controller
@@ -78,7 +82,7 @@ class User extends CI_Controller
 			// Are we willing to underwrite such database overheads? HELL NO!!!
 			$data = array(
 					'view' => 'common/notifications',
-					'msg' => 'Your details could not be found in the database. Please try again later.'
+					'msg' => array('type'=>'error','message'=>'Your details could not be found in the database. Please try again later.')
 				);
 
 			// Load the view

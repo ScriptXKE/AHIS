@@ -94,10 +94,7 @@
                     "aaSorting": [[ 2, "asc" ]],
                     "aoColumns": [
                         { "bSortable": false },
-                        { "bSortable": false },
                         { "sType": "string" },
-                        { "sType": "formatted-num" },
-                        { "sType": "eu_date" },
                         { "bSortable": false }
                     ]
                 });

@@ -247,6 +247,17 @@ small { font-size: 11px }
 #hideForm { display: none; }
 #afterRequest { display: none; }
 #afterPrognosis { display: none; }
+#addPopup { display: none; }
+#editPopup { display: none; }
+
+
+.myBread { 
+ 	font-size: 0.8em;
+  color: #000;
+ 	background-color: #FFCF29;
+ 	border: 1px #00009C solid;
+ 	padding: 0.5em;
+}
 
 /* other elements*/
     .sepH_a { margin-bottom: 6px }

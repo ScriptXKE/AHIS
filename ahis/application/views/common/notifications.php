@@ -1,1 +1,1 @@
-<div><?php echo $msg; ?></div>
+<div><?php echo $msg['message']; ?></div>
