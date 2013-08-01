@@ -21,8 +21,7 @@
                     <p class="heading_a">Case Information</p>
                      <div class="formSep">
                         <label for="s_offline">SMS Details</label>
-                             <div id="list_basic" class="SMS-list">
-       
+                        <div id="list_basic" class="SMS-list">       
                         <ul>
                             <li>
                                 <span class="list-username"><a href="javascript:void(0)">Nicolas Kerandi</a></span>
@@ -31,14 +30,12 @@
                             </li>
                             
                         </ul>
-
                         </div>
                      </div>
-                
+
                     <div class="formSep">
-                        <label for="s_off_message">About the case</label>
-                        <textarea name="s_off_message" id="s_off_message" cols="30" rows="6" class="span8">
-Enter some details about the case here</textarea>
+                        <label for="description">About the case</label>
+                        <textarea name="description" id="description" cols="30" rows="6" class="span8" placeholder="Enter details about the incident here"></textarea>
                     </div>
                    
                 </div>
@@ -46,38 +43,33 @@ Enter some details about the case here</textarea>
                     <p class="heading_a">Case Details</p>
 
                     <div class="formSep">
-                        <label for="case_location">Location</label>
-                        <select name="case_location" id="case_location" class="span6">
-                            <option value="place1">Hageiza</option>
-                            <option value="place3">Hageiza hapo down</option>
-                            <option value="place4">Hageiza Uptown</option>
-                            <option value="place5">Hageiza Grogon</option>
+                        <label for="location_id">Town where incident is reported:</label>
+                        <select name="location_id" id="location_id" class="span6">
+                            <?php foreach ($town_listing->result() as $town) { ?>
+                            <option value="<?php echo $town->id; ?>"><?php echo ucwords(strtolower($town->name)); ?></option>
+                            <?php } ?>
                         </select>
 
                     </div>
                     <div class="formSep">
-                        <label for="animal_affected">Animal Affected</label>
-                        <select name="animal_affected" id="animal_affected" class="span6">
-                            <option value="a_cow">Cow</option>
-                            <option value="a_goat">Goat</option>
-                            <option value="a_chicken">Chicken</option>
-                            <option value="a_camel">Camel</option>
-                            <option value="a_sheep">Sheep</option>
-                            <option value="a_rabbit">Rabbit?</option>
-
+                        <label for="animal_id">Animal affected:</label>
+                        <select name="animal_id" id="animal_id" class="span6">
+                            <?php foreach ($animal_listing->result() as $animal) { ?>
+                            <option value="<?php echo $animal->id; ?>"><?php echo ucwords(strtolower($animal->name)); ?></option>
+                            <?php } ?>
                         </select>
                     </div>
                      <div class="formSep">
-                    <label for="herd_animals">How many animals in the herd?</label>
-                    <input type="text" id="herd_animals" name="herd_animals" class="span8" value="0" />
+                    <label for="animal_herd_size">How many animals in the herd?</label>
+                    <input type="text" id="animal_herd_size" name="animal_herd_size" class="span8" value="0" size="10" maxlength="5" />
                 </div>
                  <div class="formSep">
-                    <label for="herd_affected">How many animals affected?</label>
-                    <input type="text" id="herd_affected" name="herd_affected" class="span8" value="25" />
+                    <label for="num_animals_affected">How many animals affected?</label>
+                    <input type="text" id="num_animals_affected" name="num_animals_affected" class="span8" value="25" />
                 </div>
                  <div class="formSep">
-                    <label for="herd_days">How many days have the symptoms been observed?</label>
-                    <input type="text" id="herd_days" name="herd_days" class="span8" value="2 Weeks" />
+                    <label for="symptoms_duration">How many days have the symptoms been observed?</label>
+                    <input type="text" id="symptoms_duration" name="symptoms_duration" class="span8" value="2 Weeks" />
                 </div>
                 </div>
             </div>
