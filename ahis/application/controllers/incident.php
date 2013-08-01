@@ -17,7 +17,7 @@ class Incident extends CI_Controller
 		$this->auth_model->is_logged_in();
 
 		// Load the incident model
-		$this->load->model('incident_model');
+		$this->load->model(array('incident_model','base_model'));
 
 	}	// END: __construct()
 
@@ -84,6 +84,8 @@ class Incident extends CI_Controller
 		// Prepare the data for the page
 		$data = array(
 				'title' => 'Incident: Basic Details',
+				'town_listing' => $this->base_model->towns_list(),
+				'animal_listing' => $this->base_model->animals_list(),
 				'view' => 'incident/basic_details',
 				'msg' => 'I am creating a new incident ...'
 			);
