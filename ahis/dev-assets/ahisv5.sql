@@ -5140,7 +5140,7 @@ DROP TABLE IF EXISTS `view_users`;
 /*!50001 DROP TABLE IF EXISTS `view_users` */;
 /*!50001 DROP VIEW IF EXISTS `view_users` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_users` AS (select `persons`.`id` AS `person_id`,`persons`.`firstname` AS `firstname`,`persons`.`surname` AS `surname`,`persons`.`othernames` AS `othernames`,`persons`.`birthdate` AS `birthdate`,`persons`.`gender` AS `gender`,`persons`.`email` AS `email`,`persons`.`telephone` AS `telephone`,`persons`.`biodata` AS `biodata`,`persons`.`avatar` AS `avatar`,`users`.`id` AS `user_id`,`users`.`username` AS `username`,`users`.`password` AS `password`,`users`.`active` AS `active`,`users`.`is_admin` AS `is_admin` from (`users` join `persons` on((`users`.`person_id` = `persons`.`id`)))) */;
+/*!50001 CREATE VIEW `view_users` AS (select `persons`.`id` AS `person_id`,`persons`.`firstname` AS `firstname`,`persons`.`surname` AS `surname`,`persons`.`othernames` AS `othernames`,`persons`.`birthdate` AS `birthdate`,`persons`.`gender` AS `gender`,`persons`.`email` AS `email`,`persons`.`telephone` AS `telephone`,`persons`.`biodata` AS `biodata`,`persons`.`avatar` AS `avatar`,`users`.`id` AS `user_id`,`users`.`username` AS `username`,`users`.`password` AS `password`,`users`.`active` AS `active`,`users`.`is_admin` AS `is_admin` from (`users` join `persons` on((`users`.`person_id` = `persons`.`id`)))) */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
