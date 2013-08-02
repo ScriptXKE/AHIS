@@ -62,7 +62,7 @@ class Incident_model extends CI_Model {
 	// Method to process an incident
 	public function process_incident() {
 		// check for the $_POST variable
-
+		
 	}
 
 }

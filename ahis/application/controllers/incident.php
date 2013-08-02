@@ -74,6 +74,9 @@ class Incident extends CI_Controller
 	 */
 	public function create() {
 
+		// initialize the message variable to nothing
+		$msg = '';
+
 		// Check if the form has been posted
 		if ($_POST) {
 			// something was posted
@@ -87,7 +90,7 @@ class Incident extends CI_Controller
 				'town_listing' => $this->base_model->towns_list(),
 				'animal_listing' => $this->base_model->animals_list(),
 				'view' => 'incident/basic_details',
-				'msg' => 'I am creating a new incident ...'
+				'msg' => $msg
 			);
 
 		// Load the view

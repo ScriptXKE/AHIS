@@ -5,8 +5,8 @@ class User extends CI_Controller
 
 
 	// Declare private variables that hold table names
-	$tbl_users = 'users';
-	$vw_users = 'view_users';
+	private $tbl_users = 'users';
+	private $vw_users = 'view_users';
 
 	
 	/**
@@ -56,7 +56,7 @@ class User extends CI_Controller
 
 		//	Run the query to get the current user's profile details
 		$user_criteria_array = array('user_id' => $this->session->userdata('user_id'));
-		$query = $this->db->get_where('view_users', $user_criteria_array);
+		$query = $this->db->get_where($this->vw_users, $user_criteria_array);
 
 		// Check for results
 		if ($query->num_rows() == 1) {
