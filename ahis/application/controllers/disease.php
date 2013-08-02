@@ -25,6 +25,7 @@ class Disease extends CI_Controller
 		 * Check if the user is logged in
 		 */
 		$this->auth_model->is_logged_in();
+		$this->load->model('disease_model');
 
 	}	// END: __construct()
 

@@ -25,6 +25,7 @@ class Location extends CI_Controller
 		 */
 		$this->auth_model->is_logged_in();
 		$this->load->library('pagination');
+		$this->load->model('location_model');
 
 	}	// END: __construct()
 

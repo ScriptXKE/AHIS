@@ -114,10 +114,13 @@
                                 <li><a href="javascript:void(0)"><i class="icsw16-megaphone icsw16-white"></i>&nbsp;&nbsp;System Setup</a>
                                  <ul>
                                         <li>
-                                            <a href="<?php echo base_url(); ?>setup/diseases">Diseases</a>
+                                            <a href="<?php echo base_url(); ?>disease">Diseases</a>
                                         </li>
                                         <li>
-                                            <a href="<?php echo base_url(); ?>setup/locations">Locations</a>
+                                            <a href="<?php echo base_url(); ?>location">Locations</a>
+                                        </li>
+                                        <li>
+                                            <a href="<?php echo base_url(); ?>animal">Animals</a>
                                         </li>
                                     </ul>
                                 <li><a href="javascript:void(0)"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Help</a>                                   
