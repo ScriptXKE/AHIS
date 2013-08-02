@@ -4,6 +4,10 @@ class User extends CI_Controller
 {
 
 
+	// Declare private variables that hold table names
+	private $tbl_users = 'users';
+	private $vw_users = 'view_users';
+
 	
 	/**
 	 * Constructor for the User class / controller
@@ -52,7 +56,7 @@ class User extends CI_Controller
 
 		//	Run the query to get the current user's profile details
 		$user_criteria_array = array('user_id' => $this->session->userdata('user_id'));
-		$query = $this->db->get_where('view_users', $user_criteria_array);
+		$query = $this->db->get_where($this->vw_users, $user_criteria_array);
 
 		// Check for results
 		if ($query->num_rows() == 1) {
@@ -78,7 +82,7 @@ class User extends CI_Controller
 			// Are we willing to underwrite such database overheads? HELL NO!!!
 			$data = array(
 					'view' => 'common/notifications',
-					'msg' => 'Your details could not be found in the database. Please try again later.'
+					'msg' => array('type'=>'error','message'=>'Your details could not be found in the database. Please try again later.')
 				);
 
 			// Load the view

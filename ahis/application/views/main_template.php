@@ -80,13 +80,13 @@
                                     <a href="<?php echo base_url() . 'dashboard'; ?>"><i class="icsw16-home icsw16-white"></i>&nbsp;&nbsp;Home</a>                                    
                                 </li>
                                 
-                                <li><a href="<?php echo base_url() . 'incident'; ?>"><i class="icsw16-documents icsw16-white"></i>&nbsp;&nbsp;Incidents</a>
+                                <li><a href="javascript:void(0)"><i class="icsw16-documents icsw16-white"></i>&nbsp;&nbsp;Incidents</a>
                                   <ul>
                                         <li>
                                             <a href="<?php echo base_url(); ?>incident/create">Open New Incident</a>
                                         </li>
                                         <li>
-                                            <a href="<?php echo base_url(); ?>incident/list">Open Existing Incident</a>
+                                            <a href="<?php echo base_url(); ?>incident/listing">Open Existing Incident</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -96,7 +96,7 @@
                                             <a href="<?php echo base_url(); ?>report/create">Create New Report</a>
                                         </li>
                                         <li>
-                                            <a href="<?php echo base_url(); ?>report/list">Open Existing Report</a>
+                                            <a href="<?php echo base_url(); ?>report/listing">Open Existing Report</a>
                                         </li>
                                     </ul>
                                 </li>
@@ -143,7 +143,26 @@
 
         <!-- NOTIFICATIONS START -->
         <?php
+
+        // First, initialize the message variable
+        $message = "";
+
+        // Initialize the $style and $prompt variables just in case
+        $style = ' alert-success';
+        $prompt = '';
+
+        /*
+        Check if there is any flash data
+        Check if instead we have flash data message ... this always supersedes any other message
+        */
+        @ $flash_data_message = $this->session->flashdata('message');
+        if (isset($flash_data_message) && trim($flash_data_message) != "") {
+            // set the $message variable to the flash data message ... overriding any other message sent to the 
+            $message .= "<div class='flash-data-message'>".$flash_data_message."</div>";
+        }
+
         /* 
+        Now that we are done with the flash data ... proceed to check for other notification messages sent over
         Check if the $msg variable is set
         The $msg variable is constructed as follows ...
         $msg = array(
@@ -159,63 +178,71 @@
         The value of 'type' in the $msg array determines the kind of warning/notification loaded
         If no value is defined for 'type', 'success' is used by default
         */
-        if (isset($msg) && is_array($msg)) {
 
-            // check for the type
-            $available_types = array('warning','error','success','notification');
-            $message_type = (in_array($msg['type'], $available_types)) ? $msg['type'] : 'success';
+        // Check for any $msg array variable sent over
+        if ( (isset($msg) && is_array($msg)) || (isset($msg) && trim($msg) != "") ) {
 
-            // Initialize the $style and $prompt variables just in case
-            $style = '';
-            $prompt = '';
+            // ARRAY MESSAGE
+            if (is_array($msg)) {
+                $available_types = array('warning','error','success','notification');
+                $message_type = (in_array($msg['type'], $available_types)) ? $msg['type'] : 'success';
 
-            // Set the style based on the passed on message type value
-            switch ($message_type) {
+                // Set the style based on the passed on message type value
+                switch ($message_type) {
 
-                // warning
-                case 'warning':
-                    $style = '';
-                    $prompt = '';
-                    break;
+                    // warning
+                    case 'warning':
+                        $style = '';
+                        $prompt = '';
+                        break;
 
-                // error
-                case 'error':
-                    $style = ' alert-error';
-                    $prompt = '';
-                    break;
+                    // error
+                    case 'error':
+                        $style = ' alert-error';
+                        $prompt = '';
+                        break;
 
-                // success
-                case 'success':
-                    $style = ' alert-success';
-                    $prompt = '';
-                    break;
+                    // success
+                    case 'success':
+                        $style = ' alert-success';
+                        $prompt = '';
+                        break;
 
-                // notification
-                case 'notification':
-                    $style = ' alert-info';
-                    $prompt = '';
-                    break;
+                    // notification
+                    case 'notification':
+                        $style = ' alert-info';
+                        $prompt = '';
+                        break;
 
-                // default
-                default:
-                    $style = ' alert-success';
-                    $prompt = '';
-                    break;            
+                    // default
+                    default:
+                        $style = ' alert-success';
+                        $prompt = '';
+                        break;            
+                }
+
+                // Now grab the message
+                $message .= "<div class='generic-notification-message'>".$msg['message']."</div>";
+
+            }   // Message passed in as an array
+
+            // NON-ARRAY MESSAGE
+            if (!is_array($msg)) {
+                $message = $msg;
             }
 
-            // Now grab the message
-            $message = $msg['message'];
+        }   // Checking if there is a $msg variable
 
         ?>
 
+        <?php if (trim($message) != "") { ?>
         <div class="w-box-content cnt_a">
             <div class="alert<?php echo $style; ?>">
                 <a data-dismiss="alert" class="close">×</a>
                 <strong><?php echo $prompt; ?></strong><?php echo $message; ?>
             </div>
         </div>
-
-        <?php } // Checking if there is a $msg variable ?>
+        <?php } ?>
 
         <!-- NOTIFICATIONS END -->
 

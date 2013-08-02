@@ -3,10 +3,19 @@
 	padding: 0;
 	border: 0;
 	padding: 10px;
+	margin-bottom: 10px;
 }
 
 .w-box-content .alert {
 	margin-bottom: 0;
+}
+
+.flash-data-message {
+	/* this style is for the flash data message */
+}
+
+.generic-notification-message {
+	/* this style is for a generic message in the notifications box */
 }
 
 /* CUSTOM CODE BY DREW */

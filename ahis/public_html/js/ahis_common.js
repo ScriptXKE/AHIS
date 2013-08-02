@@ -220,7 +220,19 @@
         	$('#afterPrognosis').show();
 			$('#beforePrognosis').hide();
     	});
+		
+		$('#beforeAdd').click(function() {
+        	$('#addPopup').show();
+			$('#beforeAdd').hide();
+			$('#beforeEdit').hide();
+    	});
+		
+		$('#beforeEdit').click(function() {
+        	$('#editPopup').show();
+			$('#beforeAdd').hide();
+			$('#beforeEdit').hide();
+    	});
 	
 		})
-	
+
 

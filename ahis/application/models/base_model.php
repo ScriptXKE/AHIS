@@ -12,6 +12,12 @@
 
 class Base_model extends CI_Model {
 
+	/**
+	 * Declare a series of private variables that hold table names
+	 */
+	private $tbl_towns = 'towns';
+	private $tbl_animals = 'animals';
+
 
 	/**
 	 * Constructor method
@@ -22,6 +28,61 @@ class Base_model extends CI_Model {
 		 * Constructor the class ... right now it does nothing
 		 */
 		parent::__construct();
+
+	}
+
+
+	/**
+	 * This method retrieves a list of all the towns in the database
+	 * It accepts a parameter to filter the towns based on a list of districts
+	 * @author ScriptX Consulting Ltd
+	 */
+	public function towns_list($district_id = FALSE) {
+
+		// Initialize the district IDs to an empty array
+		$district_id_array = array();
+
+		// Check for district ID
+		if ($district_id) {
+			// create an array of the district IDs
+			// the assumption is that the district IDs are comma separated
+			$district_id_array = explode(',', $district_id);
+			// Now that we have the district IDs ... let's run the query
+			$this->db->where_in('district_id', $district_id_array);
+		}
+
+		// Set the sort order
+		$this->db->order_by('name', 'asc');
+
+		// Run the query
+		$query = $this->db->get($this->tbl_towns);
+
+		// return the query so that whoever called it can use it anyway they like
+		return $query;
+
+	}
+
+
+	/**
+	 * This method retrieves a list of all the animals in the database
+	 * @author ScriptX Consulting Ltd
+	 */
+	public function animals_list($animal_id = FALSE) {
+
+		// Check for animal ID
+		if ($animal_id) {
+			// filter by the specified animal ID
+			$this->db->where_in('id', $animal_id);
+		}
+
+		// Set the sort order
+		$this->db->order_by('name', 'asc');
+
+		// Run the query
+		$query = $this->db->get($this->tbl_animals);
+
+		// return the query so that whoever called it can use it anyway they like
+		return $query;
 
 	}
 
