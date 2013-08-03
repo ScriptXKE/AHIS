@@ -5,8 +5,8 @@ class User extends CI_Controller
 
 
 	// Declare private variables that hold table names
-	$tbl_users = 'users';
-	$vw_users = 'view_users';
+	private $tbl_users = 'users';
+	private $vw_users = 'view_users';
 
 	
 	/**

@@ -25,7 +25,8 @@
                         <ul>
                             <li>
                                 <span class="list-username"><a href="javascript:void(0)">Nicolas Kerandi</a></span>
-                                <span class="list-info"><span>Phone:</span>(+254) 720 555 555<span>Email:</span> nicolas@netmedia.co.ke</span>
+                                <span class="list-info"><span>Phone:</span>(+254) 720 555 555</span>
+                                <span class="list-info"><span>Email:</span> nicolas@netmedia.co.ke</span>
                                 <span class="list-info"><span>Info: </span>Guys, I am buying pizza at our next Saturday meeting</span>
                             </li>
                             

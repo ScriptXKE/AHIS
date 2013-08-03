@@ -235,4 +235,17 @@
 	
 		})
 
-
+$(function() {
+    $( "#u_birthdate" ).datepicker({
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "c-99y:c",
+       
+      maxDate: "-9y",
+      dateFormat:"yy-mm-dd",
+      currentText: "Now",
+      constrainInput: true,
+      appendText: "(yyyy-mm-dd)",
+      defaultDate:"-9y -2m -7d"
+    });
+  });

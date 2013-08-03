@@ -11,7 +11,7 @@
         <!-- bootstrap framework css -->
         <link rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap.min.css">
         <link rel="stylesheet" href="<?php echo base_url(); ?>css/bootstrap-responsive.min.css">
-
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
         <!-- google web fonts -->
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Abel">
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300">
@@ -101,6 +101,14 @@
                                     </ul>
                                 </li>
                                 </li>
+                                <li><a href="javascript:void(0)"><i class="icsw16-user icsw16-white"></i>&nbsp;&nbsp;Persons</a>
+                                 <ul>
+                                        <li>
+                                            <a href="<?php echo base_url(); ?>persons/manage">Manage</a>
+                                        </li>
+                                        
+                                    </ul>                                   
+                                </li>
                                 <li><a href="javascript:void(0)"><i class="icsw16-user icsw16-white"></i>&nbsp;&nbsp;Users</a>
                                  <ul>
                                         <li>
@@ -111,6 +119,7 @@
                                         </li>
                                     </ul>                                   
                                 </li>
+                                
                                 <li><a href="javascript:void(0)"><i class="icsw16-megaphone icsw16-white"></i>&nbsp;&nbsp;System Setup</a>
                                  <ul>
                                         <li>
