@@ -11,6 +11,9 @@
     </div>
 </div>
 <div class="span10">
+
+    <!-- START NEW INCIDENT FORM -->
+    <form method="post" action="<?php echo base_url(); ?>incident/create">
     <div class="w-box w-box-blue">
         <div class="w-box-header">
             <h4>New Case</h4>
@@ -84,6 +87,8 @@
         </div>
 
     </div>
+    </form>
+    <!-- END NEW INCIDENT FORM -->
     
     <div class="w-box w-box-blue">
          <div class="w-box-header">
@@ -94,13 +99,15 @@
              <span>Show/Hide</span></a>
              </div>
          </div>
+       
 
-       <div id="myComments">  
-       <!----Saved Comments Section------>
+        <!-- Saved Comments Section -->
+        <div id="myComments">  
+       
         <div class="w-box-content">
             <div class="ch-messages">   
                 <div class="ch-message-item clearfix">
-                    <img class="ch-image img-avatar" alt="" src="<?php echo base_url(); ?>assets/avatars/<?php echo $this->session->userdata('avatar'); ?>" alt="My Photo"" />
+                    <img class="ch-image img-avatar" alt="" src="<?php echo base_url(); ?>assets/avatars/<?php echo $this->session->userdata('avatar'); ?>" alt="My Photo" />
                    <div class="ch-content">
                         <p class="ch-name">
                              <strong>Germain Mirindi</strong>
@@ -111,9 +118,9 @@
                 </div>
              </div>
          </div>
-         <!----Saved Comments Section----END------>
+         <!-- Saved Comments Section - END -->
          
-         <!----Enter Comments Section------>
+         <!-- Enter Comments Section -->
         <div class="w-box-footer">
             <div class="ch-message-add control-group">
                 <div class="input-append">
@@ -123,8 +130,8 @@ Add your comments here</textarea><br />
                 </div>
             </div>
         </div>
-        <!----Enter Comments Section----END------>
         </div>
+        <!-- Enter Comments Section - END -->
       
         </div>
     </div>    
