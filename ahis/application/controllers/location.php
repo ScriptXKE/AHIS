@@ -25,7 +25,6 @@ class Location extends CI_Controller
 		 */
 		$this->auth_model->is_logged_in();
 		$this->load->library('pagination');
-		$this->load->model('location_model');
 
 	}	// END: __construct()
 
@@ -51,6 +50,8 @@ class Location extends CI_Controller
 		$arr = $query->result_array();
 
 		$data['gis'] = $query;
+
+		$data['districts'] = $this->location_model->dropdownlocations();
 
 		$this->load->view('main_template', $data);
 	}

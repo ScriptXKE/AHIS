@@ -48,7 +48,6 @@ class Dashboard extends CI_Controller
 		 * Create the data array
 		 */
 		$data = array(
-				'msg' => array('type' => 'success', 'message' => 'Welcome to our notifications section ... please study the code for displaying me and use it in your code too! Thanks!'),
 				'view' => 'dashboard/index'
 			);
 

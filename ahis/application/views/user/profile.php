@@ -13,13 +13,13 @@
                     </div>
                     <div class="span10">
                         <p class="formSep"><small class="muted">Verified:</small> <span class="label label-success">Yes</span></p>
-                        <p class="formSep"><small class="muted">Name:</small> <?php echo $user_details['firstname'] . ' ' . $user_details['surname']; ?></p>
                         <p class="formSep"><small class="muted">Username:</small> <?php echo $user_details['username']; ?></p>
+                        <p class="formSep"><small class="muted">Name:</small> <?php echo $user_details['firstname'] . ' ' . $user_details['surname']; ?></p>
                         <p class="formSep"><small class="muted">Gender:</small> <?php echo ucfirst(strtolower($user_details['gender'])); ?></p>
-                        <p class="formSep"><small class="muted">Birthday:</small> <?php echo date('jS F Y',strtotime($user_details['birthdate'])); ?></p>
+                        <p class="formSep"><small class="muted">Birthday:</small> 24/06/1974</p>
                         <p class="formSep"><small class="muted">Email:</small> <?php echo $user_details['email']; ?></p>
-                        <p class="formSep"><small class="muted">Is Admin?</small> <?php echo ($user_details['is_admin'] == 0) ? 'No' : 'Yes'; ?></p>
-                        <!-- <p class="formSep"><small class="muted">Languages:</small> English, Arabic</p> -->
+                        <p class="formSep"><small class="muted">Access Level:</small> Veterinarian</p>
+                        <p class="formSep"><small class="muted">Languages:</small> English, Arabic</p>
                         <p class="formSep"><small class="muted">Description:</small> <?php echo $user_details['biodata']; ?></p>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
     <div class="span6">
         <div class="w-box">
             <div class="w-box-header">
-                <h4>Edit my User settings</h4>
+                <h4>User settings</h4>
             </div>
             <div class="w-box-content">
                 <form id="profile-update" action="<?php echo base_url()."user/profile"; ?>" method="post">
@@ -59,14 +59,14 @@
                         <label for="u_password">Password</label>
                         <input type="password" id="u_password" name="u_password" class="span8" />
                         <span class="help-block">Enter Password</span>
-                        <input type="password" id="u_confirm_password" name="u_confirm_password" class="span8" />
+                        <input type="password" id="u_repassword" name="u_repassword" class="span8" />
                         <span class="help-block">Repeat Password</span>
                     </div>
                     <div class="formSep">
                         <label for="u_email">Email</label>
                         <input type="text" id="u_email" name="u_email" class="span8" value="<?php echo $user_details['email']; ?>" />
                     </div>
-                    <!-- <div class="formSep">
+                    <div class="formSep">
                         <label>Gender</label>
                         <label for="u_male" class="radio inline"><input type="radio" name="u_gender" id="u_male"/> Male</label>
                         <label for="u_female" class="radio inline"><input type="radio" name="u_gender" id="u_female"/> Female</label>
@@ -76,10 +76,10 @@
                         <label for="u_newsletter" class="checkbox inline"><input type="checkbox" name="u_newsletter" id="u_newsletter"/> Veterinarian</label>
                         <label for="u_system_msg" class="checkbox inline"><input type="checkbox" name="u_system_msg" id="u_system_msg"/> Field Officer</label>
                         <label for="u_other_msg" class="checkbox inline"><input type="checkbox" name="u_other_msg" id="u_other_msg"/> System Admin</label>
-                    </div> -->
+                    </div>
                     <div class="formSep">
-                        <label for="u_biodata">Description</label>
-                        <textarea name="u_biodata" id="u_biodata" cols="30" rows="4" class="span8"><?php echo $user_details['biodata']; ?></textarea>
+                        <label for="u_signature">Description</label>
+                        <textarea name="u_signature" id="u_signature" cols="30" rows="4" class="span8"><?php echo $user_details['biodata']; ?></textarea>
                     </div>
                     <div class="formSep sepH_b">
                         <button class="btn btn-ahis-3" type="submit">Save changes</button>

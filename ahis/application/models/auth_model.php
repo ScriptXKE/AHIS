@@ -47,7 +47,7 @@ class Auth_model extends CI_Model {
 		if (!$user_id || $user_id <= 0) {
 
 			//	Simply redirect via the logout page to kill all remnant session variables and then redirect to the login page
-			redirect(base_url() . 'logout', 'refresh');
+			redirect(base_url() . 'logout');
 
 		}	// Checking if the session variable is valid
 
@@ -112,7 +112,7 @@ class Auth_model extends CI_Model {
 				);
 
 			// Run these details against the database
-			$query = $this->db->get_where('view_users', $user_data);
+			$query = $this->db->get_where('users', $user_data);
 
 			// Check for the number of rows returned
 			if ($query->num_rows == 1) {
@@ -124,8 +124,7 @@ class Auth_model extends CI_Model {
 
 				// Create an array of all the session variables
 				$session_data = array(
-						'user_id' => $user_details['user_id'],
-						'person_id' => $user_details['person_id'],
+						'user_id' => $user_details['id'],
 						'fullname' => $user_details['firstname'] . ' ' . $user_details['surname'],
 						'username' => $user_details['username'],
 						'avatar' => (trim($user_details['avatar']) == '' ? 'missing.avatar.jpg' : $user_details['avatar'])
@@ -156,203 +155,7 @@ class Auth_model extends CI_Model {
 
 
 
-	/**
-	 * Updates the user's profile with submitted information
-	 * This method checks for any form submissions and if it finds any, it 
-	 * processes them and updates the database using the user_id and person_id
-	 * that are stored in the session variable
-	 * 
-	 * @author 	ScriptX Consulting Ltd (sales@scriptx.co.ke | sales@scriptx.org) | 19th July 2013
-	 * 
-	 */
-	public function profile_update() 
-	{
-
-		// Check for any posted information
-		// Initialize the message variable
-		$msg = "<p>The following notice(s) / error(s) were noted:-</p><ul>";
-
-		
-		/**************** BASIC PERSON DETAILS ****************************/
-		// Let's set form validation config file for the person details
-		$person_details_validation_config = array(
-				array(
-					'field' => 'u_firstname',
-					'label' => 'First Name',
-					'rules' => 'required|trim'
-					),
-				array(
-					'field' => 'u_surname',
-					'label' => 'Surname',
-					'rules' => 'required|trim'
-					),
-				array(
-					'field' => 'u_othernames',
-					'label' => 'Other Name(s)',
-					'rules' => 'trim'
-					),
-				array(
-					'field' => 'u_biodata',
-					'label' => 'Biodata',
-					'rules' => 'trim'
-					)
-			);
-
-		// Load the form validation library
-		$this->load->library('form_validation');
-
-		// Set the validation delimiters
-		$this->form_validation->set_error_delimiters('<li>','</li>');
-
-		// Load the validation configuration
-		$this->form_validation->set_rules($person_details_validation_config);
-
-		// Check if they all validated
-		if ($this->form_validation->run() == FALSE) 
-		{
-
-			// Return the error(s) encountered
-			$msg .= validation_errors();
-
-		} else {
-
-			//	No errors ... go ahead and update the persons table with the new details
-			//	First, update the $person_details_array() with the details to be updated
-			$person_details_array = array(
-					'firstname' => $this->input->post('u_firstname'),
-					'surname' => $this->input->post('u_surname'),
-					'othernames' => $this->input->post('u_othernames'),
-					'surname' => $this->input->post('u_surname'),
-					'biodata' => $this->input->post('u_biodata')
-				);
-
-			// Update the persons table
-			$this->db->where('id', $this->session->userdata['person_id']);
-			$this->db->update('persons', $person_details_array);
-
-			// Successful update
-			// Update the session variable that carries the user's name
-			$this->session->set_userdata('fullname', $this->input->post('u_firstname') . ' ' . $this->input->post('u_surname'));
-
-			// Update the $msg variable
-			$msg .= "<li>Your profile details were updated successfully.</li>";
-
-		}	//	Running the form data validations for PERSON update data
-
-
-		/************* NOW RUN EMAIL CHECKS ********************************/
-		// Create the email validation configuration array
-		$email_validation_config = array(
-				array(
-					'field' => 'u_email',
-					'label' => 'Email',
-					'rules' => 'required|trim|valid_email|callback_email_check'
-					)
-			);
-
-		// Run the validation check
-		$this->form_validation->set_rules($email_validation_config);
-
-		// Run the validation and check for the result
-		if ($this->form_validation->run() == TRUE) 
-		{
-
-			// Email is okay ... go ahead and save it to the database
-			$this->db->where('id', $this->session->userdata['person_id']);
-			$this->db->update('persons', array('email' => $this->input->post('u_email')));
-
-			// Email updated successfully
-			$msg .= "<li>Your email address was successfully updated.</li>";
-
-		}	// Checking if email validation ran successfully
-
-
-		/**************** PASSWORD UPDATE CHECKS *****************************/
-		if ( trim($this->input->post('u_password') != "") && trim($this->input->post('u_confirm_password') != "") ) 
-		{
-
-			// passwords provided ... ensure they are at least 6 characters long and they match
-			$password_validation_config = array(
-					array(
-						'field' => 'u_password',
-						'label' => 'Password',
-						'rules' => 'trim|min_length[6]'
-						),
-					array(
-						'field' => 'u_confirm_password',
-						'label' => 'Confirm Password',
-						'rules' => 'trim|min_length[6]|matches[u_password]'
-						)
-				);
-
-			// Load the form validation configuration file and run the validation
-			$this->form_validation->set_rules($password_validation_config);
-
-			// run the validation and check for the result
-			if ($this->form_validation->run() == TRUE) {
-
-				// The passwords passed the validation
-				// Update the password in the database
-				$this->db->where('id', $this->session->userdata['user_id']);
-				$this->db->update('users', array('password' => sha1(trim($this->input->post('u_password')))));
-
-				// Update the status message
-				$msg .= "<li>Your password was successfully updated.</li>";
-
-			}	// Checking for valid passwords
-
-		}	// Checking if passwords were sent over for update
-
-
-		/********************* AVATAR PROCESSING ********************************/
-		
-
-		// Close the $msg variable and return it to the calling function
-		$msg .= "</ul>";
-
-		// Return it ...
-		return $msg;
-
-	}	//	END: profile_update()
-
-
-
-	/**
-	 * Checks if an email already exists in the database under a different account
-	 * This method will be called within the form validation configuration definition
-	 */
-	public function email_check($email) 
-	{
-
-		// Construct the query
-		$this->db->where('email', $email);
-		$this->db->where('id != ', $this->session->userdata('person_id'));
-
-		// Run the query
-		$query = $this->db->get('persons');
-
-		// Check for the number of rows returned
-		// If a record is returned, then this action will cause a duplicate email record
-		if ($query->num_rows() == 0) {
-
-			// No duplicate possibility
-			return TRUE;
-
-		} else {
-
-			// There is a duplicate possibility
-			// Return an error message
-			$this->form_validation->set_message('email_check', 'The email address already exists for another account.');
-			return FALSE;
-
-		}	// Checking the # of records returned
-
-	}	// END: email_check()
-
-
-
 }	// END: Class My_Model
-
 
 
 /* End of file auth_model.php */
