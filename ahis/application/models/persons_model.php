@@ -66,6 +66,12 @@ class Persons_model extends CI_Model {
     function count() {
         return $this->db->count_all($this->tbl_person);
     }
+    function is_unique($fieldID,$ID)
+    {
+        $result = $this->get($fieldID.' = ' . $this->db->escape($ID), 1, 0, false);
+        return count($result) > 0 ? FALSE : TRUE;
+        
+    }
     
 
 }

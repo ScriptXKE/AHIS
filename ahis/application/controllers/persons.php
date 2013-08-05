@@ -48,7 +48,7 @@ class Persons extends CI_Controller {
 
     function add() {
 
-        if (($this->uri->segment(3) != "")) {
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
             $msg = "<p>The following notice(s) / error(s) were noted:-</p><ul>";
             $the_person_id = "";
             /*             * ************** BASIC PERSON DETAILS *************************** */
@@ -109,13 +109,29 @@ class Persons extends CI_Controller {
                     'biodata' => $this->input->post('u_biodata'),
                     'avatar' => $this->input->post('u_avatar')
                 );
-                $the_person_id = $this->persons_model->add($data);
-                if (!is_null($the_person_id)) {
+                if ($this->persons_model->is_unique('email', $data['email'])) {
+
+                    $the_person_id = $this->persons_model->add($data);
+                    $this->data['result'] = $this->persons_model->get('id = ' . $the_person_id, 1, 0, true);
                     // Update the $msg variable
+
                     $msg .= "<li>The profile details were added successfully.</li>";
-                    //redirect(base_url() . 'persons/manage/');
                 } else {
+                    // Update the $msg variable
                     $msg .= 'An Error Occured';
+                    $msg .= "<li>The email address specified is already in use in the system.</li>";
+                    //return posted information back to form to allow the user to fill/modify his inputs
+                    $new_person = new Persons();
+                    $new_person->firstname = $this->input->post('u_firstname');
+                    $new_person->surname = $this->input->post('u_surname');
+                    $new_person->othernames = $this->input->post('u_othernames');
+                    $new_person->gender = $this->input->post('u_gender');
+                    $new_person->birthdate = $this->input->post('u_birthdate');
+                    $new_person->telephone = $this->input->post('u_telephone');
+                    $new_person->email = $this->input->post('u_email');
+                    $new_person->biodata = $this->input->post('u_biodata');
+                    $new_person->avatar = $this->input->post('u_avatar');
+                    $this->data['result'] = $new_person;
                 }
             }
             $msg .= "</ul>";
@@ -124,25 +140,27 @@ class Persons extends CI_Controller {
             $this->data['view'] = 'persons/add';
             $this->data['msg'] = $msg;
 
-            $this->data['result'] = $this->persons_model->get('id = ' . $the_person_id, 1, 0, true);
+
             // Load the view
             $this->load->view('main_template', $this->data);
         } else {
             $this->data['title'] = 'Add a Personal Profile';
             $this->data['view'] = 'persons/add';
-            $this->data['msg'] = null;
+            $this->data['msg'] = "<p>Please add the below information to add a new personal profile:-</p><ul>";
+            ;
 
             //create new instance of person...enforce code reuse of the view
 
             $new_person = new Persons();
             $new_person->firstname = "NA";
-            $new_person->surname= "NA";
-            $new_person->othernames= "NA";
-            $new_person->gender= "NA";
-            $new_person->birthdate= "NA";
-            $new_person->telephone= "NA";
-            $new_person->email= "NA";
-            $new_person->biodata= "NA";
+            $new_person->surname = "NA";
+            $new_person->othernames = "NA";
+            $new_person->gender = "NA";
+            $new_person->birthdate = "NA";
+            $new_person->telephone = "NA";
+            $new_person->email = "NA";
+            $new_person->biodata = "NA";
+            $new_person->avatar = "0";
             $this->data['result'] = $new_person;
             // Load the view
             $this->load->view('main_template', $this->data);

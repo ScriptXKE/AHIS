@@ -1,4 +1,3 @@
-<??>
 <div class="row-fluid">
     <div class="span6">
         <div class="w-box">
