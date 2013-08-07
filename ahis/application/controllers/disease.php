@@ -26,6 +26,7 @@ class Disease extends CI_Controller
 		 */
 		$this->auth_model->is_logged_in();
 		$this->load->library('pagination');
+		$this->load->model('');
 
 	}	// END: __construct()
 

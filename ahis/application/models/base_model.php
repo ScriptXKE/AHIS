@@ -14,10 +14,14 @@ class Base_model extends CI_Model {
 
 	/**
 	 * Declare a series of private variables that hold table names
+	 * This is a good practice because should the table names change, we only have to change
+	 * them in one spot in the entire model; otherwise, there will be HELL to pay :)
 	 */
-	private $tbl_towns = 'towns';
-	private $tbl_animals = 'animals';
-
+	private $tbl_towns = 'towns';	// This table contains a list of towns
+	private $tbl_animals = 'animals';	// This table contains a list of animals
+	private $tbl_sms = 'sms';	// This table contains SMSes sent by people who own animals
+	private $tbl_incident_sms = 'incident_sms';	// This table contains incident SMSes
+	private $tbl_symptoms = 'symptoms';	// This table contains all symptoms
 
 	/**
 	 * Constructor method
@@ -64,6 +68,21 @@ class Base_model extends CI_Model {
 
 
 	/**
+	 * This method gets a town's name if given an ID
+	 */
+	public function get_town_by_id($id) {
+		$this->db->where('id', $id);
+		$query = $this->db->get($this->tbl_towns);
+		if ($query->num_rows() > 0) {
+			$town = $query->row();
+			return $town->name;
+		} else {
+			return 'Not Found';
+		}
+	}
+
+
+	/**
 	 * This method retrieves a list of all the animals in the database
 	 * @author ScriptX Consulting Ltd
 	 */
@@ -85,6 +104,40 @@ class Base_model extends CI_Model {
 		return $query;
 
 	}
+
+
+	/**
+	 * This method gets an animal's name if given an ID
+	 */
+	public function get_animal_by_id($id) {
+
+		$this->db->where('id', $id);
+		$query = $this->db->get($this->tbl_animals);
+		if ($query->num_rows() > 0) {
+			$animal = $query->row();
+			return $animal->name;
+		} else {
+			return 'Not Found';
+		}
+
+	}	// END: get_animal_by_id()
+
+
+	/**
+	 * This method gets the listing of all symptoms in the database
+	 */
+	public function symptoms_listing() {
+
+		// prepare the query and ensure you sort alphabetically
+		$this->db->order_by('description', 'asc');
+
+		// run the query
+		$query = $this->db->get($this->tbl_symptoms);
+
+		// return the database object
+		return $query;
+
+	}	// END: symptoms_listing()
 
 
 	/**

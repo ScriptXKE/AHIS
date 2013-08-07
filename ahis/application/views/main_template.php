@@ -83,7 +83,7 @@
                                     <li><a href="javascript:void(0)"><i class="icsw16-documents icsw16-white"></i>&nbsp;&nbsp;Incidents</a>
                                         <ul>
                                             <li>
-                                                <a href="<?php echo base_url(); ?>incident/create">Open New Incident</a>
+                                                <a href="<?php echo base_url(); ?>incident/basic_details">Open New Incident</a>
                                             </li>
                                             <li>
                                                 <a href="<?php echo base_url(); ?>incident/listing">Open Existing Incident</a>

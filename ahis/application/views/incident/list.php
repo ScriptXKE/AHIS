@@ -1,11 +1,12 @@
 <div class="w-box">
     <div class="w-box-header">
         <div class="btn-group">
-            <a href="<?php echo base_url(); ?>incident/create" class="btn btn-inverse btn-mini delete_rows_dt" data-tableid="dt_gal" title="New Incident">New Incident</a>
+            <a href="<?php echo base_url(); ?>incident/basic_details" class="btn btn-inverse btn-mini delete_rows_dt" data-tableid="dt_gal" title="New Incident">New Incident</a>
 
         </div>
     </div>
     <div class="w-box-content">
+        <?php if ($incident_listing->num_rows() > 0) { ?>
         <table class="table table-vam table-striped" id="dt_gal">
             <thead>
                 <tr>
@@ -19,65 +20,28 @@
             </thead>
             <tbody>
 
+                <?php foreach ($incident_listing->result() as $incident) { ?>
                 <tr>
                     <td><input type="checkbox" name="row_sel" class="row_sel" /></td>
 
-                    <td>1 August 2013<br/></td>
-                    <td>Camel</td>
-                    <td>My camels woke up today and they were rather off-color; now they are just plain unruly and are not listening to my instructions.</td>
+                    <td><?php echo date('F j, Y', strtotime($incident->last_update)); ?><br /><?php echo date('h:i:s A', strtotime($incident->last_update)); ?></td>
+                    <td><?php echo $this->base_model->get_animal_by_id($incident->animal_id); ?></td>
+                    <td><?php echo $incident->description; ?></td>
                     <td>
                         <div class="btn-group">
-                            <a href="#" class="btn btn-mini" title="Edit"><i class="icon-pencil"></i></a>
-                            <a href="#" class="btn btn-mini" title="View"><i class="icon-eye-open"></i></a>
-                            <a href="#" class="btn btn-mini" title="Delete"><i class="icon-trash"></i></a>
+                            <a href="<?php echo base_url() . 'incident/basic_details_summary/' . $incident->id; ?>" class="btn btn-mini" title="Edit"><i class="icon-pencil"></i></a>
+                            <a href="<?php echo base_url() . 'incident/summary/' . $incident->id; ?>" class="btn btn-mini" title="View"><i class="icon-eye-open"></i></a>
+                            <a href="<?php echo base_url() . 'incident/delete/' . $incident->id; ?>" class="btn btn-mini" title="Delete"><i class="icon-trash"></i></a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td><input type="checkbox" name="row_sel" class="row_sel" /></td>
-
-                    <td>27 July 2013<br/></td>
-                    <td>Goat</td>
-                    <td>My goats are looking dry mouthed and are not eating as usual. They have been behaving like this for 2 weeks now since the last heavy rains that caused flooding.</td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-mini" title="Edit"><i class="icon-pencil"></i></a>
-                            <a href="#" class="btn btn-mini" title="View"><i class="icon-eye-open"></i></a>
-                            <a href="#" class="btn btn-mini" title="Delete"><i class="icon-trash"></i></a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" name="row_sel" class="row_sel" /></td>
-
-                    <td>23 July 2013<br/></td>
-                    <td>Goat</td>
-                    <td>I have lost 13 goats since last week. They just show funny symptoms and before I know it, they are dead. They are passing brownish red urine and seem to be having a fever. Any that were pregnant lost their unborn young ones spontaneously and died shortly thereafter.</td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-mini" title="Edit"><i class="icon-pencil"></i></a>
-                            <a href="#" class="btn btn-mini" title="View"><i class="icon-eye-open"></i></a>
-                            <a href="#" class="btn btn-mini" title="Delete"><i class="icon-trash"></i></a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" name="row_sel" class="row_sel" /></td>
-
-                    <td>20 July 2013<br/></td>
-                    <td>Chicken</td>
-                    <td>I think my chicken have the drooping head syndrome.</td>
-                    <td>
-                        <div class="btn-group">
-                            <a href="#" class="btn btn-mini" title="Edit"><i class="icon-pencil"></i></a>
-                            <a href="#" class="btn btn-mini" title="View"><i class="icon-eye-open"></i></a>
-                            <a href="#" class="btn btn-mini" title="Delete"><i class="icon-trash"></i></a>
-                        </div>
-                    </td>
-                </tr>
+                <?php } ?>
         
            
             </tbody>
         </table>
+        <?php } else { ?>
+        <div>There are no incidents in the database.</div>
+        <?php } ?>
     </div>
 </div>
