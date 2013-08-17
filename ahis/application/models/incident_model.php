@@ -420,7 +420,10 @@ class Incident_model extends CI_Model {
 
 		// Now run the actual query that we wanted in order to get the list of SMSes that can be used for a new incident
 		// Note that already used SMSes ... found in table 'incident_sms' will not be shown
-		$this->db->where_not_in('id', $sms_id_array);
+		if(count($sms_id_array)>0)
+                {
+                    $this->db->where_not_in('id', $sms_id_array);
+                }
 		$this->db->order_by('date_received', 'desc');
 		$sms_query = $this->db->get($this->tbl_sms);
 
