@@ -101,8 +101,6 @@
                                         </ul>
                                     </li>
                                     </li>
-
-
                                     <li><a href="javascript:void(0)"><i class="icsw16-chart-5 icsw16-white"></i>&nbsp;&nbsp;Administration</a>
                                         <ul>
                                             <li><a href="javascript:void(0)"><i class="icsw16-user icsw16-white"></i>&nbsp;&nbsp;Users</a>
@@ -123,24 +121,7 @@
 
                                                 </ul>                                   
                                             </li>
-                                            <li><a href="javascript:void(0)"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Locations</a>
-                                                <ul>
-                                                    <li>
-                                                        <a href="<?php echo base_url() . 'location'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Towns</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="<?php echo base_url() . 'settlement'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Settlements</a>
-                                                    </li>
 
-                                                </ul>                                   
-                                            </li>
-
-                                            <li>
-                                                <a href="<?php echo base_url() . 'disease'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Diseases</a>
-                                            </li>
-                                            <li>
-                                                <a href="<?php echo base_url() . 'animal'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Animals</a>
-                                            </li>
                                             <li>
                                                 <a href="<?php echo base_url() . 'animal'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Messages</a>
                                             </li>
@@ -152,11 +133,23 @@
                                     <li><a href="javascript:void(0)"><i class="icsw16-megaphone icsw16-white"></i>&nbsp;&nbsp;System Setup</a>
                                         <ul>
                                             <li>
-                                                <a href="<?php echo base_url(); ?>setup/diseases">Diseases</a>
+                                                <a href="<?php echo base_url() . 'disease'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Diseases</a>
                                             </li>
                                             <li>
-                                                <a href="<?php echo base_url(); ?>setup/locations">Locations</a>
+                                                <a href="<?php echo base_url() . 'animal'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Animals</a>
                                             </li>
+                                            <li><a href="javascript:void(0)"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Locations</a>
+                                                <ul>
+                                                    <li>
+                                                        <a href="<?php echo base_url() . 'location'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Towns</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="<?php echo base_url() . 'settlement'; ?>"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Manage Settlements</a>
+                                                    </li>
+
+                                                </ul>
+                                            </li>
+
                                         </ul>
                                     <li><a href="javascript:void(0)"><i class="icsw16-alert-2 icsw16-white"></i>&nbsp;&nbsp;Help</a>                                   
                                     </li>

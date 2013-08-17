@@ -12,7 +12,15 @@ class Persons extends CI_Controller {
 
     function __construct() {
         parent::__construct();
-
+        $this->firstname = " ";
+        $this->surname = " ";
+        $this->othernames = " ";
+        $this->gender = " ";
+        $this->birthdate = " ";
+        $this->telephone = " ";
+        $this->email = " ";
+        $this->biodata = " ";
+        $this->avatar = " ";
         // Check if the user is logged in because all incident operations require login
         $this->auth_model->is_logged_in();
 
@@ -34,7 +42,7 @@ class Persons extends CI_Controller {
         //paging
         $config['base_url'] = base_url() . 'persons/manage/';
         $config['total_rows'] = $this->persons_model->count();
-        $config['per_page'] = 10;
+        $config['per_page'] = 15;
         $this->pagination->initialize($config);
 
         // Prepare the data for the page
@@ -97,6 +105,7 @@ class Persons extends CI_Controller {
             if ($this->form_validation->run() == false) {
                 // Return the error(s) encountered
                 $msg.= (validation_errors() ? validation_errors() : false);
+                $this->data['result'] = new Persons();
             } else {
                 $data = array(
                     'firstname' => $this->input->post('u_firstname'),
@@ -112,7 +121,7 @@ class Persons extends CI_Controller {
                 if ($this->persons_model->is_unique('email', $data['email'])) {
 
                     $the_person_id = $this->persons_model->add($data);
-                    $this->data['result'] = $this->persons_model->get('id = ' . $the_person_id, 1, 0, true);
+                    $this->data['result'] = $this->persons_model->get('id = ' . $the_person_id, 1);
                     // Update the $msg variable
 
                     $msg .= "<li>The profile details were added successfully.</li>";
@@ -120,24 +129,14 @@ class Persons extends CI_Controller {
                     // Update the $msg variable
                     $msg .= 'An Error Occured';
                     $msg .= "<li>The email address specified is already in use in the system.</li>";
-                    //return posted information back to form to allow the user to fill/modify his inputs
-                    $new_person = new Persons();
-                    $new_person->firstname = $this->input->post('u_firstname');
-                    $new_person->surname = $this->input->post('u_surname');
-                    $new_person->othernames = $this->input->post('u_othernames');
-                    $new_person->gender = $this->input->post('u_gender');
-                    $new_person->birthdate = $this->input->post('u_birthdate');
-                    $new_person->telephone = $this->input->post('u_telephone');
-                    $new_person->email = $this->input->post('u_email');
-                    $new_person->biodata = $this->input->post('u_biodata');
-                    $new_person->avatar = $this->input->post('u_avatar');
-                    $this->data['result'] = $new_person;
+                    //return maching information to the user to allow the user to fill/modify his inputs
+                    $this->data['result'] = $this->persons_model->get('email = "' . $data['email'] . '"', 1);
                 }
             }
             $msg .= "</ul>";
             // Prepare the data for the page
             $this->data['title'] = 'Add a Personal Profile';
-            $this->data['view'] = 'persons/add';
+            $this->data['view'] = 'persons/edit';
             $this->data['msg'] = $msg;
 
 
@@ -151,24 +150,13 @@ class Persons extends CI_Controller {
 
             //create new instance of person...enforce code reuse of the view
 
-            $new_person = new Persons();
-            $new_person->firstname = "NA";
-            $new_person->surname = "NA";
-            $new_person->othernames = "NA";
-            $new_person->gender = "NA";
-            $new_person->birthdate = "NA";
-            $new_person->telephone = "NA";
-            $new_person->email = "NA";
-            $new_person->biodata = "NA";
-            $new_person->avatar = "0";
-            $this->data['result'] = $new_person;
+            $this->data['result'] = new Persons();
             // Load the view
             $this->load->view('main_template', $this->data);
         }
     }
 
     function edit() {
-        $msg = "<p>The following notice(s) / error(s) were noted:-</p><ul>";
 
         /*         * ************** BASIC PERSON DETAILS *************************** */
         // Let's set form validation config file for the person details
@@ -215,6 +203,7 @@ class Persons extends CI_Controller {
 
         if ($this->form_validation->run() == false) {
             // Return the error(s) encountered
+            $msg = "<p>The following notice(s) / error(s) were noted:-</p><ul>";
             $msg.= (validation_errors() ? validation_errors() : false);
         } else {
             $data = array(
@@ -241,9 +230,22 @@ class Persons extends CI_Controller {
         // Prepare the data for the page
         $this->data['title'] = 'Edit a Personal Profile';
         $this->data['view'] = 'persons/edit';
-        $this->data['msg'] = $msg;
+        $this->data['msg'] = is_null($msg) ? $msg : $msg = "";
 
-        $this->data['result'] = $this->persons_model->get('id = ' . $this->uri->segment(3), 1, 0, true);
+        $this->data['result'] = $this->persons_model->get('id = ' . $this->uri->segment(3), 1);
+        //$this->data['result'] = $this->persons_model->get('id = ' . $the_person_id, 1, 0, true);
+        // Load the view
+        $this->load->view('main_template', $this->data);
+    }
+
+    function view() {
+        /*         * ************** BASIC PERSON DETAILS *************************** */
+
+        // Prepare the data for the page
+        $this->data['title'] = 'view a Personal Profile';
+        $this->data['view'] = 'persons/view';
+
+        $this->data['result'] = $this->persons_model->get('id = ' . $this->uri->segment(3), 1);
         // Load the view
         $this->load->view('main_template', $this->data);
     }

@@ -1,3 +1,12 @@
+<?php
+if(count($result)>0)
+{
+    $person=$result[0];
+}else
+{
+    
+}
+?>
 <div class="row-fluid">
     <div class="span6">
         <div class="w-box">
@@ -11,16 +20,17 @@
                             <img class="img-avatar" alt="" src="<?php echo base_url(); ?>assets/avatars/<?php echo $this->session->userdata('avatar'); ?>">
                         </div>
                     </div>
+                    
                     <div class="span10">
                         <p class="formSep"><small class="muted">Verified:</small> <span class="label label-success">Yes</span></p>
-                        <p class="formSep"><small class="muted">Name:</small> <?php echo $result->firstname . ' ' . $result->surname; ?></p>
-                        <p class="formSep"><small class="muted">Username:</small> <?php echo $result->firstname; ?></p>
-                        <p class="formSep"><small class="muted">Gender:</small> <?php echo ucfirst(strtolower($result->gender)); ?></p>
-                        <p class="formSep"><small class="muted">Birthday:</small> <?php echo date('jS F Y', strtotime($result->birthdate)); ?></p>
-                        <p class="formSep"><small class="muted">Email:</small> <?php echo $result->email; ?></p>
-                        <p class="formSep"><small class="muted">Telephone:</small> <?php echo $result->telephone; ?></p>
+                        <p class="formSep"><small class="muted">Name:</small> <?php echo $person->firstname . ' ' . $person->surname; ?></p>
+                        <p class="formSep"><small class="muted">Username:</small> <?php echo $person->firstname; ?></p>
+                        <p class="formSep"><small class="muted">Gender:</small> <?php echo ucfirst(strtolower($person->gender)); ?></p>
+                        <p class="formSep"><small class="muted">Birthday:</small> <?php echo date('jS F Y', strtotime($person->birthdate)); ?></p>
+                        <p class="formSep"><small class="muted">Email:</small> <?php echo $person->email; ?></p>
+                        <p class="formSep"><small class="muted">Telephone:</small> <?php echo $person->telephone; ?></p>
                         <!-- <p class="formSep"><small class="muted">Languages:</small> English, Arabic</p> -->
-                        <p class="formSep"><small class="muted">Description:</small> <?php echo $result->biodata; ?></p>
+                        <p class="formSep"><small class="muted">Description:</small> <?php echo $person->biodata; ?></p>
                     </div>
                 </div>
             </div>
@@ -44,20 +54,20 @@
                     </div>
                     <div class="formSep">
                         <label for="u_firstname">Name(s) in Full:</label>
-                        <input type="text" id="u_firstname" name="u_firstname" class="span8" placeholder="First Name" value="<?php echo $result->firstname; ?>" />
+                        <input type="text" id="u_firstname" name="u_firstname" class="span8" placeholder="First Name" value="<?php echo $person->firstname; ?>" />
                         <span class="help-block">First Name</span>
-                        <input type="text" id="u_surname" name="u_surname" class="span8" placeholder="Surname" value="<?php echo $result->surname; ?>" />
+                        <input type="text" id="u_surname" name="u_surname" class="span8" placeholder="Surname" value="<?php echo $person->surname; ?>" />
                         <span class="help-block">Surname</span>
-                        <input type="text" id="u_othernames" name="u_othernames" class="span8" placeholder="Other Name(s)" value="<?php echo $result->othernames; ?>" />
+                        <input type="text" id="u_othernames" name="u_othernames" class="span8" placeholder="Other Name(s)" value="<?php echo $person->othernames; ?>" />
                         <span class="help-block">Other Name(s)</span>
                     </div>
                     <div class="formSep">
                         <label for="u_email">Email</label>
-                        <input type="text" id="u_email" name="u_email" class="span8" value="<?php echo $result->email; ?>" />
+                        <input type="text" id="u_email" name="u_email" class="span8" value="<?php echo $person->email; ?>" />
                     </div>
                     <div class="formSep">
                         <label for="u_telephone">Telephone</label>
-                        <input type="text" id="u_telephone" name="u_telephone" class="span8" value="<?php echo $result->telephone; ?>" />
+                        <input type="text" id="u_telephone" name="u_telephone" class="span8" value="<?php echo $person->telephone; ?>" />
                     </div>
                     <div class="formSep">
                         <label>Gender</label>
@@ -68,14 +78,14 @@
                             'name' => 'u_gender',
                             'id' => 'u_male',
                             'value' => 'Male',
-                            'checked' => $result->gender == 'male' ? true : false,
+                            'checked' => $person->gender == 'male' ? true : false,
                             'type' => 'radio'
                         );
                         $female = array(
                             'name' => 'u_gender',
                             'id' => 'u_female',
                             'value' => 'Female',
-                            'checked' => $result->gender == 'female' ? true : false,
+                            'checked' => $person->gender == 'female' ? true : false,
                             'type' => 'radio'
                         );
                         ?>
@@ -84,17 +94,17 @@
                     </div>
                     <div class="formSep">
                         <label for="u_birthdate">Birthday</label>
-                        <input type="text" id="u_birthdate" name="u_birthdate" class="span8" value="<?php echo $result->birthdate; ?>" />
+                        <input type="text" id="u_birthdate" name="u_birthdate" class="span8" value="<?php echo $person->birthdate; ?>" />
                     </div>
                     <div class="formSep">
                         <label for="u_biodata">Description</label>
-                        <textarea name="u_biodata" id="u_biodata" cols="30" rows="4" class="span8"><?php echo $result->biodata; ?></textarea>
+                        <textarea name="u_biodata" id="u_biodata" cols="30" rows="4" class="span8"><?php echo $person->biodata; ?></textarea>
                     </div>
                     <div class="formSep sepH_b">
                         <button class="btn btn-ahis-3" type="submit">Save changes</button>
                         <a href="#" class="btn btn-link">Cancel</a>
                     </div>
-                    <?php echo form_hidden('id', $result->id) ?>
+                    <?php echo form_hidden('id', $person->id) ?>
                 </form>
             </div>
         </div>
